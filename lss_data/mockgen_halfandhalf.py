@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import read_lognormal
 import Corrfunc
 
+# pick a seed number so that random set stays the same every time
+np.random.seed(1234567)
+
 # read in mock data
 Lx, Ly, Lz, N, data = read_lognormal.read('/Users/abbywilliams/Physics/research/lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin')
 x_ln, y_ln, z_ln, vx_ln, vy_ln, vz_ln = data.T
@@ -28,7 +31,7 @@ halfx_ln = x_ln[where_halfx_ln]
 # find associated y and z values (so all 3 arrays are the same size)
 halfy_ln = y_ln[where_halfx_ln]
 halfz_ln = z_ln[where_halfx_ln]
-# combine x, y, and z values into one tuple:
+# combine x, y, and z values into one array:
 half_ln = np.array([halfx_ln,halfy_ln,halfz_ln]).T
 
 # locate all values in RANDOM set for which x >= (boxsize/2)
@@ -37,7 +40,7 @@ halfx_rand = x_rand[where_halfx_rand]
 # find associated y and z values (so all 3 arrays are the same size)
 halfy_rand = y_rand[where_halfx_rand]
 halfz_rand = z_rand[where_halfx_rand]
-# combine x, y, and z values into one tuple:
+# combine x, y, and z values into one array:
 half_rand = np.array([halfx_rand,halfy_rand,halfz_rand]).T
 
 # create new mock with half lognormal mock and half random set
@@ -71,7 +74,7 @@ nthreads = 1
 periodic = False
 nd = N
 # these are from the demo notebook so not sure about these:
-rmin = 40.0
+rmin = 20.0 #40.0
 rmax = 150.0
 nbins = 22
 r_edges = np.linspace(rmin, rmax, nbins+1)
@@ -114,11 +117,10 @@ plt.plot(r_avg, xi_nm, marker='o', label="Half and half")
 plt.xlabel(r'r ($h^{-1}$Mpc)')
 plt.ylabel(r'$\xi$(r)')
 plt.title(r"Landy-Szalay")
-plt.legend()
 
 # plot Corrfunc for lognormal mock
 plt.plot(r_avg, xi_ln, marker='o', label="Lognormal")
 
-
+plt.legend()
 plt.show()
 

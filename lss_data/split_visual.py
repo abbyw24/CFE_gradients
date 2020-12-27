@@ -11,8 +11,7 @@ xi_dead = split_data[3]
 # average of xi_ln and xi_dead
 avg_xi_ln_dead = (xi_dead + xi_ln)/2
 
-
-plt.figure()
+fig = plt.figure()
 # plot Corrfunc for split
 plt.plot(r_avg, xi_split, marker='o', label="Split")
 plt.xlabel(r'r ($h^{-1}$Mpc)')
@@ -28,3 +27,6 @@ plt.plot(r_avg, np.zeros(len(r_avg)), color="black",alpha=0.5)
 
 plt.legend()
 plt.show()
+
+# save figure
+fig.savefig("split_xi.png")

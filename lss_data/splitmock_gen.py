@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import read_lognormal
-import Corrfunc
 
 # pick a seed number so that random set stays the same every time
 np.random.seed(123456)

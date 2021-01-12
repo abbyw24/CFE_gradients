@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import read_lognormal
 
 # pick a seed number so that random set stays the same every time
 np.random.seed(123456)
@@ -16,19 +17,13 @@ lognorm_set = x_lognorm, y_lognorm, z_lognorm = np.array([x_lognorm, y_lognorm, 
 
 # DEAD SET
 # generate a random data set (same size as mock)
-x_dead = boxsize * (np.random.rand(N) - .5)
-y_dead = boxsize * (np.random.rand(N) - .5)
-z_dead = boxsize * (np.random.rand(N) - .5)
-dead_set = np.array([x_dead,y_dead,z_dead])
-print(min(x_dead),max(x_dead))
+dead_set = np.random.uniform(-boxsize/2,boxsize/2,(3,N))
 
 # generate random R3 unit vector
 v = np.random.normal(size=3)
 v[2] = 0
 v_len = np.sqrt(v[0]**2 + v[1]**2 + v[2]**2)
 v = v / v_len
-print(v)
-print(np.sqrt(v[0]**2 + v[1]**2 + v[2]**2))
 
 # # define dividing plane normal to vector v
 # #   a*x + b*y + c*z = 0 ==> z = -(a*x + b*y) / c

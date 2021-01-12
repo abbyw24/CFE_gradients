@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import itertools as it
 import Corrfunc
 
 # load in split_mock
@@ -10,16 +11,24 @@ y = split_mock[:,1]
 z = split_mock[:,2]
 print(split_mock.shape)
 
-# divide split_mock into octants
-split1 = split_mock[np.logical_and(np.logical_and(x>0,y>0),z>0)]
-    # is there a cleaner way to do this?
-split2 = split_mock[np.logical_and(np.logical_and(x<0,y>0),z>0)]
-split3 = split_mock[np.logical_and(np.logical_and(x<0,y<0),z>0)]
-split4 = split_mock[np.logical_and(np.logical_and(x>0,y<0),z>0)]
-split5 = split_mock[np.logical_and(np.logical_and(x>0,y>0),z<0)]
-split6 = split_mock[np.logical_and(np.logical_and(x<0,y>0),z<0)]
-split7 = split_mock[np.logical_and(np.logical_and(x<0,y<0),z<0)]
-split8 = split_mock[np.logical_and(np.logical_and(x>0,y<0),z<0)]
+# define octants
+I_1 = (x>0) & (y>0) & (z>0)
+I_2 = (x<0) & (y>0) & (z>0)
+I_3 = (x<0) & (y<0) & (z>0)
+I_4 = (x>0) & (y<0) & (z>0)
+I_5 = (x>0) & (y>0) & (z<0)
+I_6 = (x<0) & (y>0) & (z<0)
+I_7 = (x<0) & (y<0) & (z<0)
+I_8 = (x>0) & (y<0) & (z<0)
+# divide split mock into octants
+split1 = split_mock[I_1]
+split2 = split_mock[I_2]
+split3 = split_mock[I_3]
+split4 = split_mock[I_4]
+split5 = split_mock[I_5]
+split6 = split_mock[I_6]
+split7 = split_mock[I_7]
+split8 = split_mock[I_8]
 
 # Corrfunc parameters
 boxsize = 2.0 * math.ceil(max(x))

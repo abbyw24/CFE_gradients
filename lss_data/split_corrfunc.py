@@ -37,7 +37,7 @@ z_dead = dead_set[:,2]
 
 # parameters
 nthreads = 1
-periodic = True
+periodic = False
 nd = N
 
 rmin = 20.0

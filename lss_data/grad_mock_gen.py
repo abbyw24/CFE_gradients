@@ -26,10 +26,11 @@ w_hat[2] = 0
     # set z-coordinate to zero for visualisation purposes
 np.linalg.norm(w_hat) == 1
 print(w_hat)
+w_hat = np.array([0,1,0])
 
 # define control parameters m and b
-m = 0.3/L
-b = 0.75
+m = 0.5/L
+b = 1
 
 # for each catalog, make random uniform deviates
 rs_clust = np.random.uniform(size=N)
@@ -44,8 +45,8 @@ ws_uncl = np.dot(w_hat,xs_uncl)
 ts_clust = m * ws_clust + b
 ts_uncl = m * ws_uncl + b
 # assert that ts range from 0 to 1
-assert np.all(ts_clust > 0)
-assert np.all(ts_clust < 1)
+# assert np.all(ts_clust > 0)
+# assert np.all(ts_clust < 1)
 # desired indices
 I_clust = rs_clust < ts_clust
 I_uncl = rs_uncl > ts_uncl

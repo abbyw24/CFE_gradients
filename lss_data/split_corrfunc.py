@@ -37,7 +37,7 @@ z_dead = dead_set[:,2]
 
 # parameters
 nthreads = 1
-periodic = False
+periodic = True
 nd = N
 
 rmin = 20.0
@@ -91,4 +91,4 @@ xi_dead = landy_szalay(nd,nr,dd_dead,dr_dead,rr_dead)
 split_xi = np.array([r_avg,xi_split,xi_ln,xi_dead])
 
 # save Corrfunc data
-np.save("split_xi",split_xi)
+np.save("split_xi_per-"+str(periodic),split_xi)

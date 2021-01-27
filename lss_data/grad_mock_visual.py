@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 m_arr = np.array([0.0,0.3,1.0,10.0]) #/L
 b_arr = np.array([0.0,0.5,0.75,1.0])
 
+# define dimension
+dim = "2D"
+
 # define periodic
 periodic = False
 
@@ -24,7 +27,7 @@ for m in m_arr:
         # define a value in terms of m and b
         a = "m-"+str(m)+"-L_b-"+str(b)
         # load in xi for gradient mock
-        grad_data = np.load("gradient_mocks/grad_xi_"+a+"_per-"+str(periodic)+".npy")
+        grad_data = np.load("gradient_mocks/"+dim+"/grad_xi_"+a+"_per-"+str(periodic)+".npy")
         xi_grad = grad_data[1]
 
         fig = plt.figure()
@@ -44,6 +47,6 @@ for m in m_arr:
         plt.legend()
 
         # save figure
-        fig.savefig("gradient_mocks/grad_xi_"+a+"_per-"+str(periodic)+".png")
+        fig.savefig("gradient_mocks/"+dim+"/grad_xi_"+a+"_per-"+str(periodic)+".png")
 
         print("m="+str(m)+", b="+str(b)+", done!")

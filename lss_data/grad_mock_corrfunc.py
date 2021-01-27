@@ -8,6 +8,9 @@ import Corrfunc
 m_arr = np.array([0.0,0.3,1.0,10.0]) #/L
 b_arr = np.array([0.0,0.5,0.75,1.0])
 
+# define which dimension we want
+dim = "1D"
+
 # parameters for Corrfunc, used in loop
 nthreads = 1
 periodic = False
@@ -31,8 +34,8 @@ for m in m_arr:
     for b in b_arr:
         # define a value in terms of m and b
         a = "m-"+str(m)+"-L_b-"+str(b)
-        # load in lognormal, dead, and gradient mocks
-        grad_mock = np.load("gradient_mocks/grad_mock_"+a+".npy")
+        # load in gradient mock
+        grad_mock = np.load("gradient_mocks/"+dim+"/grad_mock_"+a+".npy")
         # define N and boxsize, L
         N = len(grad_mock)
         L = 2.0 * math.ceil(max(grad_mock[:,0]))
@@ -71,6 +74,6 @@ for m in m_arr:
         grad_xi = np.array([r_avg,xi_grad])
 
         # save Corrfunc data
-        np.save("gradient_mocks/grad_xi_"+a+"_per-"+str(periodic),grad_xi)
+        np.save("gradient_mocks/"+dim+"/grad_xi_"+a+"_per-"+str(periodic),grad_xi)
 
-        print("m="+str(m)+", b="+str(b)+", done!")
+        print("m="+str(m)+"/L, b="+str(b)+", done!")

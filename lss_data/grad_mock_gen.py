@@ -20,13 +20,27 @@ xs_clust = x_lognorm, y_lognorm, z_lognorm = np.array([x_lognorm, y_lognorm, z_l
 # generate a random data set (same size as mock)
 xs_uncl = np.random.uniform(-L/2,L/2,(3,N))
 
+# define dimension
+dimension = 1
+
 # generate unit vector– this is the direction of the gradient
-w_hat = np.random.normal(size=3)
-w_hat[2] = 0
-    # set z-coordinate to zero for visualisation purposes
-w_hat = np.array([0,1,0])
-np.linalg.norm(w_hat) == 1
-print(w_hat)
+if dimension == 1:
+    dim = "1D"
+    w_hat = np.array([1,0,0])
+    print(dim,w_hat)
+elif dimension == 2:
+    dim = "2D"
+    w_hat = np.random.normal(size=3)
+    w_hat[2] = 0
+    np.linalg.norm(w_hat) == 1
+    print(dim,w_hat)
+elif dimension == 3:
+    dim = "3D"
+    w_hat = np.random.normal(size=3)
+    np.linalg.norm(w_hat) == 1
+    print(dim,w_hat)
+else:
+    print("Invalid dimension; must be 1, 2, or 3")
 
 # define control parameters m and b
 m_arr = np.array([0.0,0.3,1.0,10.0])/L
@@ -60,7 +74,7 @@ for m in m_arr:
         # define this for file name (for saving data and image)
         a = "m-"+str(m*L)+"-L_b-"+str(b)
         # save xs
-        np.save("gradient_mocks/grad_mock_"+a,xs)
+        np.save("gradient_mocks/"+dim+"/grad_mock_"+a,xs)
 
         # visualisation!
         z_max = -50
@@ -76,7 +90,7 @@ for m in m_arr:
         plt.ylabel("y (Mpc/h)")
         plt.title("Gradient Mock, m="+str(m*L)+"/L , b="+str(b))
         plt.legend()
-        fig1.savefig("gradient_mocks/grad_mock_"+a+".png")
+        fig1.savefig("gradient_mocks/"+dim+"/grad_mock_"+a+".png")
 
         # different colors for clust and uncl
         fig2 = plt.figure()
@@ -96,6 +110,6 @@ for m in m_arr:
         plt.ylabel("y (Mpc/h)")
         plt.title("Gradient Mock, m="+str(m*L)+"/L , b="+str(b))
         plt.legend()
-        fig2.savefig("gradient_mocks/color_grad_mock_"+a+".png")
+        fig2.savefig("gradient_mocks/"+dim+"/color_grad_mock_"+a+".png")
 
-        print("m="+str(m)+", b="+str(b)+", done!")
+        print("m="+str(m*L)+"/L, b="+str(b)+", done!")

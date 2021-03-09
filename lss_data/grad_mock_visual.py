@@ -1,13 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# define which gradient we're working with
-    # choices are m = (0, 0.3, 1, 10) and b = (0, 0.5, 0.75, 1)
-m_arr = np.array([0.0,0.3,1.0,10.0]) #/L
-b_arr = np.array([0.0,0.5,0.75,1.0])
+# load in m and b lists for loop
+m_list_noL = np.load("m_values_noL.npy")
+b_list = np.load("b_values.npy")
 
+######
 # define dimension
-dim = "2D"
+dim = "1D"
+######
 
 # define periodic
 periodic = False
@@ -22,15 +23,15 @@ xi_dead = split_data[3]
 # average of xi_ln and xi_dead
 avg_xi_ln_dead = (xi_dead + xi_ln)/2
 
-for m in m_arr:
-    for b in b_arr:
+for m in m_list_noL:
+    for b in b_list:
         # define a value in terms of m and b
         a = "m-"+str(m)+"-L_b-"+str(b)
         # load in xi for gradient mock
-        grad_data = np.load("gradient_mocks/"+dim+"/grad_xi_"+a+"_per-"+str(periodic)+".npy")
+        grad_data = np.load("gradient_mocks/"+dim+"/xi/grad_xi_"+a+"_per-"+str(periodic)+".npy")
         xi_grad = grad_data[1]
 
-        fig = plt.figure()
+        fig1 = plt.figure()
         # plot Corrfunc for gradient
         plt.plot(r_avg, xi_grad, marker='o', label="Gradient, m="+str(m)+"/L, b="+str(b))
         plt.xlabel(r'r ($h^{-1}$Mpc)')
@@ -47,6 +48,6 @@ for m in m_arr:
         plt.legend()
 
         # save figure
-        fig.savefig("gradient_mocks/"+dim+"/grad_xi_"+a+"_per-"+str(periodic)+".png")
+        fig1.savefig("gradient_mocks/"+dim+"/xi/grad_xi_"+a+"_per-"+str(periodic)+".png")
 
         print("m="+str(m)+", b="+str(b)+", done!")

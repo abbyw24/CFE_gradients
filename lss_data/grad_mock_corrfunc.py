@@ -3,10 +3,9 @@ import matplotlib.pyplot as plt
 import math
 import Corrfunc
 
-# define which gradient we're working with
-    # choices are m = (0, 0.3, 1, 10) and b = (0, 0.5, 0.75, 1)
-m_arr = np.array([0.0,0.3,1.0,10.0]) #/L
-b_arr = np.array([0.0,0.5,0.75,1.0])
+# load in m and b lists for loop
+m_list_noL = np.load("m_values_noL.npy")
+b_list = np.load("b_values.npy")
 
 # define which dimension we want
 dim = "1D"
@@ -29,33 +28,30 @@ def landy_szalay(nd, nr, dd, dr, rr):
     xi_ls = (dd-2*dr+rr)/rr
     return xi_ls
 
-# loop through the possible m and b values
-for m in m_arr:
-    for b in b_arr:
+# loop through the m and b values
+for m in m_list_noL:
+    for b in b_list:
         # define a value in terms of m and b
         a = "m-"+str(m)+"-L_b-"+str(b)
         # load in gradient mock
-        grad_mock = np.load("gradient_mocks/"+dim+"/grad_mock_"+a+".npy")
-        # define N and boxsize, L
-        N = len(grad_mock)
-        L = 2.0 * math.ceil(max(grad_mock[:,0]))
+        grad_mock = np.load("gradient_mocks/"+dim+"/mocks/grad_mock_"+a+".npy")
 
-        # CALCULATING CORRFUNC
-        # define NULL (random) set for Corrfunc
-        nr = 2*N
-        null_set = np.random.uniform(-L/2, L/2, (nr,3))
-
-        # relabeling mocks / pulling out x, y, z values
         x_grad = grad_mock[:,0]
         y_grad = grad_mock[:,1]
         z_grad = grad_mock[:,2]
 
+        # define N and L
+        nd = len(grad_mock)
+        L = 2.0 * math.ceil(max(x_grad))
+
+        # CALCULATING CORRFUNC
+        # define NULL (random) set for Corrfunc
+        nr = 2*nd
+        null_set = np.random.uniform(-L/2, L/2, (nr,3))
+
         x_null = null_set[:,0]
         y_null = null_set[:,1]
         z_null = null_set[:,2]
-
-        # parameter
-        nd = N
 
         # calculating Corrfunc for grad
         dd_res_grad = Corrfunc.theory.DD(1, nthreads, r_edges, x_grad, y_grad, z_grad, boxsize=L, periodic=periodic)
@@ -74,6 +70,6 @@ for m in m_arr:
         grad_xi = np.array([r_avg,xi_grad])
 
         # save Corrfunc data
-        np.save("gradient_mocks/"+dim+"/grad_xi_"+a+"_per-"+str(periodic),grad_xi)
+        np.save("gradient_mocks/"+dim+"/xi/grad_xi_"+a+"_per-"+str(periodic),grad_xi)
 
-        print("m="+str(m)+"/L, b="+str(b)+", done!")
+        print("m="+str(m)+"/L, b="+str(b)+", done")

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import math
 import itertools as it
 import Corrfunc
+from Corrfunc.theory import DDsmu
 
 # load in split_mock and vector
 split_mock = np.load("split_mock.npy")
@@ -10,6 +11,7 @@ v = np.load("split_mock_v.npy")
 boxsize = 2.0 * math.ceil(max(split_mock[:,0]))
 
 x, y, z = np.array([split_mock[:,0],split_mock[:,1],split_mock[:,2]])
+nd = len(x)
 
 boxsize_patch = boxsize/2
 
@@ -31,7 +33,7 @@ I_7 = (x<0) & (y<0) & (z<0)
 I_8 = (x>0) & (y<0) & (z<0)
 I = np.array([I_1,I_2,I_3,I_4,I_5,I_6,I_7,I_8])
 
-# random set is calculated analytically with Corrfunc
+# random set calculated analytically by Corrfunc
 
 # Corrfunc parameters
 nthreads = 1
@@ -41,6 +43,8 @@ rmax = 100.0
 nbins = 22
 r_edges = np.linspace(rmin, rmax, nbins+1)
 r_avg = 0.5*(r_edges[1:]+r_edges[:-1]) 
+
+
 
 # results for entire mock
 # shift x,y,z to go from 0 - boxsize (instead of centered at 0)

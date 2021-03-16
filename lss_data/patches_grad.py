@@ -7,7 +7,7 @@ import itertools as it
 
 #######
 # load in mock
-m = 0.25
+m = 0.75
 b = 0.5
 grad_dim = 1
 # define number of patches by number of patches per side length*
@@ -61,24 +61,23 @@ def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22):
     return r_avg, results_xi
 
 mock_data = np.load("gradient_mocks/"+str(grad_dim)+"D/mocks/grad_mock_m-"+str(m)+"-L_b-"+str(b)+".npy")
-    # x,y,z values from -375 to 375
-boxsize = 2*math.ceil(max(mock_data[:,0]))
-    # this works for now but is more makeshift.. eventually I should save as metadata to load in with mock data
+    # x,y,z values from -L/2 to L/2
+L = np.load("boxsize.npy")
 # shift values to 0 to L
-mock_data += boxsize/2
+mock_data += L/2
 n_dim = len(mock_data[0,:])
 nd = len(mock_data)
 
 # create random set
 nr = 2*nd
-rand_set = np.random.uniform(0, boxsize, (nr,3))
+rand_set = np.random.uniform(0, L, (nr,3))
 
 # patchify mock data and random set
-patches_mock = patchify(mock_data, boxsize, n_sides=n_sides)
+patches_mock = patchify(mock_data, L, n_sides=n_sides)
 patch_ids_mock = patches_mock[0]
 patch_id_list_mock = np.unique(patch_ids_mock)
 
-patches_rand = patchify(rand_set, boxsize, n_sides=n_sides)
+patches_rand = patchify(rand_set, L, n_sides=n_sides)
 patch_ids_rand = patches_rand[0]
 patch_id_list_rand = np.unique(patch_ids_rand)
 
@@ -95,7 +94,7 @@ for patch_id in patch_id_list:
     center = np.mean(patch_data,axis=0)
     patch_centers.append(center)
 patch_centers = np.array(patch_centers)
-np.save("gradient_mocks/"+str(grad_dim)+"D/patches/patch_centers_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.npy", patch_centers)
+np.save("gradient_mocks/"+str(grad_dim)+"D/patches/patch_centers/patch_centers_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.npy", patch_centers)
 
 # results for full mock
 results_xi_full = xi(mock_data,rand_set)

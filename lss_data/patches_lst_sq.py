@@ -4,20 +4,20 @@ import math
 
 ######
 # load in patch data
-m = 1.0
+m = 0.75
 b = 0.5
 grad_dim = 1
 n_patches = 8
+L = np.load("boxsize.npy")
 
 # and which bin we're using:
 r_bin = 2
 ######
 
 dim = ["x", "y", "z"]
-patch_centers = np.load("gradient_mocks/"+str(grad_dim)+"D/patches/patch_centers_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.npy")
-patch_centers = patch_centers - 375.0
+patch_centers = np.load("gradient_mocks/"+str(grad_dim)+"D/patches/patch_centers/patch_centers_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.npy")
+patch_centers -= L/2
     # this centers the fiducial point in the box
-    # best way to make this general ? do i need to save boxsize values separately and load them in ?
 
 # create A matrix
 A = np.ones(len(patch_centers))
@@ -41,7 +41,6 @@ assert len(xi_patches) == n_patches
 Y = xi_patches[:,r_bin-1]
     # 5th bin should be r ~ 35 h^-1 Mpc
 r_avg_bin = r_avg[r_bin-1]*np.ones(n_patches)
-print(Y)
 
 # plot xi_patches
 fig1 = plt.figure()

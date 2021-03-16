@@ -7,6 +7,9 @@ import Corrfunc
 m_list_noL = np.load("m_values_noL.npy")
 b_list = np.load("b_values.npy")
 
+# load in boxsize
+L = np.load("boxsize.npy")
+
 # define which dimension we want
 dim = "1D"
 
@@ -40,9 +43,8 @@ for m in m_list_noL:
         y_grad = grad_mock[:,1]
         z_grad = grad_mock[:,2]
 
-        # define N and L
+        # define nd
         nd = len(grad_mock)
-        L = 2.0 * math.ceil(max(x_grad))
 
         # CALCULATING CORRFUNC
         # define NULL (random) set for Corrfunc

@@ -17,6 +17,8 @@ Lx, Ly, Lz, N, data = read_lognormal.read('/Users/abbywilliams/Physics/research/
     # define boxsize based on mock; and N = number of data points
 L = Lx
     # L = boxsize
+# save boxsize!! then load in this boxsize for all uses of gradient mock
+np.save("boxsize",L)
 
 x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
 xs_clust = x_lognorm, y_lognorm, z_lognorm = np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2)

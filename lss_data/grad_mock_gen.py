@@ -105,6 +105,9 @@ for m in m_list:
 
         xs_clust_grad = xs_clust.T[I_clust]
         xs_uncl_grad = xs_uncl.T[I_uncl]
+        # save clustered and unclustered points separately for plotting in other files
+        np.save("gradient_mocks/"+str(dimension)+"D/mocks_colored/clust_"+a, xs_clust_grad)
+        np.save("gradient_mocks/"+str(dimension)+"D/mocks_colored/unclust_"+a, xs_uncl_grad)
 
         xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
         xy_slice_uncl = xs_uncl_grad[np.where(xs_uncl_grad[:,2] < z_max)]

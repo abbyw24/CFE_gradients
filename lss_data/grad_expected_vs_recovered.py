@@ -30,33 +30,38 @@ proj_rec_onto_exp = (np.dot(grad_recovered,grad_expected)/grad_exp_norm**2)*grad
 # residual
 residual = grad_recovered - proj_rec_onto_exp
 
-# # plot with quiver
-# fig1 = plt.figure()
-# V = np.vstack([grad_expected,grad_recovered])
-# origin = np.array([[0,0],[0,0]])
-# scale = 0.003
-# width = 0.005
+# load in mock data
+xs_clust_grad = np.load("gradient_mocks/"+str(grad_dim)+"D/mocks_colored/clust_m-"+str(m)+"-L_b-"+str(b)+".npy")
+xs_uncl_grad = np.load("gradient_mocks/"+str(grad_dim)+"D/mocks_colored/unclust_m-"+str(m)+"-L_b-"+str(b)+".npy")
 
-# plt.quiver(*origin, V[:,0], V[:,1], color=["r","g"], alpha=0.8, width=width, scale=scale)
+z_max = 100
 
-# # projection of recovered onto expected
-# plt.quiver(*origin, proj_rec_onto_exp[0], proj_rec_onto_exp[1], color="b", alpha=0.4, width=width, scale=scale)
+xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
+xy_slice_uncl = xs_uncl_grad[np.where(xs_uncl_grad[:,2] < z_max)]
 
-# plot "standard way"
-V = np.array([grad_expected,grad_recovered,proj_rec_onto_exp])
-colors = ["red", "black", "light_blue"]
-plot_array = np.column_stack((V, colors))
+fig1 = plt.figure()
+plt.plot(xy_slice_clust[:,0],xy_slice_clust[:,1],',',c="C0")
+plt.plot(xy_slice_uncl[:,0],xy_slice_uncl[:,1],',',c="orange")
+
+# plot expected, recovered, and projection from origin (only in xy)
+V = np.array([proj_rec_onto_exp, grad_expected, grad_recovered])
+colors = np.array(["blue", "red", "black"])
+labels = np.array([r"Proj. of $\vec{r}$ onto $\vec{e}$", r"Expected ($\vec{e}$)", r"Recovered ($\vec{r}$)"])
+plot_array = np.column_stack((V, colors, labels))
+a = 200*L     # scale factor
+
 for i in range(len(V)):
-    plt.plot([0,V[i,0]], [0,V[i,1]], color=V[i,3], alpha=0.7, linewidth=2)
+    plt.plot([0,a*V[i,0]], [0,a*V[i,1]], label=plot_array[i,4], color=plot_array[i,3], alpha=0.8, linewidth=2)
 # plot residual as triangle
-plt.plot([proj_rec_onto_exp[0],grad_recovered[0]],[proj_rec_onto_exp[1],residual[1]], color="gray", linewidth=2)
+plt.plot([a*proj_rec_onto_exp[0],a*grad_recovered[0]], [a*proj_rec_onto_exp[1],a*residual[1]], color="black", alpha=0.4, linewidth=2)
 
 plt.title("Expected vs. Recovered Clustering Gradient: \n m="+str(m)+", b="+str(b)+", "+str(n_patches)+" patches")
-plt.xlabel("x")
-plt.ylabel("y")
-    # what are the units of this measurement???
+plt.axes().set_aspect("equal")      # square aspect ratio
+plt.ylim((-400,400))
+plt.xlim((-400,400))
+plt.xlabel("x (Mpc/h)")
+plt.ylabel("y (Mpc/h)")
 plt.legend()
-    # can't figure out how to get a legend with quiver
 plt.show()
 
 fig1.savefig("gradient_mocks/"+str(grad_dim)+"D/patches/lst_sq_fit/grad_exp_vs_rec_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.png")

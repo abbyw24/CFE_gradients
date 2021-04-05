@@ -4,8 +4,8 @@ import math
 
 ######
 # load in patch data
-m = 0.75
-b = 0.5
+m = 0.25
+b = 0.75
 grad_dim = 1
 n_patches = 8
 L = np.load("boxsize.npy")

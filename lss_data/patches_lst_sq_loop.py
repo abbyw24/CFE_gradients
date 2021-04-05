@@ -4,8 +4,8 @@ import math
 
 ######
 # load in patch data
-m = 0.5
-b = 0.5
+m = 1.0
+b = 1.0
 grad_dim = 1
 n_patches = 8
 nbins = 22

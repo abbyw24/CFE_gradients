@@ -13,7 +13,7 @@ np.random.seed(123456)
 
 # LOGNORMAL SET
 # read in mock data
-Lx, Ly, Lz, N, data = read_lognormal.read('/Users/abbywilliams/Physics/research/lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin')
+Lx, Ly, Lz, N, data = read_lognormal.read('lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin')
     # define boxsize based on mock; and N = number of data points
 L = Lx
     # L = boxsize

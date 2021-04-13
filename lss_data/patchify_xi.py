@@ -4,28 +4,42 @@ import matplotlib.image as img
 import math
 import Corrfunc
 import itertools as it
+import globals
 
-#######
-# gradient dimension
-grad_dim = 1
-# define number of patches by number of patches per side length
-n_sides = 2
-# whether to loop through all possible values of m and b; otherwise manually input
-loop = True
-# otherwise, desired values of m and b:
-m = 0.5
-b = 0.75
+globals.initialize_patchvals()  # brings in all the default parameters
+
+grad_dim = globals.grad_dim
+n_sides = globals.n_sides
+loop = globals.loop
+m = globals.m
+b = globals.b
+periodic = globals.periodic
+rmin = globals.rmin
+rmax = globals.rmax
+nbins = globals.nbins
+
+# the following is commented out for run_patches.py
+# #######
+# # gradient dimension
+# grad_dim = 1
+# # define number of patches by number of patches per side length
+# n_sides = 2
+# # whether to loop through all possible values of m and b; otherwise manually input
+# loop = True
+# # otherwise, desired values of m and b:
+# m = 0.5
+# b = 0.75
+# #######
 
 if loop == True:
-    m_list_noL = np.load("m_values_noL.npy")
-    b_list = np.load("b_values.npy")
+    m_arr_perL = np.load("m_values_perL.npy")
+    b_arr = np.load("b_values.npy")
 elif loop == False:
-    m_list_noL = 0.5
-    b_list = 0.75
+    m_arr_perL = m
+    b_arr = b
 else:
     print("loop must be True or False")
     assert False
-
 
 # define patchify
 def patchify(data, boxsize, n_sides=2):
@@ -74,8 +88,8 @@ def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22):
     return r_avg, results_xi
 
 # loop through the m and b values
-for m in m_list_noL:
-    for b in b_list:
+for m in m_arr_perL:
+    for b in b_arr:
         mock_data = np.load("gradient_mocks/"+str(grad_dim)+"D/mocks/grad_mock_m-"+str(m)+"-L_b-"+str(b)+".npy")
             # x,y,z values from -L/2 to L/2
         L = np.load("boxsize.npy")
@@ -143,7 +157,7 @@ for m in m_list_noL:
         xi_patch_avg = np.sum(xi_patches,axis=0)/len(xi_patches)
 
         # save xi data– to load in separate file for least square fit
-        patches_xi = np.array([r_avg, xi_patches, xi_patch_avg, xi_full])
+        patches_xi = np.array([r_avg, xi_patches, xi_patch_avg, xi_full], dtype=object)
         np.save("gradient_mocks/"+str(grad_dim)+"D/patches/grad_xi_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.npy",
                 patches_xi, allow_pickle=True)
 

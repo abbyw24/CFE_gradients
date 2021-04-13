@@ -8,6 +8,13 @@ import read_lognormal
 dimension = 1
 #####
 
+# define control parameters m and b
+m_arr_perL = np.array([0.0, 0.25, 0.5, 0.75, 1.0, 10.0])
+np.save("m_values_perL",m_arr_perL)
+m_arr = m_arr_perL / L
+b_arr = np.array([0.0, 0.25, 0.5, 0.75 , 1.0])
+np.save("b_values",b_arr)
+
 # pick a seed number so that random set stays the same every time (for now)
 np.random.seed(123456)
 
@@ -18,7 +25,7 @@ Lx, Ly, Lz, N, data = read_lognormal.read('/Users/abbywilliams/Physics/research/
 L = Lx
     # L = boxsize
 # save boxsize!! then load in this boxsize for all uses of gradient mock
-np.save("boxsize",L)
+np.save("boxsize", L)
 
 x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
 xs_clust = x_lognorm, y_lognorm, z_lognorm = np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2)
@@ -45,13 +52,6 @@ else:
 w_hat /= np.linalg.norm(w_hat)
 print(dim,w_hat)
 
-# define control parameters m and b
-m_list_noL = np.array([0.0, 0.25, 0.5, 0.75, 1.0, 10.0])
-np.save("m_values_noL",m_list_noL)
-m_list = m_list_noL / L
-b_list = np.array([0.0, 0.25, 0.5, 0.75 , 1.0])
-np.save("b_values",b_list)
-
 # for each catalog, make random uniform deviates
 rs_clust = np.random.uniform(size=N)
 rs_uncl = np.random.uniform(size=N)
@@ -61,8 +61,8 @@ ws_clust = np.dot(w_hat,xs_clust)
 ws_uncl = np.dot(w_hat,xs_uncl)
 
 # loop through the different m and b parameters
-for m in m_list:
-    for b in b_list:
+for m in m_arr:
+    for b in b_arr:
         # combine catalogs:
         # threshold
 

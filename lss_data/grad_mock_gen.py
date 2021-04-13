@@ -8,13 +8,6 @@ import read_lognormal
 dimension = 1
 #####
 
-# define control parameters m and b
-m_arr_perL = np.array([0.0, 0.25, 0.5, 0.75, 1.0, 10.0])
-np.save("m_values_perL",m_arr_perL)
-m_arr = m_arr_perL / L
-b_arr = np.array([0.0, 0.25, 0.5, 0.75 , 1.0])
-np.save("b_values",b_arr)
-
 # pick a seed number so that random set stays the same every time (for now)
 np.random.seed(123456)
 
@@ -26,6 +19,15 @@ L = Lx
     # L = boxsize
 # save boxsize!! then load in this boxsize for all uses of gradient mock
 np.save("boxsize", L)
+
+######
+# define control parameters m and b
+m_arr_perL = np.array([0.0, 0.25, 0.5, 0.75, 1.0, 10.0])
+np.save("m_values_perL",m_arr_perL)
+m_arr = m_arr_perL / L
+b_arr = np.array([0.0, 0.25, 0.5, 0.75 , 1.0])
+np.save("b_values",b_arr)
+######
 
 x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
 xs_clust = x_lognorm, y_lognorm, z_lognorm = np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2)

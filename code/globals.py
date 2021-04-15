@@ -21,3 +21,10 @@ def initialize_patchvals():
     rmax = 100.0
     global nbins
     nbins = 22
+
+def initialize_path():
+    global path     # PATH TO RESEARCH DIRECTORY
+    # if running on cluster
+    path = "/home/aew492/research-summer2020"
+    # if running locally
+    #path = "/Users/abbywilliams/Physics/research"

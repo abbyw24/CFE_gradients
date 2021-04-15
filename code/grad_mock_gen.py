@@ -2,17 +2,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import read_lognormal
+import globals
 
 #####
 # define dimension
 dimension = 1
 #####
 
-# PATH TO RESEARCH DIRECTORY
-# if running on cluster
-path = "/home/aew492/research-summer2020"
-# if running locally
-#path = "/Users/abbywilliams/Physics/research"
+# specify which path (for running on HPC vs. running locally)
+globals.initialize_path()
+path = globals.path
 
 # pick a seed number so that random set stays the same every time (for now)
 np.random.seed(123456)
@@ -44,21 +43,18 @@ xs_uncl = np.random.uniform(-L/2,L/2,(3,N))
 
 # generate unit vector– this is the direction of the gradient
 if dimension == 1:
-    dim = "1D"
     w_hat = np.array([1.0,0,0])
 elif dimension == 2:
-    dim = "2D"
     w_hat = np.random.normal(size=3)
     w_hat[2] = 0
 elif dimension == 3:
-    dim = "3D"
     w_hat = np.random.normal(size=3)
 else:
     print("Invalid dimension; must be 1, 2, or 3")
     assert False
 
 w_hat /= np.linalg.norm(w_hat)
-print(dim,w_hat)
+print(dimension,w_hat)
 
 # for each catalog, make random uniform deviates
 rs_clust = np.random.uniform(size=N)
@@ -90,7 +86,7 @@ for m in m_arr:
         # define this for file name (for saving data and image)
         a = "m-"+str(m*L)+"-L_b-"+str(b)
         # save xs
-        np.save(f"{path}/gradient_mocks/"+dim+"/mocks/grad_mock_"+a,xs)
+        np.save(f"{path}/gradient_mocks/{dimension}D/mocks/grad_mock_"+a,xs)
 
         # visualisation!
         z_max = -50
@@ -106,7 +102,7 @@ for m in m_arr:
         plt.ylabel("y (Mpc/h)")
         plt.title("Gradient Mock, m="+str(m*L)+"/L , b="+str(b))
         plt.legend()
-        fig1.savefig(f"{path}/gradient_mocks/"+dim+"/mocks/grad_mock_"+a+".png")
+        fig1.savefig(f"{path}/gradient_mocks/{dimension}D/mocks/grad_mock_"+a+".png")
 
         # different colors for clust and uncl
         fig2 = plt.figure()
@@ -114,8 +110,8 @@ for m in m_arr:
         xs_clust_grad = xs_clust.T[I_clust]
         xs_uncl_grad = xs_uncl.T[I_uncl]
         # save clustered and unclustered points separately for plotting in other files
-        np.save(f"{path}/gradient_mocks/"+str(dimension)+"D/mocks_colored/clust_"+a, xs_clust_grad)
-        np.save(f"{path}/gradient_mocks/"+str(dimension)+"D/mocks_colored/unclust_"+a, xs_uncl_grad)
+        np.save(f"{path}/gradient_mocks/{dimension}D/mocks_colored/clust_"+a, xs_clust_grad)
+        np.save(f"{path}/gradient_mocks/{dimension}D/mocks_colored/unclust_"+a, xs_uncl_grad)
 
         xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
         xy_slice_uncl = xs_uncl_grad[np.where(xs_uncl_grad[:,2] < z_max)]
@@ -129,7 +125,7 @@ for m in m_arr:
         plt.xlabel("x (Mpc/h)")
         plt.ylabel("y (Mpc/h)")
         plt.title("Gradient Mock, m="+str(m*L)+"/L , b="+str(b))
-        fig2.savefig(f"{path}/gradient_mocks/"+dim+"/mocks_colored/color_grad_mock_"+a+".png")
+        fig2.savefig(f"{path}/gradient_mocks/{dimension}D/mocks_colored/color_grad_mock_"+a+".png")
         plt.legend()
 
         print("m="+str(m*L)+"/L, b="+str(b)+", done!")

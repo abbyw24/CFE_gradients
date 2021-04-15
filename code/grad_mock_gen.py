@@ -11,27 +11,27 @@ dimension = 1
 
 # specify which path (for running on HPC vs. running locally)
 globals.initialize_path()
-path = globals.path
+path_to_dir = globals.path_to_dir
 
 # pick a seed number so that random set stays the same every time (for now)
 np.random.seed(123456)
 
 # LOGNORMAL SET
 # read in mock data
-Lx, Ly, Lz, N, data = read_lognormal.read(f"{path}/lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin")
+Lx, Ly, Lz, N, data = read_lognormal.read(f"{path_to_dir}/lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin")
     # define boxsize based on mock; and N = number of data points
 L = Lx
     # L = boxsize
 # save boxsize!! then load in this boxsize for all uses of gradient mock
-np.save("boxsize", L)
+np.save(f"{path_to_dir}/boxsize", L)
 
 ######
 # define control parameters m and b
 m_arr_perL = np.array([0.0, 0.25, 0.5, 0.75, 1.0, 10.0])
-np.save("m_values_perL",m_arr_perL)
+np.save(f"{path_to_dir}/m_values_perL",m_arr_perL)
 m_arr = m_arr_perL / L
 b_arr = np.array([0.0, 0.25, 0.5, 0.75 , 1.0])
-np.save("b_values",b_arr)
+np.save(f"{path_to_dir}/b_values",b_arr)
 ######
 
 x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
@@ -84,9 +84,9 @@ for m in m_arr:
         # append
         xs = np.append(xs_clust.T[I_clust], xs_uncl.T[I_uncl],axis=0)
         # define this for file name (for saving data and image)
-        a = "m-"+str(m*L)+"-L_b-"+str(b)
+        a = f"m-{m}-L_b-{b}"
         # save xs
-        np.save(f"{path}/gradient_mocks/{dimension}D/mocks/grad_mock_"+a,xs)
+        np.save(f"{path_to_dir}/gradient_mocks/{dimension}D/mocks/grad_mock_"+a,xs)
 
         # visualisation!
         z_max = -50
@@ -100,9 +100,9 @@ for m in m_arr:
         plt.ylim((-400,400))
         plt.xlabel("x (Mpc/h)")
         plt.ylabel("y (Mpc/h)")
-        plt.title("Gradient Mock, m="+str(m*L)+"/L , b="+str(b))
+        plt.title(f"Gradient Mock, m={m*L}/L , b={b}")
         plt.legend()
-        fig1.savefig(f"{path}/gradient_mocks/{dimension}D/mocks/grad_mock_"+a+".png")
+        fig1.savefig(f"{path_to_dir}/gradient_mocks/{dimension}D/mocks/grad_mock_"+a+".png")
 
         # different colors for clust and uncl
         fig2 = plt.figure()
@@ -110,8 +110,8 @@ for m in m_arr:
         xs_clust_grad = xs_clust.T[I_clust]
         xs_uncl_grad = xs_uncl.T[I_uncl]
         # save clustered and unclustered points separately for plotting in other files
-        np.save(f"{path}/gradient_mocks/{dimension}D/mocks_colored/clust_"+a, xs_clust_grad)
-        np.save(f"{path}/gradient_mocks/{dimension}D/mocks_colored/unclust_"+a, xs_uncl_grad)
+        np.save(f"{path_to_dir}/gradient_mocks/{dimension}D/mocks_colored/clust_"+a, xs_clust_grad)
+        np.save(f"{path_to_dir}/gradient_mocks/{dimension}D/mocks_colored/unclust_"+a, xs_uncl_grad)
 
         xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
         xy_slice_uncl = xs_uncl_grad[np.where(xs_uncl_grad[:,2] < z_max)]
@@ -125,7 +125,7 @@ for m in m_arr:
         plt.xlabel("x (Mpc/h)")
         plt.ylabel("y (Mpc/h)")
         plt.title("Gradient Mock, m="+str(m*L)+"/L , b="+str(b))
-        fig2.savefig(f"{path}/gradient_mocks/{dimension}D/mocks_colored/color_grad_mock_"+a+".png")
+        fig2.savefig(f"{path_to_dir}/gradient_mocks/{dimension}D/mocks_colored/color_grad_mock_"+a+".png")
         plt.legend()
 
-        print("m="+str(m*L)+"/L, b="+str(b)+", done!")
+        print(f"m={m*b}/L, b={b}, done!")

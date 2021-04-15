@@ -23,8 +23,9 @@ def initialize_patchvals():
     nbins = 22
 
 def initialize_path():
-    global path     # PATH TO RESEARCH DIRECTORY
+    global path_to_dir     # PATH TO RESEARCH DIRECTORY
+    path_to_dir = ""
     # if running on cluster
-    path = "/home/aew492/research-summer2020"
+    #path_to_dir = "/home/aew492/research-summer2020"
     # if running locally
-    #path = "/Users/abbywilliams/Physics/research"
+    #path_to_dir = "/Users/abbywilliams/Physics/research"

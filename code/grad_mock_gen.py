@@ -20,7 +20,6 @@ np.random.seed(123456)
 # LOGNORMAL SET
 # read in mock data
 Lx, Ly, Lz, N, data = read_lognormal.read(f"{path}/lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin")
-assert False
     # define boxsize based on mock; and N = number of data points
 L = Lx
     # L = boxsize

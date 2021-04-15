@@ -8,12 +8,19 @@ import read_lognormal
 dimension = 1
 #####
 
+# PATH TO RESEARCH DIRECTORY
+# if running on cluster
+path = "/home/aew492/research-summer2020""
+# if running locally
+#path = "/Users/abbywilliams/Physics/research"
+
 # pick a seed number so that random set stays the same every time (for now)
 np.random.seed(123456)
 
 # LOGNORMAL SET
 # read in mock data
-Lx, Ly, Lz, N, data = read_lognormal.read('lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin')
+Lx, Ly, Lz, N, data = read_lognormal.read(f"{path}/lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin")
+assert False
     # define boxsize based on mock; and N = number of data points
 L = Lx
     # L = boxsize
@@ -84,7 +91,7 @@ for m in m_arr:
         # define this for file name (for saving data and image)
         a = "m-"+str(m*L)+"-L_b-"+str(b)
         # save xs
-        np.save("gradient_mocks/"+dim+"/mocks/grad_mock_"+a,xs)
+        np.save(f"{path}/gradient_mocks/"+dim+"/mocks/grad_mock_"+a,xs)
 
         # visualisation!
         z_max = -50
@@ -100,7 +107,7 @@ for m in m_arr:
         plt.ylabel("y (Mpc/h)")
         plt.title("Gradient Mock, m="+str(m*L)+"/L , b="+str(b))
         plt.legend()
-        fig1.savefig("gradient_mocks/"+dim+"/mocks/grad_mock_"+a+".png")
+        fig1.savefig(f"{path}/gradient_mocks/"+dim+"/mocks/grad_mock_"+a+".png")
 
         # different colors for clust and uncl
         fig2 = plt.figure()
@@ -108,8 +115,8 @@ for m in m_arr:
         xs_clust_grad = xs_clust.T[I_clust]
         xs_uncl_grad = xs_uncl.T[I_uncl]
         # save clustered and unclustered points separately for plotting in other files
-        np.save("gradient_mocks/"+str(dimension)+"D/mocks_colored/clust_"+a, xs_clust_grad)
-        np.save("gradient_mocks/"+str(dimension)+"D/mocks_colored/unclust_"+a, xs_uncl_grad)
+        np.save(f"{path}/gradient_mocks/"+str(dimension)+"D/mocks_colored/clust_"+a, xs_clust_grad)
+        np.save(f"{path}/gradient_mocks/"+str(dimension)+"D/mocks_colored/unclust_"+a, xs_uncl_grad)
 
         xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
         xy_slice_uncl = xs_uncl_grad[np.where(xs_uncl_grad[:,2] < z_max)]
@@ -123,7 +130,7 @@ for m in m_arr:
         plt.xlabel("x (Mpc/h)")
         plt.ylabel("y (Mpc/h)")
         plt.title("Gradient Mock, m="+str(m*L)+"/L , b="+str(b))
-        fig2.savefig("gradient_mocks/"+dim+"/mocks_colored/color_grad_mock_"+a+".png")
+        fig2.savefig(f"{path}/gradient_mocks/"+dim+"/mocks_colored/color_grad_mock_"+a+".png")
         plt.legend()
 
         print("m="+str(m*L)+"/L, b="+str(b)+", done!")

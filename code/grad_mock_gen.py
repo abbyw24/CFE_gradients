@@ -10,7 +10,7 @@ dimension = 1
 
 # PATH TO RESEARCH DIRECTORY
 # if running on cluster
-path = "/home/aew492/research-summer2020""
+path = "/home/aew492/research-summer2020"
 # if running locally
 #path = "/Users/abbywilliams/Physics/research"
 

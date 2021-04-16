@@ -6,17 +6,21 @@ import Corrfunc
 import itertools as it
 import globals
 
-globals.initialize_patchvals()  # brings in all the default parameters
+globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
-n_sides = globals.n_sides
+L = globals.L
 loop = globals.loop
-m = globals.m
-b = globals.b
+m_arr_perL = globals.m_arr_perL
+b_arr = globals.b_arr
+
 periodic = globals.periodic
 rmin = globals.rmin
 rmax = globals.rmax
 nbins = globals.nbins
+nthreads = globals.nthreads
+
+n_sides = globals.n_sides
 
 # the following is commented out for run_patches.py
 # #######
@@ -30,16 +34,6 @@ nbins = globals.nbins
 # m = 0.5
 # b = 0.75
 # #######
-
-if loop == True:
-    m_arr_perL = np.load("m_values_perL.npy")
-    b_arr = np.load("b_values.npy")
-elif loop == False:
-    m_arr_perL = m
-    b_arr = b
-else:
-    print("loop must be True or False")
-    assert False
 
 # define patchify
 def patchify(data, boxsize, n_sides=2):
@@ -64,7 +58,6 @@ def patchify(data, boxsize, n_sides=2):
 # define Corrfunc Landy-Szalay
 def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22):
     # parameters
-    nthreads = 1
     r_edges = np.linspace(rmin, rmax, nbins+1)
     r_avg = 0.5*(r_edges[1:]+r_edges[:-1])
 
@@ -90,9 +83,8 @@ def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22):
 # loop through the m and b values
 for m in m_arr_perL:
     for b in b_arr:
-        mock_data = np.load("gradient_mocks/"+str(grad_dim)+"D/mocks/grad_mock_m-"+str(m)+"-L_b-"+str(b)+".npy")
+        mock_data = np.load(f"gradient_mocks/{grad_dim}D/mocks/grad_mock_m-{m}-L_b-{b}.npy")
             # x,y,z values from -L/2 to L/2
-        L = np.load("boxsize.npy")
         # shift values to 0 to L
         mock_data += L/2
         n_dim = len(mock_data[0,:])
@@ -124,7 +116,7 @@ for m in m_arr_perL:
             center = np.mean(patch_data,axis=0)
             patch_centers.append(center)
         patch_centers = np.array(patch_centers)
-        np.save("gradient_mocks/"+str(grad_dim)+"D/patches/patch_centers/patch_centers_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.npy", patch_centers)
+        np.save(f"gradient_mocks/{grad_dim}D/patches/patch_centers/patch_centers_m-{m}-L_b-{b}_{n_patches}patches.npy", patch_centers)
 
         # results for full mock
         results_xi_full = xi(mock_data,rand_set)
@@ -146,7 +138,7 @@ for m in m_arr_perL:
             patch_rand = rand_set[patch_ids_rand == patch_id]
             results_xi_patch = xi(patch_data,patch_rand)
             xi_patch = results_xi_patch[1]
-            print("m="+str(m)+", b="+str(b)+", patch "+str(k+1)+" done")
+            print(f"m={m}, b={b}, patch {k+1} done")
 
             plt.plot(r_avg,xi_patch,alpha=0.5,marker=".",label=patches_idx[k])
             xi_patches.append(xi_patch)
@@ -158,7 +150,7 @@ for m in m_arr_perL:
 
         # save xi data– to load in separate file for least square fit
         patches_xi = np.array([r_avg, xi_patches, xi_patch_avg, xi_full], dtype=object)
-        np.save("gradient_mocks/"+str(grad_dim)+"D/patches/grad_xi_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.npy",
+        np.save(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy",
                 patches_xi, allow_pickle=True)
 
         # plot results
@@ -168,15 +160,15 @@ for m in m_arr_perL:
         plt.xlabel(r'r ($h^{-1}$Mpc)')
         plt.ylabel(r'$\xi$(r)')
         plt.rcParams["axes.titlesize"] = 10
-        plt.title("Standard Estimator, Grad Mock Patches, "+str(grad_dim)+"D, m="+str(m)+"/L, b="+str(b))
+        plt.title(f"Standard Estimator, Grad Mock Patches, {grad_dim}D, m={m}/L, b={b}")
         plt.legend(prop={'size': 8})
-        fig.savefig("gradient_mocks/"+str(grad_dim)+"D/patches/grad_xi_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.png")
+        fig.savefig(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.png")
 
 if loop == False:
     # pull up color mock for reference
     fig2 = plt.figure()
     ax = fig2.add_axes([0, 0, 1, 1])
     ax.axis('off')
-    im = img.imread("gradient_mocks/"+str(grad_dim)+"D/mocks_colored/color_grad_mock_m-"+str(m)+"-L_b-"+str(b)+".png")
+    im = img.imread(f"gradient_mocks/{grad_dim}D/mocks_colored/color_grad_mock_m-{m}-L_b-{b}.png")
     ax.imshow(im)
     plt.show()

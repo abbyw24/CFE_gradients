@@ -1,39 +1,40 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import globals
 
-# load in m and b lists for loop
-m_list_perL = np.load("m_values_perL.npy")
-b_list = np.load("b_values.npy")
+globals.initialize_vals()
 
-######
-# define dimension
-dimension = 1
-######
+grad_dim = globals.grad_dim
+L = globals.L
+loop = globals.loop
+m_arr_perL = globals.m_arr_perL
+b_arr = globals.b_arr
 
-# define periodic
-periodic = False
+periodic = globals.periodic
 
-# load in xi for split, ln, and dead mocks
-split_data = np.load(f"split_xi_per-{periodic}.npy")
-r_avg = split_data[0]
-xi_split = split_data[1]
-xi_ln = split_data[2]
-xi_dead = split_data[3]
+# load in xi for ln and dead mocks
+ln_xi = np.load("lognormal_xi.npy")
+r_avg = ln_xi[0]
+xi_ln = ln_xi[1]
+
+dead_xi = np.load("dead_xi.npy")
+xi_dead = dead_xi[1]
 
 # average of xi_ln and xi_dead
-avg_xi_ln_dead = (xi_dead + xi_ln)/2
+avg_xi_ln_dead = (xi_ln + xi_dead)/2
 
-for m in m_list_noL:
-    for b in b_list:
+# loop through m and b values
+for m in m_arr_perL:
+    for b in b_arr:
         # define a value in terms of m and b
         a = f"m-{m}-L_b-{b}"
         # load in xi for gradient mock
-        grad_data = np.load(f"gradient_mocks/{dimension}D/xi/grad_xi_{a}_per-{periodic}.npy")
+        grad_data = np.load(f"gradient_mocks/{grad_dim}D/xi/grad_xi_{a}_per-{periodic}.npy")
         xi_grad = grad_data[1]
 
         fig1 = plt.figure()
         # plot Corrfunc for gradient
-        plt.plot(r_avg, xi_grad, marker='o', label="Gradient, m="+str(m)+"/L, b="+str(b))
+        plt.plot(r_avg, xi_grad, marker='o', label=f"Gradient, m={m}/L, b={b}")
         plt.xlabel(r'r ($h^{-1}$Mpc)')
         plt.ylabel(r'$\xi$(r)')
         plt.title(r"Landy-Szalay (Periodic="+str(periodic)+")")
@@ -48,6 +49,6 @@ for m in m_list_noL:
         plt.legend()
 
         # save figure
-        fig1.savefig(f"gradient_mocks/{dimension}D/xi/grad_xi_{a}_per-{periodic}.png")
+        fig1.savefig(f"gradient_mocks/{grad_dim}D/xi/grad_xi_{a}_per-{periodic}.png")
 
         print(f"m={m}, b={b}, done!")

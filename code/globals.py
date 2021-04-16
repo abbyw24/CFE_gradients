@@ -1,16 +1,29 @@
-def initialize_patchvals():
+import numpy as np
+
+def initialize_vals():
+    # gradient values
     global grad_dim
-    grad_dim = 1        # dimension of w_hat in gradient mock (just for file saving purposes here;
-                        #   doesn't affect actual computation)
-    global n_sides
-    n_sides = 2         # define number of patches by number of patches per side length
+    grad_dim = 1        # dimension of w_hat in gradient mock
+    global L
+    L = np.load("boxsize.npy")
     global loop
     loop = True         # whether to loop through entire m and b array
+    global m_arr_perL
+    global b_arr
     # if loop is false, the script will use:
-    global m
     m = 0.75
-    global b
     b = 0.5
+
+    if loop == True:
+        m_arr_perL = np.load("m_values_perL.npy")
+        b_arr = np.load("b_values.npy")
+    elif loop == False:
+        m_arr_perL = np.array([m])
+        b_arr = np.array([b])
+    else:
+        print("loop must be True or False")
+        assert False
+
     # parameters for landy-szalay:
     #   by default in patchify_xi.xi, periodic=False, rmin=20.0, rmax=100.0, nbins=22
     global periodic
@@ -21,6 +34,12 @@ def initialize_patchvals():
     rmax = 100.0
     global nbins
     nbins = 22
+    global nthreads
+    nthreads = 1
+
+    # patch values
+    global n_sides
+    n_sides = 2         # define number of patches by number of patches per side length
 
 def initialize_path():
     global path_to_dir     # PATH TO RESEARCH DIRECTORY

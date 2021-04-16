@@ -3,17 +3,22 @@ import matplotlib.pyplot as plt
 import math
 import globals
 
-globals.initialize_patchvals()  # brings in all the default parameters
+globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
-n_sides = globals.n_sides
+L = globals.L
+
 loop = globals.loop
-m = globals.m
-b = globals.b
+m_arr_perL = globals.m_arr_perL
+b_arr = globals.b_arr
+
 periodic = globals.periodic
 rmin = globals.rmin
 rmax = globals.rmax
 nbins = globals.nbins
+nthreads = globals.nthreads
+
+n_sides = globals.n_sides
 
 # the following is commented out for run_patches.py
 # ######
@@ -26,25 +31,15 @@ nbins = globals.nbins
 # n_patches = n_sides**3
 # nbins = 22
 # ######
+
 # since this script uses absolute number of patches instead of number of patches per side length:
 n_patches = n_sides**3
-L = np.load("boxsize.npy")
-
-if loop == True:
-    m_arr_perL = np.load("m_values_perL.npy")
-    b_arr = np.load("b_values.npy")
-elif loop == False:
-    m_arr_perL = m
-    b_arr = b
-else:
-    print("loop must be True or False")
-    assert False
 
 # loop through m and b values
 for m in m_arr_perL:
     for b in b_arr:
         dim = ["x", "y", "z"]
-        patch_centers = np.load("gradient_mocks/"+str(grad_dim)+"D/patches/patch_centers/patch_centers_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.npy")
+        patch_centers = np.load(f"gradient_mocks/{grad_dim}D/patches/patch_centers/patch_centers_m-{m}-L_b-{b}_{n_patches}patches.npy")
         patch_centers -= L/2
             # this centers the fiducial point in the box
 
@@ -60,7 +55,7 @@ for m in m_arr_perL:
         C_inv = np.linalg.inv(C)
 
         # Y matrix = clustering amplitudes
-        patches_xi = np.load("gradient_mocks/"+str(grad_dim)+"D/patches/grad_xi_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.npy",
+        patches_xi = np.load(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy",
                             allow_pickle=True)
         r_avg, xi_patches, xi_patch_avg, xi_full = patches_xi
 
@@ -68,7 +63,7 @@ for m in m_arr_perL:
 
         # plot xi_patches
         fig1 = plt.figure()
-        plt.title("Clustering amps in patches, m="+str(m)+", b="+str(b))
+        plt.title(f"Clustering amps in patches, m={m}, b={b}")
         plt.xlabel(r"r ($h^{-1}$Mpc)")
         plt.ylabel(r"$\xi$(r)")
 
@@ -105,7 +100,7 @@ for m in m_arr_perL:
             recovered_vals.append(val_rec)
         print(recovered_vals)
         # save recovered gradient values
-        np.save("gradient_mocks/"+str(grad_dim)+"D/patches/lst_sq_fit/recovered_vals_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches",recovered_vals)
+        np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches",recovered_vals)
 
         # plot results
         plt.plot(r_avg, np.array(m_fits_x)/np.array(b_fits), color="black", marker=".", label="x fit")
@@ -114,4 +109,4 @@ for m in m_arr_perL:
         plt.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
         plt.legend()
 
-        fig1.savefig("gradient_mocks/"+str(grad_dim)+"D/patches/lst_sq_fit/allbins_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.png")
+        fig1.savefig(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/allbins_m-{m}-L_b-{b}_{n_patches}patches.png")

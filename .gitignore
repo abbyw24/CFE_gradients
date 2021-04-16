@@ -2,4 +2,5 @@
 *.npy
 *.png
 *.dat
+*.pyc
 omp_test.c

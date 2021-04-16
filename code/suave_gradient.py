@@ -44,7 +44,7 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
     return bases
 
 # load in data
-m = 0.75
+m = 0.0
 b = 0.5
 grad_dim = 1
 boxsize = np.load(f"{path_to_dir}boxsize.npy")

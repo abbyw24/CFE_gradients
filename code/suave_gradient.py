@@ -59,7 +59,7 @@ z = mock_data[:,2]
 nd = len(x)
 
 # random set
-nr = 2*nd
+nr = 1*nd
 xr = np.random.rand(nr)*float(L)
 yr = np.random.rand(nr)*float(L)
 zr = np.random.rand(nr)*float(L)
@@ -135,7 +135,7 @@ print("expected gradient (m_input/b_input)w_hat =", grad_expected)
 
 # save recovered values!
 recovered_arr = [w_cont, b_guess, m_recovered_perL]
-np.save(recovered_arr, f"{path_to_dir}gradient_mocks/{grad_dim}D/suave/recovered_grad_m-{m}-L_b-{b}_suave")
+np.save(f"{path_to_dir}gradient_mocks/{grad_dim}D/suave/recovered_grad_m-{m}-L_b-{b}_suave", recovered_arr)
 
 print(f"If we assume an initial b={b_guess}, this gives m = {m_recovered_perL:.4f}/L") 
 

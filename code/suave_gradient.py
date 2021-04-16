@@ -44,7 +44,7 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
     return bases
 
 # load in data
-m = 0.0
+m = 0.5
 b = 0.5
 grad_dim = 1
 L = np.load(f"{path_to_dir}boxsize.npy")
@@ -59,7 +59,7 @@ z = mock_data[:,2]
 nd = len(x)
 
 # random set
-nr = 1*nd
+nr = 2*nd
 xr = np.random.rand(nr)*float(L)
 yr = np.random.rand(nr)*float(L)
 zr = np.random.rand(nr)*float(L)

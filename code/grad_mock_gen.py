@@ -31,7 +31,7 @@ m_arr_perL = np.linspace(0.0,1.0,100)
 #m_arr_perL = np.array([0.0, 0.25, 0.5, 0.75, 1.0, 10.0])
 np.save(f"{path_to_dir}m_values_perL",m_arr_perL)
 m_arr = m_arr_perL / L
-b_arr = 0.5
+b_arr = np.array([0.5])
 #b_arr = np.array([0.0, 0.25, 0.5, 0.75 , 1.0])
 np.save(f"{path_to_dir}b_values",b_arr)
 ######
@@ -130,4 +130,4 @@ for m in m_arr:
         fig2.savefig(f"{path_to_dir}gradient_mocks/{dimension}D/mocks_colored/color_grad_mock_"+a+".png")
         plt.legend()
 
-        print(f"m={m*b}/L, b={b}, done!")
+        print(f"m={m*L}/L, b={b}, done!")

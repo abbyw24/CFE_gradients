@@ -27,7 +27,7 @@ np.save(f"{path_to_dir}boxsize", L)
 
 ######
 # define control parameters m and b
-m_arr_perL = np.linspace(0.0,1.0,100)
+m_arr_perL = np.linspace(0.0,1.0,101)
 #m_arr_perL = np.array([0.0, 0.25, 0.5, 0.75, 1.0, 10.0])
 np.save(f"{path_to_dir}m_values_perL",m_arr_perL)
 m_arr = m_arr_perL / L

@@ -47,10 +47,10 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
 m = 0.0
 b = 0.5
 grad_dim = 1
-boxsize = np.load(f"{path_to_dir}boxsize.npy")
+L = np.load(f"{path_to_dir}boxsize.npy")
 
 mock_data = np.load(f"{path_to_dir}gradient_mocks/{grad_dim}D/mocks/grad_mock_m-{m}-L_b-{b}.npy")
-mock_data += boxsize/2
+mock_data += L/2
 
 x = mock_data[:,0]
 y = mock_data[:,1]
@@ -60,9 +60,9 @@ nd = len(x)
 
 # random set
 nr = 1*nd
-xr = np.random.rand(nr)*float(boxsize)
-yr = np.random.rand(nr)*float(boxsize)
-zr = np.random.rand(nr)*float(boxsize)
+xr = np.random.rand(nr)*float(L)
+yr = np.random.rand(nr)*float(L)
+zr = np.random.rand(nr)*float(L)
 
 # parameters for suave
 rmin = 40.0
@@ -88,7 +88,7 @@ r = bases[:,0]
 base_vals = bases[:,1]
 
 # weights
-loc_pivot = [boxsize/2., boxsize/2., boxsize/2.]
+loc_pivot = [L/2., L/2., L/2.]
 weights = np.array([np.ones(len(x)), x-loc_pivot[0], y-loc_pivot[1], z-loc_pivot[2]])
 weights_r = np.array([np.ones(len(xr)), xr-loc_pivot[0], yr-loc_pivot[1], zr-loc_pivot[2]])
 
@@ -127,7 +127,7 @@ w_cont_hat = w_cont/w_cont_norm
 print("w_cont = ", w_cont)
 print(f"||w_cont|| = {w_cont_norm:.6f}")
 b_guess = 0.5
-m_recovered_perL = w_cont_norm*b_guess*boxsize
+m_recovered_perL = w_cont_norm*b_guess*L
 
 # expected gradient (only in x direction)
 grad_expected = np.array([m/(b*L),0,0])
@@ -143,8 +143,8 @@ print(f"If we assume an initial b={b_guess}, this gives m = {m_recovered_perL:.4
 fig = plt.figure(figsize=(5,4))
 ax = plt.gca()
 
-v_min = -boxsize/2.
-v_max = boxsize/2.
+v_min = -L/2.
+v_max = L/2.
 vs_norm = matplotlib.colors.Normalize(vmin=v_min, vmax=v_max)
 cmap = matplotlib.cm.get_cmap('cool')
 nvs = 10

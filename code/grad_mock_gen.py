@@ -67,14 +67,14 @@ ws_clust = np.dot(w_hat,xs_clust)
 ws_uncl = np.dot(w_hat,xs_uncl)
 
 # loop through the different m and b parameters
-for m in m_arr:
+for m in m_arr_perL:
     for b in b_arr:
         # combine catalogs:
         # threshold
 
-        ts_clust_squared = m * ws_clust + b
+        ts_clust_squared = (m/L) * ws_clust + b
         
-        ts_uncl_squared = m * ws_uncl + b
+        ts_uncl_squared = (m/L) * ws_uncl + b
 
         # assert that ts range from 0 to 1
         # assert np.all(ts_clust > 0)
@@ -102,9 +102,9 @@ for m in m_arr:
         plt.ylim((-400,400))
         plt.xlabel("x (Mpc/h)")
         plt.ylabel("y (Mpc/h)")
-        plt.title(f"Gradient Mock, m={m*L}/L , b={b}")
+        plt.title(f"Gradient Mock, m={m}/L , b={b}")
         plt.legend()
-        fig1.savefig(f"{path_to_dir}gradient_mocks/{dimension}D/mocks/grad_mock_"+a+".png")
+        fig1.savefig(f"{path_to_dir}gradient_mocks/{dimension}D/mocks/grad_mock_{a}.png")
 
         # different colors for clust and uncl
         fig2 = plt.figure()
@@ -126,8 +126,8 @@ for m in m_arr:
         plt.xlim((-400,400))
         plt.xlabel("x (Mpc/h)")
         plt.ylabel("y (Mpc/h)")
-        plt.title("Gradient Mock, m="+str(m*L)+"/L , b="+str(b))
+        plt.title("Gradient Mock, m="+str(m)+"/L , b="+str(b))
         fig2.savefig(f"{path_to_dir}gradient_mocks/{dimension}D/mocks_colored/color_grad_mock_"+a+".png")
         plt.legend()
 
-        print(f"m={m*L}/L, b={b}, done!")
+        print(f"m={m}/L, b={b}, done!")

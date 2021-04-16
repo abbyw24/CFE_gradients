@@ -2,19 +2,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # load in m and b lists for loop
-m_list_noL = np.load("m_values_noL.npy")
+m_list_perL = np.load("m_values_perL.npy")
 b_list = np.load("b_values.npy")
 
 ######
 # define dimension
-dim = "1D"
+dimension = 1
 ######
 
 # define periodic
 periodic = False
 
 # load in xi for split, ln, and dead mocks
-split_data = np.load("split_xi_per-"+str(periodic)+".npy")
+split_data = np.load(f"split_xi_per-{periodic}.npy")
 r_avg = split_data[0]
 xi_split = split_data[1]
 xi_ln = split_data[2]
@@ -26,9 +26,9 @@ avg_xi_ln_dead = (xi_dead + xi_ln)/2
 for m in m_list_noL:
     for b in b_list:
         # define a value in terms of m and b
-        a = "m-"+str(m)+"-L_b-"+str(b)
+        a = f"m-{m}-L_b-{b}"
         # load in xi for gradient mock
-        grad_data = np.load("gradient_mocks/"+dim+"/xi/grad_xi_"+a+"_per-"+str(periodic)+".npy")
+        grad_data = np.load(f"gradient_mocks/{dimension}D/xi/grad_xi_{a}_per-{periodic}.npy")
         xi_grad = grad_data[1]
 
         fig1 = plt.figure()
@@ -48,6 +48,6 @@ for m in m_list_noL:
         plt.legend()
 
         # save figure
-        fig1.savefig("gradient_mocks/"+dim+"/xi/grad_xi_"+a+"_per-"+str(periodic)+".png")
+        fig1.savefig(f"gradient_mocks/{dimension}D/xi/grad_xi_{a}_per-{periodic}.png")
 
-        print("m="+str(m)+", b="+str(b)+", done!")
+        print(f"m={m}, b={b}, done!")

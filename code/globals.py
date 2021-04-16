@@ -26,6 +26,6 @@ def initialize_path():
     global path_to_dir     # PATH TO RESEARCH DIRECTORY
     path_to_dir = ""
     # if running on cluster
-    #path_to_dir = "/home/aew492/research-summer2020"
+    #path_to_dir = "/home/aew492/research-summer2020/"
     # if running locally
-    #path_to_dir = "/Users/abbywilliams/Physics/research"
+    #path_to_dir = "/Users/abbywilliams/Physics/research-summer2020/"

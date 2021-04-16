@@ -47,9 +47,9 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
 m = 0.75
 b = 0.5
 grad_dim = 1
-boxsize = np.load(f"{path_to_dir}/boxsize.npy")
+boxsize = np.load(f"{path_to_dir}boxsize.npy")
 
-mock_data = np.load(f"{path_to_dir}/gradient_mocks/{grad_dim}D/mocks/grad_mock_m-{m}-L_b-{b}.npy")
+mock_data = np.load(f"{path_to_dir}gradient_mocks/{grad_dim}D/mocks/grad_mock_m-{m}-L_b-{b}.npy")
 mock_data += boxsize/2
 
 x = mock_data[:,0]
@@ -135,7 +135,7 @@ print("expected gradient (m_input/b_input)w_hat =", grad_expected)
 
 # save recovered values!
 recovered_arr = [w_cont, b_guess, m_recovered_perL]
-np.save(recovered_arr, f"{path_to_dir}/gradient_mocks/{grad_dim}D/suave/recovered_grad_m-{m}-L_b-{b}_suave")
+np.save(recovered_arr, f"{path_to_dir}gradient_mocks/{grad_dim}D/suave/recovered_grad_m-{m}-L_b-{b}_suave")
 
 print(f"If we assume an initial b={b_guess}, this gives m = {m_recovered_perL:.4f}/L") 
 
@@ -172,6 +172,6 @@ ax.set_xlabel(r'separation $r$ ($h^{-1}\,$Mpc)')
 ax.set_ylabel(r'$\xi(r)$')
 ax.set_title(f"Recovered Gradient, m={m}, b={b}")
 
-fig.savefig(f"{path_to_dir}/gradient_mocks/{grad_dim}D/suave/recovered_grad_m-{m}-L_b-{b}_suave.png")
+fig.savefig(f"{path_to_dir}gradient_mocks/{grad_dim}D/suave/recovered_grad_m-{m}-L_b-{b}_suave.png")
 
 plt.show()

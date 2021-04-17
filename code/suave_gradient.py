@@ -75,7 +75,7 @@ r_fine = np.linspace(rmin, rmax, ncont)
 nmubins = 1
 mumax = 1.0
 periodic = False
-nthreads = 1
+nthreads = 3
 
 proj_type = 'gradient'
 weight_type = 'pair_product_gradient'

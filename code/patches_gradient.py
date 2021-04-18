@@ -2,13 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import globals
 
-globals.initialize_patchvals()  # brings in all the default parameters
+globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
-n_sides = globals.n_sides
+L = globals.L
 loop = globals.loop
-m = globals.m
-b = globals.b
+m_arr_perL = globals.m_arr_perL
+b_arr = globals.b_arr
+
+n_sides = globals.n_sides
 
 # ** this is currently for the x dimension only **
 
@@ -20,18 +22,8 @@ b = globals.b
 # grad_dim = 1
 # n_patches = 8
 # ######
-L = np.load("boxsize.npy")
-n_patches = n_sides**3
 
-if loop == True:
-    m_arr_perL = np.load("m_values_perL.npy")
-    b_arr = np.load("b_values.npy")
-elif loop == False:
-    m_arr_perL = m
-    b_arr = b
-else:
-    print("loop must be True or False")
-    assert False
+n_patches = n_sides**3
 
 # loop through m and b values
 for m in m_arr_perL:

@@ -94,10 +94,7 @@ for m in m_arr_perL:
         # load in data
         mock_data = np.load(f"{path_to_dir}gradient_mocks/{grad_dim}D/mocks/grad_mock_m-{m}-L_b-{b}.npy")
         mock_data += L/2
-
-        x = mock_data[:,0]
-        y = mock_data[:,1]
-        z = mock_data[:,2]
+        x, y, z = mock_data.T
 
         nd = len(x)
 
@@ -162,6 +159,10 @@ for m in m_arr_perL:
         # expected gradient (only in x direction)
         grad_expected = np.array([m/(b*L),0,0])
         print("expected gradient (m_input/b_input)w_hat =", grad_expected)
+
+        # "percent error" just for me to see for now how close we are
+        percent_difference = abs((grad_expected[0]-grad_recovered[0])/grad_expected[0]) * 100
+        print(f"'error' = {percent_difference}%")
 
         print(" ")      # line break for nice loop print formatting
 

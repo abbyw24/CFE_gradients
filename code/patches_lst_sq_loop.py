@@ -98,7 +98,7 @@ for m in m_arr_perL:
             fits_rec = value[:bin_cutoff]
             val_rec = np.mean(fits_rec)
             recovered_vals.append(val_rec)
-        print(recovered_vals)
+        print("recovered fit values:", recovered_vals)
         # save recovered gradient values
         np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches",recovered_vals)
 

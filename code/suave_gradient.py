@@ -32,6 +32,9 @@ nthreads = globals.nthreads
 
 n_sides = globals.n_sides
 
+globals.initialize_path()
+path_to_dir = globals.path_to_dir
+
 # define cosmo_bases function
 def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000, 
               redshift=0.0, bias=1.0):

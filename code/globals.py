@@ -7,7 +7,7 @@ def initialize_vals():
     global L
     L = np.load("boxsize.npy")
     global loop
-    loop = False         # whether to loop through entire m and b array
+    loop = True         # whether to loop through entire m and b array
     global m_arr_perL
     global b_arr
     # if loop is false, the script will use:

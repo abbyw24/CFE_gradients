@@ -193,4 +193,6 @@ for m in m_arr_perL:
 
         fig.savefig(f"{path_to_dir}gradient_mocks/{grad_dim}D/suave/recovered_grad_m-{m}-L_b-{b}_suave.png")
 
-        plt.show()
+        # save recovered and expected values to array
+        exp_vs_rec_vals = np.array([m, b, grad_expected, grad_recovered, percent_difference])
+        np.save(f"gradient_mocks/{grad_dim}D/suave/suave_exp_vs_rec_vals_m-{m}-L_b-{b}", exp_vs_rec_vals)

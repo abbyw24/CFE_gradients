@@ -38,6 +38,10 @@ for m in m_arr_perL:
         grad_expected = np.array([m/(b*L),0,0])
         print("expected gradient (m_input/b_input)w_hat =", grad_expected)
 
+        # "percent error" just for me to see for now how close we are
+        percent_difference = abs((grad_expected[0]-grad_recovered[0])/grad_expected[0]) * 100
+        print(f"'error' = {percent_difference}%")
+
         # projection of recovered onto expected
         grad_exp_norm = np.linalg.norm(grad_expected)
         proj_rec_onto_exp = (np.dot(grad_recovered,grad_expected)/grad_exp_norm**2)*grad_expected
@@ -80,3 +84,7 @@ for m in m_arr_perL:
         plt.legend()
 
         fig1.savefig("gradient_mocks/"+str(grad_dim)+"D/patches/lst_sq_fit/grad_exp_vs_rec_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.png")
+
+        # save recovered and expected values to array
+        exp_vs_rec_vals = np.array([m, b, grad_expected, grad_recovered, percent_difference])
+        np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches", exp_vs_rec_vals)

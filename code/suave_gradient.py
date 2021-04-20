@@ -60,7 +60,7 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
     return bases
 
 # parameters for suave
-rand_multiplier = 2
+randmult = 2
 
 ntopbins = 10
 r_edges = np.linspace(rmin, rmax, ntopbins+1) 
@@ -91,6 +91,8 @@ vs = np.linspace(v_min, v_max, nvs)
 # loop through m and b values
 for m in m_arr_perL:
     for b in b_arr:
+        print(f"m={m}, b={b} :")
+
         # load in data
         mock_data = np.load(f"{path_to_dir}gradient_mocks/{grad_dim}D/mocks/grad_mock_m-{m}-L_b-{b}.npy")
         mock_data += L/2
@@ -99,7 +101,7 @@ for m in m_arr_perL:
         nd = len(x)
 
         # random set
-        nr = rand_multiplier*nd
+        nr = randmult*nd
         xr = np.random.rand(nr)*float(L)
         yr = np.random.rand(nr)*float(L)
         zr = np.random.rand(nr)*float(L)
@@ -137,7 +139,6 @@ for m in m_arr_perL:
         r_avg = 0.5*(r_edges[:-1] + r_edges[1:])
 
         # recovered gradient
-        print(f"m={m}, b={b} :")
         print("amps = ", amps)
         w_cont = amps[1:]/amps[0]
         w_cont_norm = np.linalg.norm(w_cont)
@@ -160,9 +161,9 @@ for m in m_arr_perL:
         grad_expected = np.array([m/(b*L),0,0])
         print("expected gradient (m_input/b_input)w_hat =", grad_expected)
 
-        # "percent error" just for me to see for now how close we are
-        percent_difference = abs((grad_expected[0]-grad_recovered[0])/grad_expected[0]) * 100
-        print(f"'error' = {percent_difference}%")
+        # mean squared error just to see for now how close we are
+        mean_sq_err = (1/len(grad_expected))*np.sum((grad_recovered - grad_expected)**2)
+        print(f"'error' = {mean_sq_err}%")
 
         print(" ")      # line break for nice loop print formatting
 
@@ -194,5 +195,5 @@ for m in m_arr_perL:
         fig.savefig(f"{path_to_dir}gradient_mocks/{grad_dim}D/suave/recovered_grad_m-{m}-L_b-{b}_suave.png")
 
         # save recovered and expected values to array
-        exp_vs_rec_vals = np.array([m, b, grad_expected, grad_recovered, percent_difference], dtype=object)
+        exp_vs_rec_vals = np.array([m, b, amps, grad_expected, grad_recovered, mean_sq_err], dtype=object)
         np.save(f"gradient_mocks/{grad_dim}D/suave/suave_exp_vs_rec_vals_m-{m}-L_b-{b}", exp_vs_rec_vals)

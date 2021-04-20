@@ -35,7 +35,7 @@ def initialize_vals():
     global nbins
     nbins = 22
     global nthreads
-    nthreads = 3
+    nthreads = 12
 
     # patch values
     global n_sides

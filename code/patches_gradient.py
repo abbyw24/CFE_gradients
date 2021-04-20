@@ -28,8 +28,10 @@ n_patches = n_sides**3
 # loop through m and b values
 for m in m_arr_perL:
     for b in b_arr:
+        print(f"m={m}, b={b} :")
+
         # load in recovered gradient
-        recovered_vals = np.load("gradient_mocks/"+str(grad_dim)+"D/patches/lst_sq_fit/recovered_vals_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.npy")
+        recovered_vals = np.load(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches.npy")
         m_fit_x, m_fit_y, m_fit_z, b_fit = recovered_vals
         grad_recovered = (1/b_fit)*np.array([m_fit_x,m_fit_y,m_fit_z])
         print("recovered gradient (m_fit/b_fit) =", grad_recovered)
@@ -38,9 +40,9 @@ for m in m_arr_perL:
         grad_expected = np.array([m/(b*L),0,0])
         print("expected gradient (m_input/b_input)w_hat =", grad_expected)
 
-        # "percent error" just for me to see for now how close we are
-        percent_difference = abs((grad_expected[0]-grad_recovered[0])/grad_expected[0]) * 100
-        print(f"'error' = {percent_difference}%")
+        # mean squared error just to see for now how close we are
+        mean_sq_err = (1/len(grad_expected))*np.sum((grad_recovered - grad_expected)**2)
+        print(f"'error' = {mean_sq_err}%")
         
         print(" ")      # line break for nice loop print formatting
 
@@ -88,5 +90,5 @@ for m in m_arr_perL:
         fig1.savefig("gradient_mocks/"+str(grad_dim)+"D/patches/lst_sq_fit/grad_exp_vs_rec_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.png")
 
         # save recovered and expected values to array
-        exp_vs_rec_vals = np.array([m, b, grad_expected, grad_recovered, percent_difference], dtype=object)
+        exp_vs_rec_vals = np.array([m, b, n_patches, grad_expected, grad_recovered, mean_sq_err], dtype=object)
         np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches", exp_vs_rec_vals)

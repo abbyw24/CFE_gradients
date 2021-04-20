@@ -138,7 +138,7 @@ for m in m_arr_perL:
             patch_rand = rand_set[patch_ids_rand == patch_id]
             results_xi_patch = xi(patch_data,patch_rand)
             xi_patch = results_xi_patch[1]
-            print(f"m={m}, b={b}, patch {k+1} done")
+            #print(f"m={m}, b={b}, patch {k+1} done")
 
             plt.plot(r_avg,xi_patch,alpha=0.5,marker=".",label=patches_idx[k])
             xi_patches.append(xi_patch)

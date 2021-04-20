@@ -42,9 +42,7 @@ for m in m_arr_perL:
 
         # mean squared error just to see for now how close we are
         mean_sq_err = (1/len(grad_expected))*np.sum((grad_recovered - grad_expected)**2)
-        print(f"'error' = {mean_sq_err}%")
-        
-        print(" ")      # line break for nice loop print formatting
+        print(f"mean squared error = {mean_sq_err}")
 
         # projection of recovered onto expected
         grad_exp_norm = np.linalg.norm(grad_expected)
@@ -92,3 +90,5 @@ for m in m_arr_perL:
         # save recovered and expected values to array
         exp_vs_rec_vals = np.array([m, b, n_patches, grad_expected, grad_recovered, mean_sq_err], dtype=object)
         np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches", exp_vs_rec_vals)
+
+        print(" ")      # line break for nice loop print formatting

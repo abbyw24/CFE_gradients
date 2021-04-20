@@ -88,5 +88,5 @@ for m in m_arr_perL:
         fig1.savefig("gradient_mocks/"+str(grad_dim)+"D/patches/lst_sq_fit/grad_exp_vs_rec_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.png")
 
         # save recovered and expected values to array
-        exp_vs_rec_vals = np.array([m, b, grad_expected, grad_recovered, percent_difference])
+        exp_vs_rec_vals = np.array([m, b, grad_expected, grad_recovered, percent_difference], dtype=object)
         np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches", exp_vs_rec_vals)

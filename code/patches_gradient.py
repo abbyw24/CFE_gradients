@@ -41,6 +41,8 @@ for m in m_arr_perL:
         # "percent error" just for me to see for now how close we are
         percent_difference = abs((grad_expected[0]-grad_recovered[0])/grad_expected[0]) * 100
         print(f"'error' = {percent_difference}%")
+        
+        print(" ")      # line break for nice loop print formatting
 
         # projection of recovered onto expected
         grad_exp_norm = np.linalg.norm(grad_expected)

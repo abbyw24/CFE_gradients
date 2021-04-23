@@ -61,4 +61,4 @@ plt.plot(x, x, color="black", alpha=0.5)
 
 plt.show()
 
-fig1.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec/exp_vs_rec.png")
+fig1.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec.png")

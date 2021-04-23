@@ -44,7 +44,7 @@ for m in m_arr_perL:
         m = m_s
         assert b_s == b_p
         b = b_s
-        assert grad_expected_s == grad_expected_p
+        assert np.all(grad_expected_s) == np.all(grad_expected_p)
         grad_expected = grad_expected_s
         # save expected gradients so we can pull out the max value for plotting
         expected_xgrads.append(grad_expected[0])

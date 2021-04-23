@@ -19,6 +19,8 @@ nthreads = globals.nthreads
 
 n_sides = globals.n_sides
 
+n_patches = n_sides**3
+
 # create plot
 fig1 = plt.figure()
 plt.xlabel("Expected Gradient")

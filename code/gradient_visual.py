@@ -30,7 +30,7 @@ expected_xgrads = []
 for m in m_arr_perL:
     for b in b_arr:
         # load in data from suave gradient recovery
-        suave_data = np.load(f"gradient_mocks/{grad_dim}D/suave/suave_exp_vs_rec_vals_m-{m}-L_b-{b}.npy")
+        suave_data = np.load(f"gradient_mocks/{grad_dim}D/suave/suave_exp_vs_rec_vals_m-{m}-L_b-{b}.npy", allow_pickle=True)
         m_s, b_s, amps, grad_expected_s, grad_recovered_s, mean_sq_err_s = suave_data
         
         # load in data from patches gradient recovery

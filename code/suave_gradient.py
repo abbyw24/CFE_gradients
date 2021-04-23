@@ -194,6 +194,6 @@ for m in m_arr_perL:
 
         # save recovered and expected values to array
         exp_vs_rec_vals = np.array([m, b, amps, grad_expected, grad_recovered, mean_sq_err], dtype=object)
-        np.save(f"gradient_mocks/{grad_dim}D/suave/suave_exp_vs_rec_vals_m-{m}-L_b-{b}", exp_vs_rec_vals)
+        np.save(f"gradient_mocks/{grad_dim}D/suave/exp_vs_rec_vals/suave_exp_vs_rec_vals_m-{m}-L_b-{b}", exp_vs_rec_vals)
 
         print(" ")      # line break for nice loop print formatting

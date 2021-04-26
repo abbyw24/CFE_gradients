@@ -33,6 +33,10 @@ for m in m_arr_perL:
     for b in b_arr:
         # load in data from suave gradient recovery
         suave_data = np.load(f"gradient_mocks/{grad_dim}D/suave/suave_exp_vs_rec_vals_m-{m}-L_b-{b}.npy", allow_pickle=True)
+        print(suave_data.tolist())
+        print(type(suave_data))
+        print(suave_data["amps"])
+        assert False
         m_s, b_s, amps, grad_expected_s, grad_recovered_s, mean_sq_err_s = suave_data
         
         # load in data from patches gradient recovery
@@ -44,20 +48,21 @@ for m in m_arr_perL:
         m = m_s
         assert b_s == b_p
         b = b_s
-        assert np.all(grad_expected_s) == np.all(grad_expected_p)
+        assert np.all(grad_expected_s == grad_expected_p)
         grad_expected = grad_expected_s
         # save expected gradients so we can pull out the max value for plotting
         expected_xgrads.append(grad_expected[0])
 
         # plot expected vs. recovered (in x direction only) for suave
-        plt.plot(grad_expected[0], grad_recovered_s[0], marker="o", color="blue")
+        plt.plot(grad_expected[0], grad_recovered_s[0], marker="o", color="blue", label="suave")
 
-        # plot expected vs. recovered (in x direction only) for suave
-        plt.plot(grad_expected[0], grad_recovered_p[0], marker="o", color="green")
+        # plot expected vs. recovered (in x direction only) for patches
+        plt.plot(grad_expected[0], grad_recovered_p[0], marker="o", color="green", label="patches")
 
 # plot line y = x (the data points would fall on this line if the expected and recovered gradients matched up perfectly)
 x = np.linspace(0, max(expected_xgrads), 10)
 plt.plot(x, x, color="black", alpha=0.5)
+plt.legend()
 
 plt.show()
 

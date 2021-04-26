@@ -35,14 +35,13 @@ for m in m_arr_perL:
     for b in b_arr:
         # load in data from suave gradient recovery
         suave_data = np.load(f"gradient_mocks/{grad_dim}D/suave/exp_vs_rec_vals/suave_exp_vs_rec_vals_m-{m}-L_b-{b}.npy", allow_pickle=True).item()
-        print(type(suave_data))
-        print(suave_data["amps"])
-        assert False
-        m_s, b_s, amps, grad_expected_s, grad_recovered_s, mean_sq_err_s = suave_data
+        m_s, b_s, amps, grad_expected_s, grad_recovered_s, mean_sq_err_s = suave_data["m"], suave_data["b"], suave_data["amps"],
+            suave_data["grad_expected"], suave_data["grad_recovered"], suave_data["mean_sq_err"]
         
         # load in data from patches gradient recovery
-        patches_data = np.load(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True)
-        m_p, b_p, n_patches, grad_expected_p, grad_recovered_p, mean_sq_err_p = patches_data
+        patches_data = np.load(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True).item()
+        m_p, b_p, n_patches, grad_expected_p, grad_recovered_p, mean_sq_err_p = patches_data["m"], patches_data["b"], patches_data["amps"],
+            patches_data["grad_expected"], patches_data["grad_recovered"], patches_data["mean_sq_err"]
 
         # make sure the data that should match does actually match
         assert m_s == m_p

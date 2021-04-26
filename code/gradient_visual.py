@@ -26,6 +26,8 @@ fig1 = plt.figure()
 plt.xlabel("Expected Gradient")
 plt.ylabel("Recovered Gradient")
 
+dims = ["x", "y", "z"]
+
 expected_xgrads = []
 
 # loop through m and b values
@@ -48,19 +50,21 @@ for m in m_arr_perL:
         m = m_s
         assert b_s == b_p
         b = b_s
-        assert np.all(grad_expected_s == grad_expected_p)
-        grad_expected = grad_expected_s
+
         # save expected gradients so we can pull out the max value for plotting
-        expected_xgrads.append(grad_expected[0])
+        expected_xgrads.append(grad_expected_s[0])
+        expected_ygrads.append(grad_expected_s[1])
+        expected_zgrads.append(grad_expected_s[2])
 
-        # plot expected vs. recovered (in x direction only) for suave
-        plt.plot(grad_expected[0], grad_recovered_s[0], marker="o", color="blue", label="suave")
-
-        # plot expected vs. recovered (in x direction only) for patches
-        plt.plot(grad_expected[0], grad_recovered_p[0], marker="o", color="green", label="patches")
+        for i in range(len(grad_expected_s)):
+            # plot expected vs. recovered (in x direction only) for suave
+            plt.plot(grad_expected_s[i], grad_recovered_s[i], marker=",", color="blue", label=f"suave {dims[i]}")
+            # plot expected vs. recovered (in x direction only) for patches
+            plt.plot(grad_expected_p[i], grad_recovered_p[i], marker=",", color="green", label=f"patches {dims[i]}")
 
 # plot line y = x (the data points would fall on this line if the expected and recovered gradients matched up perfectly)
 x = np.linspace(0, max(expected_xgrads), 10)
+
 plt.plot(x, x, color="black", alpha=0.5)
 plt.legend()
 

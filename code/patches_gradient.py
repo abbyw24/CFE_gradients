@@ -91,7 +91,7 @@ for m in m_arr_perL:
         exp_vs_rec_vals = {
             "m" : m,
             "b" : b,
-            "amps" : amps,
+            "n_patches" : n_patches,
             "grad_expected" : grad_expected,
             "grad_recovered" : grad_recovered,
             "mean_sq_err" : mean_sq_err

@@ -21,8 +21,6 @@ n_sides = globals.n_sides
 
 n_patches = n_sides**3
 
-dims = ["x", "y", "z"]
-
 # create plot
 fig1 = plt.figure()
 plt.xlabel("Expected Gradient")
@@ -31,9 +29,22 @@ plt.title("Expected vs. Recovered Gradient")
 
 expected_xgrads = []
 
+def label_s(i):
+    if i = 0:
+        return "suave"
+    else:
+        return None
+
+def label_p(i):
+    if i = 0:
+        return "patches"
+    else:
+        return None
+
 # loop through m and b values
 for m in m_arr_perL:
     for b in b_arr:
+
         # load in data from suave gradient recovery
         suave_data = np.load(f"gradient_mocks/{grad_dim}D/suave/exp_vs_rec_vals/suave_exp_vs_rec_vals_m-{m}-L_b-{b}.npy", allow_pickle=True).item()
         m_s = suave_data["m"]
@@ -61,14 +72,13 @@ for m in m_arr_perL:
         # save expected gradients so we can pull out the max value for plotting
         expected_xgrads.append(grad_expected_s[0])
 
-        colors1 = ["blue", "green", "purple"]
-        colors2 = ["red", "orange", "yellow"]
+        # plot expected vs. recovered (in x direction only) for suave
+        plt.plot(grad_expected_s[], grad_recovered_s[], marker="o", color="blue", label=label_s(i))
+        # plot expected vs. recovered (in x direction only) for patches
+        plt.plot(grad_expected_p[], grad_recovered_p[], marker="o", color="green", label=label_p(i))
 
-        for i in range(len(grad_expected_s)):
-            # plot expected vs. recovered (in x direction only) for suave
-            plt.plot(grad_expected_s[i], grad_recovered_s[i], marker="o", color=colors1[i], label=f"suave {dims[i]}")
-            # plot expected vs. recovered (in x direction only) for patches
-            plt.plot(grad_expected_p[i], grad_recovered_p[i], marker="o", color=colors2[i], label=f"patches {dims[i]}")
+        # increase index value
+        i += 1
 
 # plot line y = x (the data points would fall on this line if the expected and recovered gradients matched up perfectly)
 x = np.linspace(0, max(expected_xgrads), 10)

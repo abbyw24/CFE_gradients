@@ -20,37 +20,31 @@ n_sides = globals.n_sides
 
 n_patches = n_sides**3
 
-num = { 1:"sauve", 2:"patches" }
+dim = { 1:"y", 2:"z" }
+method = ["suave", "patches"]
 
 # loop through first suave and then patches
-for i in num:
-    print(i)
-    print(num[1])
-    print(num["suave"])
-assert False
+for i in dim:
+    # create plot
+    fig = plt.figure()
+    plt.title(f"Histogram of Recovered Gradient, {dim[i]}")
+    plt.xlabel("Recovered Gradient")
 
-# create plot
-fig1 = plt.figure()
-plt.xlabel("Recovered Gradient")
+    # line at x = 0
+    plt.vlines(0, 0, 1, color="black", alpha=0.5)
 
-# line at x = 0
-plt.vlines(0, 0, 1, color="black", alpha=0.5)
+    for j in method:
+        # create an array of recovered gradient values for y and z
+        grads_recovered = []
 
-# create an array of recovered gradient values for y and z
-grads_recovered_s = []
-grads_recovered_p = []
+        for m in m_arr_perL:
+            for b in b_arr:
+                data = np.load(f"gradient_mocks/{grad_dim}D/{method[i]}/exp_vs_rec_vals/{method[i]}_exp_vs_rec_vals_m-{m}-L_b-{b}.npy", allow_pickle=True).item()
+                grads_recovered.append(data["grad_recovered"])
 
-for m in m_arr_perL:
-    for b in b_arr:
-        suave_data = np.load(f"gradient_mocks/{grad_dim}D/suave/exp_vs_rec_vals/suave_exp_vs_rec_vals_m-{m}-L_b-{b}.npy", allow_pickle=True).item()
-        grads_recovered_s.append(suave_data["grad_recovered"])
+        grads_recovered = np.array(grads_recovered)
 
-        patches_data = np.load(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True).item()
-        grads_recovered_p.append(patches_data["grad_recovered"])
+        # histogram array
+        plt.hist(grads_recovered[:,i], bins=10)
 
-grads_recovered_s = np.array(grads_recovered_s)
-grads_recovered_p = np.array(grads_recovered_p)
-
-# plot histogram
-plt.hist(grads_recovered_s[:,1], bins = 10)
-plt.hist
+    plt.show()

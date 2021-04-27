@@ -52,7 +52,6 @@ for m in m_arr_perL:
         amps = suave_data["amps"]
         grad_expected_s = suave_data["grad_expected"]
         grad_recovered_s = suave_data["grad_recovered"]
-        mean_sq_err_s = suave_data["mean_sq_err"]
         
         # load in data from patches gradient recovery
         patches_data = np.load(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True).item()
@@ -61,7 +60,6 @@ for m in m_arr_perL:
         n_patches = patches_data["n_patches"]
         grad_expected_p = patches_data["grad_expected"]
         grad_recovered_p = patches_data["grad_recovered"]
-        mean_sq_err_p = patches_data["mean_sq_err"]
 
         # make sure the data that should match does actually match
         assert m_s == m_p

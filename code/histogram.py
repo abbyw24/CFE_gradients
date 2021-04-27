@@ -20,7 +20,7 @@ n_sides = globals.n_sides
 
 n_patches = n_sides**3
 
-num = [1:"sauve", 2:"patches"]
+num = { 1:"sauve", 2:"patches" }
 
 # loop through first suave and then patches
 for i in num:

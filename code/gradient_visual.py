@@ -59,8 +59,6 @@ for m in m_arr_perL:
 
         # save expected gradients so we can pull out the max value for plotting
         expected_xgrads.append(grad_expected_s[0])
-        expected_ygrads.append(grad_expected_s[1])
-        expected_zgrads.append(grad_expected_s[2])
 
         for i in range(len(grad_expected_s)):
             # plot expected vs. recovered (in x direction only) for suave
@@ -76,4 +74,4 @@ plt.legend()
 
 plt.show()
 
-fig1.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec.png")
+fig1.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec1.png")

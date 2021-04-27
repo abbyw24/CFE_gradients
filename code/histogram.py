@@ -25,6 +25,8 @@ num = { 1:"sauve", 2:"patches" }
 # loop through first suave and then patches
 for i in num:
     print(i)
+    print(num[1])
+    print(num["suave"])
 assert False
 
 # create plot

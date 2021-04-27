@@ -20,6 +20,13 @@ n_sides = globals.n_sides
 
 n_patches = n_sides**3
 
+num = [1:"sauve", 2:"patches"]
+
+# loop through first suave and then patches
+for i in num:
+    print(i)
+assert False
+
 # create plot
 fig1 = plt.figure()
 plt.xlabel("Recovered Gradient")
@@ -42,5 +49,6 @@ for m in m_arr_perL:
 grads_recovered_s = np.array(grads_recovered_s)
 grads_recovered_p = np.array(grads_recovered_p)
 
-print(grads_recovered_s.shape)
-print(grads_recovered_p.shape)
+# plot histogram
+plt.hist(grads_recovered_s[:,1], bins = 10)
+plt.hist

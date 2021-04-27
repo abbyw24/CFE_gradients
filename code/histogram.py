@@ -39,5 +39,8 @@ for m in m_arr_perL:
         patches_data = np.load(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True).item()
         grads_recovered_p.append(patches_data["grad_recovered"])
 
+grads_recovered_s = np.array(grads_recovered_s)
+grads_recovered_p = np.array(grads_recovered_p)
+
 print(grads_recovered_s.shape)
 print(grads_recovered_p.shape)

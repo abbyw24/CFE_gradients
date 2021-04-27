@@ -23,6 +23,12 @@ n_patches = n_sides**3
 dim = { 1:"y", 2:"z" }
 method = ["suave", "patches"]
 
+def patches(method):
+    if method = "patches":
+        return f"_{n_patches}patches"
+    else:
+        return ""
+
 # loop through first suave and then patches
 for i in dim:
     # create plot
@@ -39,7 +45,7 @@ for i in dim:
 
         for m in m_arr_perL:
             for b in b_arr:
-                data = np.load(f"gradient_mocks/{grad_dim}D/{method[i]}/exp_vs_rec_vals/{method[i]}_exp_vs_rec_vals_m-{m}-L_b-{b}.npy", allow_pickle=True).item()
+                data = np.load(f"gradient_mocks/{grad_dim}D/{method[i]}/exp_vs_rec_vals/{method[i]}_exp_vs_rec_vals_m-{m}-L_b-{b}{patches(method[j])}.npy", allow_pickle=True).item()
                 grads_recovered.append(data["grad_recovered"])
 
         grads_recovered = np.array(grads_recovered)

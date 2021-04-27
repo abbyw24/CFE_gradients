@@ -96,6 +96,6 @@ for m in m_arr_perL:
             "grad_recovered" : grad_recovered,
             "mean_sq_err" : mean_sq_err
         }
-        np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches", exp_vs_rec_vals)
+        np.save(f"gradient_mocks/{grad_dim}D/patches/exp_vs_rec_vals/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches", exp_vs_rec_vals)
 
         print(" ")      # line break for nice loop print formatting

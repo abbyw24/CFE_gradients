@@ -41,6 +41,8 @@ def label_p(i):
     else:
         return None
 
+i = 0
+
 # loop through m and b values
 for m in m_arr_perL:
     for b in b_arr:

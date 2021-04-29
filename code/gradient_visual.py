@@ -30,13 +30,13 @@ plt.title("Expected vs. Recovered Gradient")
 expected_xgrads = []
 
 def label_s(i):
-    if i = 0:
+    if i == 0:
         return "suave"
     else:
         return None
 
 def label_p(i):
-    if i = 0:
+    if i == 0:
         return "patches"
     else:
         return None

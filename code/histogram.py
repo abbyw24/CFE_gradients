@@ -53,4 +53,6 @@ for i in dim:
         # histogram array
         plt.hist(grads_recovered[:,i], bins=10)
 
+    fig.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec_hist.png")
+
     plt.show()

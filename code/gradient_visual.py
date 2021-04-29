@@ -71,9 +71,9 @@ for m in m_arr_perL:
         expected_xgrads.append(grad_expected_s[0])
 
         # plot expected vs. recovered (in x direction only) for suave
-        plt.plot(grad_expected_s[], grad_recovered_s[], marker="o", color="blue", label=label_s(i))
+        plt.plot(grad_expected_s[0], grad_recovered_s[0], marker="o", color="blue", label=label_s(i))
         # plot expected vs. recovered (in x direction only) for patches
-        plt.plot(grad_expected_p[], grad_recovered_p[], marker="o", color="green", label=label_p(i))
+        plt.plot(grad_expected_p[0], grad_recovered_p[0], marker="o", color="green", label=label_p(i))
 
         # increase index value
         i += 1
@@ -86,4 +86,4 @@ plt.legend()
 
 plt.show()
 
-fig1.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec1.png")
+fig1.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec.png")

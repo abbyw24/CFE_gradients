@@ -37,7 +37,7 @@ for i in dim:
     plt.xlabel("Recovered Gradient")
 
     # line at x = 0
-    plt.vlines(0, 0, 1, color="black", alpha=0.5)
+    plt.vlines(0, 0, 20, color="black", alpha=0.4)
 
     for j in method:
         # create an array of recovered gradient values for y and z
@@ -55,5 +55,5 @@ for i in dim:
 
     plt.legend()
     plt.show()
-    
+
     fig.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec_hist_{dim[i]}.png")

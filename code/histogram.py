@@ -24,7 +24,7 @@ dim = { 1:"y", 2:"z" }
 method = ["suave", "patches"]
 
 def patches(method):
-    if method = "patches":
+    if method == "patches":
         return f"_{n_patches}patches"
     else:
         return ""

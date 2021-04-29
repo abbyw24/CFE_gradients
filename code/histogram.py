@@ -51,8 +51,9 @@ for i in dim:
         grads_recovered = np.array(grads_recovered)
 
         # histogram array
-        plt.hist(grads_recovered[:,i], bins=10)
+        plt.hist(grads_recovered[:,i], bins=10, alpha=0.5, label=j)
 
-    fig.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec_hist.png")
-
+    plt.legend()
     plt.show()
+    
+    fig.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec_hist_{dim[i]}.png")

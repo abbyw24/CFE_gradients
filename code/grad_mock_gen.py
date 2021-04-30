@@ -24,18 +24,16 @@ np.save("boxsize", L)
 
 ######
 # define control parameters m and b
-m_arr_perL = np.linspace(0.0,1.0,101)
-#m_arr_perL = np.array([0.0, 0.25, 0.5, 0.75, 1.0, 10.0])
+m_arr_perL = np.linspace(-1.0,1.0,202)
 np.save("m_values_perL",m_arr_perL)
-m_arr = m_arr_perL / L
+
 b_arr = np.array([0.5])
-#b_arr = np.array([0.0, 0.25, 0.5, 0.75 , 1.0])
 np.save("b_values",b_arr)
 ######
 
-x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
-xs_clust = x_lognorm, y_lognorm, z_lognorm = np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2)
 # save lognormal set
+x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
+xs_clust = np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2)
 np.save("lognormal_set", xs_clust.T)
 
 # DEAD SET

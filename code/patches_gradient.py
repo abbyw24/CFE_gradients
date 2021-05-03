@@ -6,24 +6,13 @@ globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
 L = globals.L
-loop = globals.loop
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 
 n_sides = globals.n_sides
+n_patches = n_sides**3
 
 # ** this is currently for the x dimension only **
-
-# the following is commented out for run_patches.py
-# ######
-# # load in patch data
-# m = 0.5
-# b = 0.5
-# grad_dim = 1
-# n_patches = 8
-# ######
-
-n_patches = n_sides**3
 
 # loop through m and b values
 for m in m_arr_perL:
@@ -87,7 +76,7 @@ for m in m_arr_perL:
 
         fig1.savefig("gradient_mocks/"+str(grad_dim)+"D/patches/lst_sq_fit/grad_exp_vs_rec_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.png")
 
-        # save recovered and expected values to array
+        # save recovered and expected values to dictionary
         exp_vs_rec_vals = {
             "m" : m,
             "b" : b,
@@ -96,7 +85,7 @@ for m in m_arr_perL:
             "grad_recovered" : grad_recovered,
             "mean_sq_err" : mean_sq_err
         }
-        
+
         np.save(f"gradient_mocks/{grad_dim}D/patches/exp_vs_rec_vals/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches", exp_vs_rec_vals)
 
         print(" ")      # line break for nice loop print formatting

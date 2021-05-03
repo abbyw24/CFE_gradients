@@ -7,8 +7,6 @@ globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
 L = globals.L
-
-loop = globals.loop
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 
@@ -19,21 +17,9 @@ nbins = globals.nbins
 nthreads = globals.nthreads
 
 n_sides = globals.n_sides
-
-# the following is commented out for run_patches.py
-# ######
-# # load in patch data
-# loop = False
-# m = 1.0
-# b = 1.0
-# grad_dim = 1
-# n_sides = 2
-# n_patches = n_sides**3
-# nbins = 22
-# ######
-
-# since this script uses absolute number of patches instead of number of patches per side length:
 n_patches = n_sides**3
+    # since this script uses absolute number of patches instead of number of patches per side length:
+
 
 # loop through m and b values
 for m in m_arr_perL:
@@ -55,8 +41,7 @@ for m in m_arr_perL:
         C_inv = np.linalg.inv(C)
 
         # Y matrix = clustering amplitudes
-        patches_xi = np.load(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy",
-                            allow_pickle=True)
+        patches_xi = np.load(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True)
         r_avg, xi_patches, xi_patch_avg, xi_full = patches_xi
 
         assert len(xi_patches) == n_patches
@@ -100,7 +85,7 @@ for m in m_arr_perL:
             recovered_vals.append(val_rec)
         #print("recovered fit values:", recovered_vals)
         # save recovered gradient values
-        np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches",recovered_vals)
+        np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches", recovered_vals)
 
         # plot results
         plt.plot(r_avg, np.array(m_fits_x)/np.array(b_fits), color="black", marker=".", label="x fit")

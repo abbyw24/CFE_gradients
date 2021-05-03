@@ -6,7 +6,6 @@ globals.initialize_vals()
 
 grad_dim = globals.grad_dim
 L = globals.L
-loop = globals.loop
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 

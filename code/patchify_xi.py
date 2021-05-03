@@ -22,19 +22,6 @@ nthreads = globals.nthreads
 
 n_sides = globals.n_sides
 
-# the following is commented out for run_patches.py
-# #######
-# # gradient dimension
-# grad_dim = 1
-# # define number of patches by number of patches per side length
-# n_sides = 2
-# # whether to loop through all possible values of m and b; otherwise manually input
-# loop = True
-# # otherwise, desired values of m and b:
-# m = 0.5
-# b = 0.75
-# #######
-
 # define patchify
 def patchify(data, boxsize, n_sides=2):
     nd, n_dim = data.shape
@@ -60,13 +47,11 @@ def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22):
     # parameters
     r_edges = np.linspace(rmin, rmax, nbins+1)
     r_avg = 0.5*(r_edges[1:]+r_edges[:-1])
-
     nd = len(data)
     nr = len(rand_set)
-    # pull out x, y, z values from data
+
     x, y, z = data[:,0], data[:,1], data[:,2]
     x_rand, y_rand, z_rand = rand_set[:,0], rand_set[:,1], rand_set[:,2]
-        # should i try to generalize this to other dimensions?
 
     dd_res = Corrfunc.theory.DD(1, nthreads, r_edges, x, y, z, periodic=periodic)
     dr_res = Corrfunc.theory.DD(0, nthreads, r_edges, x, y, z, X2=x_rand, Y2=y_rand, Z2=z_rand, periodic=periodic)
@@ -87,7 +72,6 @@ for m in m_arr_perL:
             # x,y,z values from -L/2 to L/2
         # shift values to 0 to L
         mock_data += L/2
-        n_dim = len(mock_data[0,:])
         nd = len(mock_data)
 
         # create random set
@@ -113,13 +97,13 @@ for m in m_arr_perL:
         patch_centers = []
         for patch_id in patch_id_list:
             patch_data = rand_set[patch_ids_rand == patch_id]
-            center = np.mean(patch_data,axis=0)
+            center = np.mean(patch_data, axis=0)
             patch_centers.append(center)
         patch_centers = np.array(patch_centers)
         np.save(f"gradient_mocks/{grad_dim}D/patches/patch_centers/patch_centers_m-{m}-L_b-{b}_{n_patches}patches.npy", patch_centers)
 
         # results for full mock
-        results_xi_full = xi(mock_data,rand_set)
+        results_xi_full = xi(mock_data, rand_set)
         xi_full = np.array(results_xi_full[1])
 
         # define r_avg (this is the same for all xi)
@@ -131,31 +115,35 @@ for m in m_arr_perL:
         fig = plt.figure()
         ax = plt.axes()
         cmap = plt.cm.get_cmap("cool")
-        ax.set_prop_cycle('color',cmap(np.linspace(0,1,n_patches)))
+        ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
 
         for patch_id in patch_id_list:
             patch_data = mock_data[patch_ids_mock == patch_id]
             patch_rand = rand_set[patch_ids_rand == patch_id]
-            results_xi_patch = xi(patch_data,patch_rand)
+            results_xi_patch = xi(patch_data, patch_rand)
             xi_patch = results_xi_patch[1]
             #print(f"m={m}, b={b}, patch {k+1} done")
 
-            plt.plot(r_avg,xi_patch,alpha=0.5,marker=".",label=patches_idx[k])
+            plt.plot(r_avg, xi_patch, alpha=0.5, marker=".", label=patches_idx[k])
             xi_patches.append(xi_patch)
             k += 1
         xi_patches = np.array(xi_patches)
 
         # average of patch results
-        xi_patch_avg = np.sum(xi_patches,axis=0)/len(xi_patches)
+        xi_patch_avg = np.sum(xi_patches, axis=0)/len(xi_patches)
 
         # save xi data– to load in separate file for least square fit
-        patches_xi = np.array([r_avg, xi_patches, xi_patch_avg, xi_full], dtype=object)
-        np.save(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy",
-                patches_xi, allow_pickle=True)
+        patches_xi = {
+            "r_avg" : r_avg,
+            "xi_patches" : xi_patches,
+            "xi_patch_avg" : xi_patch_avg,
+            "xi_full" : xi_full
+            }
+        np.save(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy", patches_xi, allow_pickle=True)
 
         # plot results
-        plt.plot(r_avg,xi_full,color="black",marker=".",label="Full Mock")
-        plt.plot(r_avg,xi_patch_avg,color="black",alpha=0.5,marker=".",label="Avg. of Patches")
+        plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")
+        plt.plot(r_avg, xi_patch_avg, color="black", alpha=0.5, marker=".", label="Avg. of Patches")
         # plot parameters
         plt.xlabel(r'r ($h^{-1}$Mpc)')
         plt.ylabel(r'$\xi$(r)')

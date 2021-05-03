@@ -7,28 +7,23 @@ import globals
 globals.initialize_vals()
 
 grad_dim = globals.grad_dim
+m_arr_perL = globals.m_arr_perL
+b_arr = globals.b_arr
 
-# we generate L, m_arr_perL, and b_arr values in this script! so no need to import
+# we generate L in this script so no need to import
 
 # pick a seed number so that random set stays the same every time (for now)
 np.random.seed(123456)
 
+######
 # LOGNORMAL SET
 # read in mock data
 Lx, Ly, Lz, N, data = read_lognormal.read("lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin")
     # define boxsize based on mock; and N = number of data points
 L = Lx
     # L = boxsize
-# save boxsize! then load in this boxsize for all uses of gradient mock
+# save boxsize then load in this boxsize for all uses of gradient mock
 np.save("boxsize", L)
-
-######
-# define control parameters m and b
-m_arr_perL = np.linspace(-1.0,1.0,202)
-np.save("m_values_perL",m_arr_perL)
-
-b_arr = np.array([0.5])
-np.save("b_values",b_arr)
 ######
 
 # save lognormal set

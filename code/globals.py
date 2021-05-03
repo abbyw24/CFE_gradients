@@ -4,10 +4,13 @@ def initialize_vals():
     # gradient values
     global grad_dim
     grad_dim = 1        # dimension of w_hat in gradient mock
+
     global L
     L = np.load("boxsize.npy")
+
     global loop
     loop = True         # whether to loop through entire m and b array
+
     global m_arr_perL
     global b_arr
     # if loop is false, the script will use:
@@ -15,8 +18,8 @@ def initialize_vals():
     b = 0.5
 
     if loop == True:
-        m_arr_perL = np.load("m_values_perL.npy")
-        b_arr = np.load("b_values.npy")
+        m_arr_perL = np.linspace(-1.0,1.0,202)
+        b_arr = np.array([0.5])
     elif loop == False:
         m_arr_perL = np.array([m])
         b_arr = np.array([b])

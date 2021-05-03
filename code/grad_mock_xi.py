@@ -8,7 +8,6 @@ globals.initialize_vals()
 
 grad_dim = globals.grad_dim
 L = globals.L
-loop = globals.loop
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 
@@ -17,21 +16,6 @@ rmin = globals.rmin
 rmax = globals.rmax
 nbins = globals.nbins
 nthreads = globals.nthreads
-
-# not needed now that we import global values
-# ######
-# m_arr_perL = np.load("m_values_noL.npy")
-# b_arr = np.load("b_values.npy")
-# L = np.load("boxsize.npy")
-# # define which dimension we want
-# grad_dim = 1
-# # parameters for Corrfunc, used in loop
-# nthreads = 1
-# periodic = False
-# rmin = 20.0
-# rmax = 150.0
-# nbins = 22
-# ######
 
 r_edges = np.linspace(rmin, rmax, nbins+1)
 r_avg = 0.5*(r_edges[1:]+r_edges[:-1])

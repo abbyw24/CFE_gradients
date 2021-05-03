@@ -41,8 +41,11 @@ for m in m_arr_perL:
         C_inv = np.linalg.inv(C)
 
         # Y matrix = clustering amplitudes
-        patches_xi = np.load(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True)
-        r_avg, xi_patches, xi_patch_avg, xi_full = patches_xi
+        patchify_data = np.load(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True)
+        r_avg = patchify_data["r_avg"]
+        xi_patches = patchify_data["xi_patches"]
+        xi_patch_avg = patchify_data["xi_patch_avg"]
+        xi_full = patchify_data["xi_full"]
 
         assert len(xi_patches) == n_patches
 
@@ -74,7 +77,7 @@ for m in m_arr_perL:
             m_fits_y.append(X[2])
             m_fits_z.append(X[3])
             b_fits.append(X[0])
-        fit_vals = [m_fits_x,m_fits_y,m_fits_z,b_fits]
+        fit_vals = [m_fits_x, m_fits_y, m_fits_z, b_fits]
 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/2)
@@ -82,6 +85,7 @@ for m in m_arr_perL:
         for value in fit_vals:
             fits_rec = value[:bin_cutoff]
             val_rec = np.mean(fits_rec)
+                # average of the fit value in each bin up to cutoff
             recovered_vals.append(val_rec)
         #print("recovered fit values:", recovered_vals)
         # save recovered gradient values

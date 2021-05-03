@@ -64,20 +64,25 @@ for m in m_arr_perL:
         for patch in xi_patches:
             plt.plot(r_avg, patch, alpha=0.5, marker=".")
 
-        m_fits_x = []
-        m_fits_y = []
-        m_fits_z = []
-        b_fits = []
+        # m_fits_x = []
+        # m_fits_y = []
+        # m_fits_z = []
+        # b_fits = []
+        fits = []
         for r_bin in range(nbins):
             # clustering amplitudes
             Y = xi_patches[:,r_bin]
             # least square fit
             X = np.linalg.inv(A.T @ C_inv @ A) @ (A.T @ C_inv @ Y)
-            m_fits_x.append(X[1])
-            m_fits_y.append(X[2])
-            m_fits_z.append(X[3])
-            b_fits.append(X[0])
-        fit_vals = [m_fits_x, m_fits_y, m_fits_z, b_fits]
+            fits.append(X)
+            # m_fits_x.append(X[1])
+            # m_fits_y.append(X[2])
+            # m_fits_z.append(X[3])
+            # b_fits.append(X[0])
+        print(fits)
+        print(fits[0])
+        assert False
+        #fit_vals = [m_fits_x, m_fits_y, m_fits_z, b_fits]
 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/2)
@@ -87,9 +92,16 @@ for m in m_arr_perL:
             val_rec = np.mean(fits_rec)
                 # average of the fit value in each bin up to cutoff
             recovered_vals.append(val_rec)
-        #print("recovered fit values:", recovered_vals)
+        
+        recovered_values = {
+            "m_fit_x" : recovered_vals[0]
+            "m_fit_y" : recovered_vals[1]
+            "m_fit_z" : recovered_vals[2]
+            "b_fit" : recovered_vals[3]
+        }
+
         # save recovered gradient values
-        np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches", recovered_vals)
+        np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches", recovered_values)
 
         # plot results
         plt.plot(r_avg, np.array(m_fits_x)/np.array(b_fits), color="black", marker=".", label="x fit")

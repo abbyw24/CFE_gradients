@@ -78,8 +78,8 @@ for m in m_arr_perL:
             # m_fits_y.append(X[2])
             # m_fits_z.append(X[3])
             # b_fits.append(X[0])
-        print(fits)
-        print(fits[0])
+        fit_vals = np.array(fits).T
+        print(fit_vals.shape)
         assert False
         #fit_vals = [m_fits_x, m_fits_y, m_fits_z, b_fits]
 

@@ -83,8 +83,8 @@ for m in m_arr_perL:
 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/2)
-        # plot bin cutoff
-        plt.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
+        # # plot bin cutoff
+        # plt.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
 
         recovered_vals = []
         for value in fit_vals:

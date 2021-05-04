@@ -20,7 +20,6 @@ n_sides = globals.n_sides
 n_patches = n_sides**3
     # since this script uses absolute number of patches instead of number of patches per side length:
 
-
 # loop through m and b values
 for m in m_arr_perL:
     for b in b_arr:

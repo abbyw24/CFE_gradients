@@ -73,13 +73,11 @@ for m in m_arr_perL:
             Y = xi_patches[:,r_bin]
             # least square fit
             X = np.linalg.inv(A.T @ C_inv @ A) @ (A.T @ C_inv @ Y)
+                # X gives best fit: [b, m_x, m_y, m_z]
             fits.append(X)
-            # m_fits_x.append(X[1])
-            # m_fits_y.append(X[2])
-            # m_fits_z.append(X[3])
-            # b_fits.append(X[0])
         fit_vals = np.array(fits).T
-        #fit_vals = [b_fits, m_fits_x, m_fits_y, m_fits_z]
+        print(fit_vals)
+        assert False
 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/2)

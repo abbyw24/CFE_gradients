@@ -54,14 +54,14 @@ for m in m_arr_perL:
         plt.xlabel(r"r ($h^{-1}$Mpc)")
         plt.ylabel(r"$\xi$(r)")
 
-        # expected "strength of gradient"
-        grad_expected = m/(b*L)
-        plt.axhline(grad_expected)
+        # # expected "strength of gradient"
+        # grad_expected = m/(b*L)
+        # plt.axhline(grad_expected)
 
         # plot xi in each patch across all bins
         cmap = plt.cm.get_cmap("cool")
         ax = plt.axes()
-        ax.set_prop_cycle('color',cmap(np.linspace(0,1,n_patches)))
+        ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
         for patch in xi_patches:
             plt.plot(r_avg, patch, alpha=0.5, marker=".")
 

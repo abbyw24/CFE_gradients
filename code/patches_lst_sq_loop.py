@@ -79,7 +79,7 @@ for m in m_arr_perL:
             # m_fits_z.append(X[3])
             # b_fits.append(X[0])
         fit_vals = np.array(fits).T
-        #fit_vals = [m_fits_x, m_fits_y, m_fits_z, b_fits]
+        #fit_vals = [b_fits, m_fits_x, m_fits_y, m_fits_z]
 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/2)
@@ -91,22 +91,19 @@ for m in m_arr_perL:
             recovered_vals.append(val_rec)
         
         recovered_values = {
-            "m_fits_x" : recovered_vals[0],
-            "m_fits_y" : recovered_vals[1],
-            "m_fits_z" : recovered_vals[2],
-            "b_fits" : recovered_vals[3]
+            "b_fits" : recovered_vals[0],
+            "m_fits_x" : recovered_vals[1],
+            "m_fits_y" : recovered_vals[2],
+            "m_fits_z" : recovered_vals[3]
         }
-        print(recovered_values)
-        print(recovered_values["m_fits_x"])
-        print(recovered_values["b_fits"])
 
         # save recovered gradient values
         np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches", recovered_values)
 
         # plot results
-        plt.plot(r_avg, recovered_values["m_fits_x"]/recovered_values["b_fits"], color="black", marker=".", label="x fit")
-        plt.plot(r_avg, recovered_values["m_fits_y"]/recovered_values["b_fits"], color="black", marker=".", alpha=0.6, label="y fit")
-        plt.plot(r_avg, recovered_values["m_fits_z"]/recovered_values["b_fits"], color="black", marker=".", alpha=0.4, label="z fit")
+        plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="black", marker=".", label="x fit")
+        plt.plot(r_avg, fit_vals[2]/fit_vals[0], color="black", marker=".", alpha=0.6, label="y fit")
+        plt.plot(r_avg, fit_vals[3]/fit_vals[0], color="black", marker=".", alpha=0.4, label="z fit")
         plt.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
         plt.legend()
 

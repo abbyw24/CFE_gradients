@@ -66,6 +66,8 @@ def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22):
 
     return r_avg, results_xi
 
+fig, ax = plt.subplots()
+
 # loop through the m and b values
 for m in m_arr_perL:
     for b in b_arr:
@@ -113,8 +115,6 @@ for m in m_arr_perL:
         # results in patches
         xi_patches = []
         k = 0
-        fig = plt.figure()
-        ax = plt.axes()
         cmap = plt.cm.get_cmap("cool")
         ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
 
@@ -152,6 +152,7 @@ for m in m_arr_perL:
         plt.title(f"Standard Estimator, Grad Mock Patches, {grad_dim}D, m={m}/L, b={b}")
         plt.legend(prop={'size': 8})
         fig.savefig(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.png")
+        plt.cla()
 
 if loop == False:
     # pull up color mock for reference

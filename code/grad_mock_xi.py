@@ -11,6 +11,7 @@ L = globals.L
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 
+randmult = globals.randmult
 periodic = globals.periodic
 rmin = globals.rmin
 rmax = globals.rmax
@@ -42,7 +43,7 @@ assert len(dead_set) == len(lognormal_set)
 nd = len(lognormal_set)
 
 # define NULL (random) set for Corrfunc
-nr = 3*nd
+nr = randmult*nd
 null_set = np.random.uniform(-L/2, L/2, (nr,3))
 x_null, y_null, z_null = null_set.T
 

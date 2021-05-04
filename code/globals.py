@@ -18,7 +18,7 @@ def initialize_vals():
     b = 0.5
 
     if loop == True:
-        m_arr_perL = np.linspace(0, 1.0, 101)
+        m_arr_perL = np.linspace(-1.0, 1.0, 202)
         b_arr = np.array([0.5])
     elif loop == False:
         m_arr_perL = np.array([m])
@@ -29,6 +29,8 @@ def initialize_vals():
 
     # parameters for landy-szalay:
     #   by default in patchify_xi.xi, periodic=False, rmin=20.0, rmax=100.0, nbins=22
+    global randmult
+    randmult = 2
     global periodic
     periodic = False
     global rmin

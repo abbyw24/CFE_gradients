@@ -14,6 +14,7 @@ loop = globals.loop
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 
+randmult = globals.randmult
 periodic = globals.periodic
 rmin = globals.rmin
 rmax = globals.rmax
@@ -75,7 +76,7 @@ for m in m_arr_perL:
         nd = len(mock_data)
 
         # create random set
-        nr = 2*nd
+        nr = randmult*nd
         rand_set = np.random.uniform(0, L, (nr,3))
 
         # patchify mock data and random set

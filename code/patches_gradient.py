@@ -20,8 +20,12 @@ for m in m_arr_perL:
         print(f"m={m}, b={b} :")
 
         # load in recovered gradient
-        recovered_vals = np.load(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches.npy")
-        m_fit_x, m_fit_y, m_fit_z, b_fit = recovered_vals
+        recovered_vals = np.load(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True).item()
+        b_fit = recovered_vals["b_fit"]
+        m_fit_x = recovered_vals["m_fit_x"]
+        m_fit_y = recovered_vals["m_fit_y"]
+        m_fit_z = recovered_vals["m_fit_z"]
+        
         grad_recovered = (1/b_fit)*np.array([m_fit_x,m_fit_y,m_fit_z])
         print("recovered gradient (m_fit/b_fit) =", grad_recovered)
 
@@ -41,8 +45,8 @@ for m in m_arr_perL:
         residual = grad_recovered - grad_expected
 
         # load in mock data
-        xs_clust_grad = np.load("gradient_mocks/"+str(grad_dim)+"D/mocks_colored/clust_m-"+str(m)+"-L_b-"+str(b)+".npy")
-        xs_uncl_grad = np.load("gradient_mocks/"+str(grad_dim)+"D/mocks_colored/unclust_m-"+str(m)+"-L_b-"+str(b)+".npy")
+        xs_clust_grad = np.load(f"gradient_mocks/{grad_dim}D/mocks_colored/clust_m-{m}-L_b-{b}.npy")
+        xs_uncl_grad = np.load(f"gradient_mocks/{grad_dim}D/mocks_colored/unclust_m-{m}-L_b-{b}.npy")
 
         z_max = 100
 
@@ -51,8 +55,8 @@ for m in m_arr_perL:
 
         fig1 = plt.figure()
         ax = fig1.add_subplot(111)
-        plt.plot(xy_slice_clust[:,0],xy_slice_clust[:,1],',',c="C0")
-        plt.plot(xy_slice_uncl[:,0],xy_slice_uncl[:,1],',',c="orange")
+        plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], marker=',', c="C0")
+        plt.plot(xy_slice_uncl[:,0], xy_slice_uncl[:,1], marker=',', c="orange")
 
         # plot expected, recovered, and projection from origin (only in xy)
         V = np.array([grad_expected, grad_recovered, proj_rec_onto_exp])
@@ -74,7 +78,7 @@ for m in m_arr_perL:
         plt.ylabel("y (Mpc/h)")
         plt.legend()
 
-        fig1.savefig("gradient_mocks/"+str(grad_dim)+"D/patches/lst_sq_fit/grad_exp_vs_rec_m-"+str(m)+"-L_b-"+str(b)+"_"+str(n_patches)+"patches.png")
+        fig1.savefig(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/grad_exp_vs_rec_m-{m}-L_b-{b}_{n_patches}patches.png")
 
         # save recovered and expected values to dictionary
         exp_vs_rec_vals = {

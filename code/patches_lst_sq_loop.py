@@ -94,10 +94,10 @@ for m in m_arr_perL:
             recovered_vals.append(val_rec)
         
         recovered_values = {
-            "b_fits" : recovered_vals[0],
-            "m_fits_x" : recovered_vals[1],
-            "m_fits_y" : recovered_vals[2],
-            "m_fits_z" : recovered_vals[3]
+            "b_fit" : recovered_vals[0],
+            "m_fit_x" : recovered_vals[1],
+            "m_fit_y" : recovered_vals[2],
+            "m_fit_z" : recovered_vals[3]
         }
 
         # save recovered gradient values

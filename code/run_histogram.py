@@ -61,4 +61,4 @@ for j in method:
     # add recovered gradients from this method to a dictionary entry
     grads_recovered_dict[j] = np.array(grads_recovered)
 
-histogram(grads_recovered_dict["patches"], "patches", grads_recovered_dict["suave"], "suave", dim=dim, hist_type="yz")
+histogram(hist_type="yz", grads_recovered_dict["patches"], grads_recovered_dict["suave"], dim=dim)

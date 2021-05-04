@@ -73,9 +73,9 @@ for m in m_arr_perL:
         expected_xgrads.append(grad_expected_s[0])
 
         # plot expected vs. recovered (in x direction only) for suave
-        plt.plot(grad_expected_s[0], grad_recovered_s[0], marker="o", color="C0", alpha=0.5, label=label_s(i))
+        plt.plot(grad_expected_s[0], grad_recovered_s[0], marker=".", color="C0", alpha=0.5, label=label_s(i))
         # plot expected vs. recovered (in x direction only) for patches
-        plt.plot(grad_expected_p[0], grad_recovered_p[0], marker="o", color="orange", alpha=0.5, label=label_p(i))
+        plt.plot(grad_expected_p[0], grad_recovered_p[0], marker=".", color="orange", alpha=0.5, label=label_p(i))
 
         # increase index value
         i += 1

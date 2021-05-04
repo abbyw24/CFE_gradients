@@ -40,7 +40,7 @@ for m in m_arr_perL:
         C_inv = np.linalg.inv(C)
 
         # Y matrix = clustering amplitudes
-        patchify_data = np.load(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True)
+        patchify_data = np.load(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True).item()
         r_avg = patchify_data["r_avg"]
         xi_patches = patchify_data["xi_patches"]
         xi_patch_avg = patchify_data["xi_patch_avg"]

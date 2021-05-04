@@ -96,6 +96,9 @@ for m in m_arr_perL:
             "m_fits_z" : recovered_vals[2],
             "b_fits" : recovered_vals[3]
         }
+        print(recovered_values)
+        print(recovered_values["m_fits_x"])
+        print(recovered_values["b_fits"])
 
         # save recovered gradient values
         np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches", recovered_values)

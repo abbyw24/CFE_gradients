@@ -41,24 +41,19 @@ for j in method:
     # create list to add the recovered gradients (shape (3,)) from each realization
     grads_recovered = []
     if hist_type == "yz":
+        print(f"{hist_type} histogram")
         for m in m_arr_perL:
             for b in b_arr:
                 data = np.load(f"gradient_mocks/{grad_dim}D/{j}/exp_vs_rec_vals/{j}_exp_vs_rec_vals_m-{m}-L_b-{b}{patches(j)}.npy", allow_pickle=True).item()
                 grads_recovered.append(data["grad_recovered"])
-        dim = {
-            1 : "y",
-            2 : "z"
-            }
+
     elif hist_type == "null-full":
-        dim = {
-            0 : "x",
-            1 : "y",
-            2 : "z"
-            }
+        print(f"{hist_type} histogram")
+        assert False
     else:
         print("hist_type must be either 'yz' or 'null-full'")
 
     # add recovered gradients from this method to a dictionary entry
     grads_recovered_dict[j] = np.array(grads_recovered)
 
-histogram(hist_type="yz", grads_recovered_dict["patches"], grads_recovered_dict["suave"], dim=dim)
+histogram(hist_type="yz", grads_recovered_dict["patches"], grads_recovered_dict["suave"])

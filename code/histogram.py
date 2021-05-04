@@ -1,7 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def histogram(hist_type, data1, data2, dim, label1="patches", label2="suave", nbins=10):
+def histogram(hist_type, data1, data2, label1="patches", label2="suave", nbins=10):
+    dim = {
+            0 : "x",
+            1 : "y",
+            2 : "z"
+            }
+
     # check that recovered gradient array is in the right form
     assert data1.shape == data2.shape
     # check that dim is dictionary

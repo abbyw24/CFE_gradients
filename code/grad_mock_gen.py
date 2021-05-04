@@ -119,7 +119,7 @@ for m in m_arr_perL:
         plt.xlim((-400,400))
         plt.xlabel("x (Mpc/h)")
         plt.ylabel("y (Mpc/h)")
-        plt.title("Gradient Mock, m="+str(m)+"/L , b="+str(b))
+        plt.title(f"Gradient Mock, m={m}/L , b={b}")
         plt.legend()
         fig2.savefig(f"gradient_mocks/{grad_dim}D/mocks_colored/color_grad_mock_"+a+".png")
 

@@ -76,11 +76,18 @@ for m in m_arr_perL:
                 # X gives best fit: [b, m_x, m_y, m_z]
             fits.append(X)
         fit_vals = np.array(fits).T
-        print(fit_vals)
-        assert False
+
+        # plot m_fit/b_fit in each bin
+        #       m_fit_x/b_fit should match grad_expected, and y and z should be zero
+        plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="black", marker=".", label="x fit")
+        plt.plot(r_avg, fit_vals[2]/fit_vals[0], color="black", marker=".", alpha=0.6, label="y fit")
+        plt.plot(r_avg, fit_vals[3]/fit_vals[0], color="black", marker=".", alpha=0.4, label="z fit")
 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/2)
+        # plot bin cutoff
+        plt.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
+
         recovered_vals = []
         for value in fit_vals:
             fits_rec = value[:bin_cutoff]
@@ -98,11 +105,5 @@ for m in m_arr_perL:
         # save recovered gradient values
         np.save(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/recovered_vals_m-{m}-L_b-{b}_{n_patches}patches", recovered_values)
 
-        # plot results
-        plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="black", marker=".", label="x fit")
-        plt.plot(r_avg, fit_vals[2]/fit_vals[0], color="black", marker=".", alpha=0.6, label="y fit")
-        plt.plot(r_avg, fit_vals[3]/fit_vals[0], color="black", marker=".", alpha=0.4, label="z fit")
-        plt.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
         plt.legend()
-
         fig1.savefig(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/allbins_m-{m}-L_b-{b}_{n_patches}patches.png")

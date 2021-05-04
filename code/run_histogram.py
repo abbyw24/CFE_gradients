@@ -59,4 +59,4 @@ for j in method:
 patches_data = grads_recovered_dict["patches"]
 suave_data = grads_recovered_dict["suave"]
 
-histogram("yz", patches_data, suave_data)
+histogram("yz", grad_dim, patches_data, suave_data)

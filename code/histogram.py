@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def histogram(grads_recovered_patches, grads_recovered_suave, dim, hist_type):
+def histogram(data1, label1="patches", data2, label2="suave", dim, hist_type, nbins=10):
     # check that recovered gradient array is in the right form
-    assert grads_recovered_patches.shape == grads_recovered_suave.shape
-
-    # best way to assert that the inputs are the proper types?
+    assert data1.shape == data2.shape
+    # check that dim is dictionary
+    assert isinstance(dim, dict)
 
     # loop through desired dimensions with patches and suave
     for i in dim:
@@ -18,10 +18,10 @@ def histogram(grads_recovered_patches, grads_recovered_suave, dim, hist_type):
         plt.vlines(0, 0, 20, color="black", alpha=0.4)
 
         # histogram for patches
-        plt.hist(grads_recovered_patches[:,i], bins=10, alpha=0.5, label="patches")
-        plt.hist(grads_recovered_suave[:,i], bins=10, alpha=0.5, label="suave")
+        plt.hist(data1[:,i], bins=nbins, alpha=0.5, label=label1)
+        plt.hist(data2[:,i], bins=nbins, alpha=0.5, label=label2)
 
         plt.legend()
-        plt.show()
 
         fig.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec_hist_{dim[i]}_{hist_type}.png")
+        plt.cla()

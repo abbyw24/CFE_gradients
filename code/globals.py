@@ -18,7 +18,7 @@ def initialize_vals():
     b = 0.5
 
     if loop == True:
-        m_arr_perL = np.linspace(-1.0, 1.0, 202)
+        m_arr_perL = np.linspace(-1.0, 1.0, 201)
         b_arr = np.array([0.5])
     elif loop == False:
         m_arr_perL = np.array([m])

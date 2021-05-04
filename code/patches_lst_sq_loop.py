@@ -61,7 +61,7 @@ for m in m_arr_perL:
         # plot xi in each patch across all bins
         cmap = plt.cm.get_cmap("cool")
         ax = plt.axes()
-        ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
+        ax.set_prop_cycle('color', cmap(np.linspace(0, 0.6, n_patches)))
         for patch in xi_patches:
             plt.plot(r_avg, patch, alpha=0.5, marker=".")
 

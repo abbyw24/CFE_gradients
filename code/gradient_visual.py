@@ -56,7 +56,7 @@ for m in m_arr_perL:
         grad_recovered_s = suave_data["grad_recovered"]
         
         # load in data from patches gradient recovery
-        patches_data = np.load(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True).item()
+        patches_data = np.load(f"gradient_mocks/{grad_dim}D/patches/exp_vs_rec_vals/patches_exp_vs_rec_vals_m-{m}-L_b-{b}_{n_patches}patches.npy", allow_pickle=True).item()
         m_p = patches_data["m"]
         b_p = patches_data["b"]
         n_patches = patches_data["n_patches"]

@@ -10,11 +10,7 @@ L = globals.L
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 
-periodic = globals.periodic
-rmin = globals.rmin
-rmax = globals.rmax
 nbins = globals.nbins
-nthreads = globals.nthreads
 
 n_sides = globals.n_sides
 n_patches = n_sides**3

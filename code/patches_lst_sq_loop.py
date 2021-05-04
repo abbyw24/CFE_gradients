@@ -54,14 +54,14 @@ for m in m_arr_perL:
         plt.xlabel(r"r ($h^{-1}$Mpc)")
         plt.ylabel(r"$\xi$(r)")
 
-        # # expected "strength of gradient"
-        # grad_expected = m/(b*L)
-        # plt.axhline(grad_expected)
+        # expected "strength of gradient"
+        grad_expected = m/(b*L)
+        plt.axhline(grad_expected)
 
         # plot xi in each patch across all bins
         cmap = plt.cm.get_cmap("cool")
         ax = plt.axes()
-        ax.set_prop_cycle('color', cmap(np.linspace(0, 0.6, n_patches)))
+        ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
         for patch in xi_patches:
             plt.plot(r_avg, patch, alpha=0.5, marker=".")
 
@@ -75,16 +75,16 @@ for m in m_arr_perL:
             fits.append(X)
         fit_vals = np.array(fits).T
 
-        # # plot m_fit/b_fit in each bin
-        # #       m_fit_x/b_fit should match grad_expected, and y and z should be zero
-        # plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="black", marker=".", label="x fit")
-        # plt.plot(r_avg, fit_vals[2]/fit_vals[0], color="black", marker=".", alpha=0.6, label="y fit")
-        # plt.plot(r_avg, fit_vals[3]/fit_vals[0], color="black", marker=".", alpha=0.4, label="z fit")
+        # plot m_fit/b_fit in each bin
+        #       m_fit_x/b_fit should match grad_expected, and y and z should be zero
+        plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="black", marker=".", label="x fit")
+        plt.plot(r_avg, fit_vals[2]/fit_vals[0], color="black", marker=".", alpha=0.6, label="y fit")
+        plt.plot(r_avg, fit_vals[3]/fit_vals[0], color="black", marker=".", alpha=0.4, label="z fit")
 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/2)
-        # # plot bin cutoff
-        # plt.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
+        # plot bin cutoff
+        plt.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
 
         recovered_vals = []
         for value in fit_vals:

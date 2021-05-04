@@ -20,6 +20,8 @@ n_sides = globals.n_sides
 n_patches = n_sides**3
     # since this script uses absolute number of patches instead of number of patches per side length:
 
+fig, ax = plt.subplots()
+
 # loop through m and b values
 for m in m_arr_perL:
     for b in b_arr:
@@ -49,19 +51,17 @@ for m in m_arr_perL:
         assert len(xi_patches) == n_patches
 
         # plot xi_patches
-        fig1 = plt.figure()
-        ax1 = plt.gca()
-        ax1.set_title(f"Clustering amps in patches, m={m}, b={b}")
-        ax1.set_xlabel(r"r ($h^{-1}$Mpc)")
-        ax1.set_ylabel(r"$\xi$(r)")
+        ax.set_title(f"Clustering amps in patches, m={m}, b={b}")
+        ax.set_xlabel(r"r ($h^{-1}$Mpc)")
+        ax.set_ylabel(r"$\xi$(r)")
 
         # expected "strength of gradient"
         grad_expected = m/(b*L)
-        ax1.axhline(grad_expected, color="red", alpha=0.5)
+        ax.axhline(grad_expected, color="red", alpha=0.5)
 
         # plot xi in each patch across all bins
         cmap = plt.cm.get_cmap("cool")
-        ax1.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
+        ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
         for patch in xi_patches:
             plt.plot(r_avg, patch, alpha=0.5, marker=".")
 
@@ -84,7 +84,7 @@ for m in m_arr_perL:
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/2)
         # plot bin cutoff
-        ax1.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
+        ax.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
 
         recovered_vals = []
         for value in fit_vals:
@@ -105,3 +105,4 @@ for m in m_arr_perL:
 
         plt.legend()
         fig1.savefig(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/allbins_m-{m}-L_b-{b}_{n_patches}patches.png")
+        plt.cla()

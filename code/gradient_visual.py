@@ -81,7 +81,7 @@ for m in m_arr_perL:
         i += 1
 
 # plot line y = x (the data points would fall on this line if the expected and recovered gradients matched up perfectly)
-x = np.linspace(0, max(expected_xgrads), 10)
+x = np.linspace(min(expected_xgrads), max(expected_xgrads), 10)
 
 plt.plot(x, x, color="black", alpha=0.5)
 plt.legend()

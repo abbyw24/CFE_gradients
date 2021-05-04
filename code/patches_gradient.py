@@ -14,6 +14,8 @@ n_patches = n_sides**3
 
 # ** this is currently for the x dimension only **
 
+fig, ax = plt.subplots()
+
 # loop through m and b values
 for m in m_arr_perL:
     for b in b_arr:
@@ -25,7 +27,7 @@ for m in m_arr_perL:
         m_fit_x = recovered_vals["m_fit_x"]
         m_fit_y = recovered_vals["m_fit_y"]
         m_fit_z = recovered_vals["m_fit_z"]
-        
+
         grad_recovered = (1/b_fit)*np.array([m_fit_x,m_fit_y,m_fit_z])
         print("recovered gradient (m_fit/b_fit) =", grad_recovered)
 
@@ -53,8 +55,6 @@ for m in m_arr_perL:
         xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
         xy_slice_uncl = xs_uncl_grad[np.where(xs_uncl_grad[:,2] < z_max)]
 
-        fig1 = plt.figure()
-        ax = fig1.add_subplot(111)
         plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], marker=',', c="C0")
         plt.plot(xy_slice_uncl[:,0], xy_slice_uncl[:,1], marker=',', c="orange")
 
@@ -78,7 +78,8 @@ for m in m_arr_perL:
         plt.ylabel("y (Mpc/h)")
         plt.legend()
 
-        fig1.savefig(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/grad_exp_vs_rec_m-{m}-L_b-{b}_{n_patches}patches.png")
+        fig.savefig(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/grad_exp_vs_rec_m-{m}-L_b-{b}_{n_patches}patches.png")
+        plt.cla()
 
         # save recovered and expected values to dictionary
         exp_vs_rec_vals = {

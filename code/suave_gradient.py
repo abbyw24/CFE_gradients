@@ -88,6 +88,8 @@ cmap = matplotlib.cm.get_cmap('cool')
 nvs = 10
 vs = np.linspace(v_min, v_max, nvs)
 
+fig, ax = plt.subplots()
+
 # loop through m and b values
 for m in m_arr_perL:
     for b in b_arr:
@@ -166,9 +168,6 @@ for m in m_arr_perL:
         print(f"mean squared error = {mean_sq_err}")
 
         # plot correlation functions along the gradient axis
-        fig = plt.figure(figsize=(5,4))
-        ax = plt.gca()
-
         for i, v in enumerate(vs):
             
             loc = loc_pivot + v*w_cont_hat
@@ -191,6 +190,7 @@ for m in m_arr_perL:
         ax.set_title(f"Recovered Gradient, m={m}, b={b}")
 
         fig.savefig(f"{path_to_dir}gradient_mocks/{grad_dim}D/suave/recovered_grad_m-{m}-L_b-{b}_suave.png")
+        plt.cla()
 
         # save recovered and expected values to array
         exp_vs_rec_vals = {
@@ -201,7 +201,7 @@ for m in m_arr_perL:
             "grad_recovered" : grad_recovered,
             "mean_sq_err" : mean_sq_err
         }
-        
+
         np.save(f"gradient_mocks/{grad_dim}D/suave/exp_vs_rec_vals/suave_exp_vs_rec_vals_m-{m}-L_b-{b}", exp_vs_rec_vals)
 
         print(" ")      # line break for nice loop print formatting

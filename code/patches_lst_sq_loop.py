@@ -56,7 +56,7 @@ for m in m_arr_perL:
 
         # expected "strength of gradient"
         grad_expected = m/(b*L)
-        plt.axhline(grad_expected, xmin=0, xmax=1)
+        plt.axhline(grad_expected)
 
         # plot xi in each patch across all bins
         cmap = plt.cm.get_cmap("cool")

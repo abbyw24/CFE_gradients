@@ -25,7 +25,6 @@ def generate_gradmock(grad_dim, path_to_lognorm_file, lognorm_file, output_file,
     assert isinstance(lognorm_file, str)
     assert isinstance(output_file, str)
     assert isinstance(z_max, int or float)
-    assert isinstance(plot_title, str)
 
     # load in lognormal set
     Lx, Ly, Lz, N, data = read_lognormal.read(path_to_lognorm_file+lognorm_file)

@@ -18,7 +18,7 @@ np.random.seed(123456)
 # lognorm file used so far = "lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin"
 
 # function to generate gradient mock
-def generate_gradmock(grad_dim, path_to_lognorm_file, lognorm_file, output_file, z_max=-50, plot_title=output_file):
+def generate_gradmock(grad_dim, path_to_lognorm_file, lognorm_file, output_file, z_max=-50):
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)
     assert isinstance(path_to_lognorm_file, str)
@@ -102,7 +102,7 @@ def generate_gradmock(grad_dim, path_to_lognorm_file, lognorm_file, output_file,
     # plt.ylim((-400,400))
     plt.xlabel("x (Mpc/h)")
     plt.ylabel("y (Mpc/h)")
-    plt.title(plot_title)
+    plt.title(output_file)
     plt.legend()
     fig1.savefig(f"gradient_mocks/{grad_dim}D/mocks/plots/gradmock_{output_file}.png")
     plt.cla()
@@ -124,7 +124,7 @@ def generate_gradmock(grad_dim, path_to_lognorm_file, lognorm_file, output_file,
     # plt.xlim((-400,400))
     plt.xlabel("x (Mpc/h)")
     plt.ylabel("y (Mpc/h)")
-    plt.title(plot_title)
+    plt.title(output_file)
     plt.legend()
     fig2.savefig(f"gradient_mocks/{grad_dim}D/mocks/plots/color_gradmock_{output_file}.png")
     plt.cla()

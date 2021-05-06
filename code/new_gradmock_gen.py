@@ -2,13 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import read_lognormal
-import globals
-
-globals.initialize_vals()
-
-grad_dim = globals.grad_dim
-m_arr_perL = globals.m_arr_perL
-b_arr = globals.b_arr
+import os
 
 # we generate L in this script so no need to import
 
@@ -27,7 +21,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     assert isinstance(z_max, int or float)
 
     # load in lognormal set
-    Lx, Ly, Lz, N, data = read_lognormal.read(path_to_lognorm_file+lognorm_file)
+    Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_file, lognorm_file))
         # define boxsize based on mock; and N = number of data points
     L = Lx
         # L = boxsize
@@ -127,5 +121,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     plt.legend()
     fig2.savefig(f"gradient_mocks/{grad_dim}D/mocks/plots/color_gradmock_{output_file}.png")
     plt.cla()
+
+    plt.close('all')
 
     print(f"gradient generated from {lognorm_file} --> {output_file}")

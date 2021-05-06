@@ -107,7 +107,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
     xy_slice_uncl = xs_uncl_grad[np.where(xs_uncl_grad[:,2] < z_max)]
 
-    fig2, ax2 = subplots()
+    fig2, ax2 = plt.subplots()
     plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], ',', c="C0", label="clustered")
     plt.plot(xy_slice_uncl[:,0], xy_slice_uncl[:,1], ',', c="orange", label="unclustered")
     plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], c="green", label=w_hat)   # plot vector w_hat (no z)

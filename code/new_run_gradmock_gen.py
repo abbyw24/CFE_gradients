@@ -12,7 +12,7 @@ m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 
 path_to_lognorm_file = "lss_data/lognormal_mocks/"
-lognorm_file = "cat_L750_n3e-4_lognormal_rlz0.bin"
+lognorm_file = "cat_L750_n3e-4_lognormal_rlz0"
 
 # loop through m and b arrays
 for m in m_arr_perL:

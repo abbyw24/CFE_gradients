@@ -21,7 +21,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     assert isinstance(z_max, int or float)
 
     # load in lognormal set
-    Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_file, lognorm_file))
+    Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_file, f"{lognorm_file}.bin"))
         # define boxsize based on mock; and N = number of data points
     L = Lx
         # L = boxsize

@@ -94,7 +94,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     fig1, ax1 = plt.subplots()
     plt.plot(xy_slice[:,0], xy_slice[:,1],',')   # plot scatter xy-slice
     plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], color="green", label=w_hat)   # plot vector w_hat (no z)
-    plt.axes().set_aspect("equal")      # square aspect ratio
+    ax1.set_aspect("equal")      # square aspect ratio
     # plt.ylim((-400,400))
     ax1.set_xlabel("x (Mpc/h)")
     ax1.set_ylabel("y (Mpc/h)")
@@ -111,7 +111,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], ',', c="C0", label="clustered")
     plt.plot(xy_slice_uncl[:,0], xy_slice_uncl[:,1], ',', c="orange", label="unclustered")
     plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], c="green", label=w_hat)   # plot vector w_hat (no z)
-    plt.axes().set_aspect("equal")      # square aspect ratio
+    ax2.set_aspect("equal")      # square aspect ratio
     # plt.ylim((-400,400))
     # plt.xlim((-400,400))
     ax2.set_xlabel("x (Mpc/h)")

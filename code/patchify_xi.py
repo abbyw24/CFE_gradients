@@ -140,7 +140,7 @@ for m in m_arr_perL:
             "xi_patch_avg" : xi_patch_avg,
             "xi_full" : xi_full
             }
-        np.save(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy", patches_xi, allow_pickle=True)
+        np.save(f"gradient_mocks/{grad_dim}D/patches/xi/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy", patches_xi, allow_pickle=True)
 
         # plot results
         plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")

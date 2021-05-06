@@ -12,30 +12,33 @@ np.random.seed(123456)
 # lognorm file used so far = "lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin"
 
 # function to generate gradient mock
-def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output_file, z_max=-50):
+def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path_to_mocks_dir, mock_name, z_max=-50):
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)
-    assert isinstance(path_to_lognorm_file, str)
+    assert isinstance(m, int or float)
+    assert isinstance(b, int or float)
+    assert isinstance(path_to_lognorm_source, str)
     assert isinstance(lognorm_file, str)
-    assert isinstance(output_file, str)
+    assert isinstance(path_to_mocks_dir, str)
+    assert isinstance(mock_name, str)
     assert isinstance(z_max, int or float)
 
     # load in lognormal set
-    Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_file, f"{lognorm_file}.bin"))
+    Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, lognorm_file))
         # define boxsize based on mock; and N = number of data points
     L = Lx
         # L = boxsize
     # save boxsize then load in this boxsize for all uses of gradient mock
-    np.save("lognormal_data/boxsizes/boxsize_"+lognorm_file, L)
+    np.save(os.path.join(path_to_mocks_dir, f"boxsize_{lognorm_file}"), L)
 
-    # save lognormal set
+    # save lognormal set to mocks directory
     x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
-    xs_clust = np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2)
-    np.save("lognormal_data/lognormal_sets/lognormal_set_"+lognorm_file, xs_clust.T)
+    xs_clust = np.array(([x_lognorm, y_lognorm, z_lognorm])-(L/2)).T
+    np.save(os.path.join(path_to_mocks_dir, f"lognormal_set_{lognorm_file}"), xs_clust)
 
     # generate a random data set (same size as mock)
     xs_uncl = np.random.uniform(-L/2,L/2,(3,N))
-    np.save("lognormal_data/dead_sets/dead_set_"+lognorm_file, xs_uncl.T)
+    # np.save("lognormal_data/dead_sets/dead_set_"+lognorm_file, xs_uncl.T)
 
     # generate unit vector– this is the direction of the gradient
     if grad_dim == 1:
@@ -51,7 +54,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
 
     # normalize w_hat and print out result
     w_hat /= np.linalg.norm(w_hat)
-    print(f"grad dim = {grad_dim}, w_hat = {w_hat}")
+    print("grad dim = {}, w_hat = {}, m = {:.2f}, b = {:.2f}".format(grad_dim, w_hat, m, b))
 
     # for each catalog, make random uniform deviates
     rs_clust = np.random.uniform(size=N)
@@ -77,14 +80,14 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     xs = np.append(xs_clust.T[I_clust], xs_uncl.T[I_uncl], axis=0)
 
     # save xs
-    np.save(f"gradient_mocks/{grad_dim}D/mocks/mock_data/grad_data_{output_file}", xs)
+    np.save(os.path.join(path_to_mocks_dir, f"mocks/mock_data_{mock_name}"), xs)
 
     # also save clustered and unclustered separately (used to plot in separate colors later)
     xs_clust_grad = xs_clust.T[I_clust]
     xs_uncl_grad = xs_uncl.T[I_uncl]
 
-    np.save(f"gradient_mocks/{grad_dim}D/mocks/mock_data/clust/clust_data_{output_file}", xs_clust_grad)
-    np.save(f"gradient_mocks/{grad_dim}D/mocks/mock_data/unclust/unclust_data_{output_file}", xs_uncl_grad)
+    np.save(os.path.join(path_to_mocks_dir, f"clust/clust_data_{mock_name}"), xs_clust_grad)
+    np.save(os.path.join(path_to_mocks_dir, f"unclust/unclust_data_{mock_name}"), xs_uncl_grad)
 
     # visualisation! (we define z_max cutoff in function parameters)
 
@@ -100,7 +103,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     ax1.set_ylabel("y (Mpc/h)")
     ax1.set_title(output_file)
     ax1.legend()
-    fig1.savefig(f"gradient_mocks/{grad_dim}D/mocks/plots/gradmock_{output_file}.png")
+    fig1.savefig(os.path.join(path_to_mocks_dir, f"plots/mock_{mock_name}.png")
     plt.cla()
 
     # plot different colors for clust and uncl
@@ -118,9 +121,9 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     ax2.set_ylabel("y (Mpc/h)")
     ax2.set_title(output_file)
     ax2.legend()
-    fig2.savefig(f"gradient_mocks/{grad_dim}D/mocks/plots/color_gradmock_{output_file}.png")
+    fig2.savefig(os.path.join(path_to_mocks_dir, f"plots/color_mock_{mock_name}.png")
     plt.cla()
 
-    plt.close('all')
+    plt.close("all")
 
-    print(f"gradient generated from {lognorm_file} --> {output_file}")
+    print(f"gradient generated from {lognorm_file} --> {mock_name}")

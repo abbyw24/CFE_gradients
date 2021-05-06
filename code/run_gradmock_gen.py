@@ -11,11 +11,12 @@ grad_dim = globals.grad_dim
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 
-path_to_lognorm_file = "lss_data/lognormal_mocks/"
+path_to_lognorm_source = "lss_data/lognormal_mocks/"
 lognorm_file = "cat_L750_n3e-4_lognormal_rlz0"
+path_to_mocks_dir = f"gradient_mocks/{grad_dim}D/mocks/{lognorm_file}"
 
 # loop through m and b arrays
 for m in m_arr_perL:
     for b in b_arr:
-        output_file = "m-{:.2f}-L_b-{:.2f}".format(m, b)
-        generate_gradmock(1, m, b, path_to_lognorm_file, lognorm_file, output_file)
+        mock_name = "m-{:.2f}-L_b-{:.2f}".format(m, b)
+        generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path_to_mocks_dir, mock_name)

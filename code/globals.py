@@ -43,8 +43,8 @@ def initialize_vals():
     nthreads = 12
 
     # patch values
-    global n_sides
-    n_sides = 2         # define number of patches by number of patches per side length
+    global n_patches
+    n_patches = 8         # define number of patches by number of patches per side length
 
 def initialize_path():
     global path_to_dir     # PATH TO RESEARCH DIRECTORY

@@ -17,5 +17,5 @@ lognorm_file = "cat_L750_n3e-4_lognormal_rlz0"
 # loop through m and b arrays
 for m in m_arr_perL:
     for b in b_arr:
-        output_file = "m-{%.2f}-L_b-{%.2f}".format(m, b)
+        output_file = "m-{:.2f}-L_b-{:.2f}".format(m, b)
         generate_gradmock(1, m, b, path_to_lognorm_file, lognorm_file, output_file)

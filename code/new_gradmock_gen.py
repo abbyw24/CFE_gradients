@@ -105,6 +105,7 @@ def generate_gradmock(grad_dim, path_to_lognorm_file, lognorm_file, output_file,
     plt.title(plot_title)
     plt.legend()
     fig1.savefig(f"gradient_mocks/{grad_dim}D/mocks/plots/gradmock_{output_file}.png")
+    plt.cla()
 
     # plot different colors for clust and uncl
     fig2 = plt.figure()
@@ -126,5 +127,6 @@ def generate_gradmock(grad_dim, path_to_lognorm_file, lognorm_file, output_file,
     plt.title(plot_title)
     plt.legend()
     fig2.savefig(f"gradient_mocks/{grad_dim}D/mocks/plots/color_gradmock_{output_file}.png")
+    plt.cla()
 
     print(f"gradient generated from {lognorm_file} --> {output_file}")

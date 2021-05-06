@@ -86,6 +86,9 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     np.save(f"gradient_mocks/{grad_dim}D/mocks/mock_data/grad_data_{output_file}", xs)
 
     # also save clustered and unclustered separately (used to plot in separate colors later)
+    xs_clust_grad = xs_clust.T[I_clust]
+    xs_uncl_grad = xs_uncl.T[I_uncl]
+
     np.save(f"gradient_mocks/{grad_dim}D/mocks/mock_data/clust/clust_data_{output_file}", xs_clust_grad)
     np.save(f"gradient_mocks/{grad_dim}D/mocks/mock_data/unclust/unclust_data_{output_file}", xs_uncl_grad)
 
@@ -108,9 +111,6 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
 
     # plot different colors for clust and uncl
     fig2 = plt.figure()
-
-    xs_clust_grad = xs_clust.T[I_clust]
-    xs_uncl_grad = xs_uncl.T[I_uncl]
 
     xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
     xy_slice_uncl = xs_uncl_grad[np.where(xs_uncl_grad[:,2] < z_max)]

@@ -96,10 +96,10 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], color="green", label=w_hat)   # plot vector w_hat (no z)
     plt.axes().set_aspect("equal")      # square aspect ratio
     # plt.ylim((-400,400))
-    ax.set_xlabel("x (Mpc/h)")
-    ax.set_ylabel("y (Mpc/h)")
-    ax.set_title(output_file)
-    ax.legend()
+    ax1.set_xlabel("x (Mpc/h)")
+    ax1.set_ylabel("y (Mpc/h)")
+    ax1.set_title(output_file)
+    ax1.legend()
     fig1.savefig(f"gradient_mocks/{grad_dim}D/mocks/plots/gradmock_{output_file}.png")
     plt.cla()
 
@@ -114,10 +114,10 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     plt.axes().set_aspect("equal")      # square aspect ratio
     # plt.ylim((-400,400))
     # plt.xlim((-400,400))
-    ax.set_xlabel("x (Mpc/h)")
-    ax.set_ylabel("y (Mpc/h)")
-    ax.set_title(output_file)
-    ax.legend()
+    ax2.set_xlabel("x (Mpc/h)")
+    ax2.set_ylabel("y (Mpc/h)")
+    ax2.set_title(output_file)
+    ax2.legend()
     fig2.savefig(f"gradient_mocks/{grad_dim}D/mocks/plots/color_gradmock_{output_file}.png")
     plt.cla()
 

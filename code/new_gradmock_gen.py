@@ -91,34 +91,33 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output
     # plot all points in same color
     xy_slice = xs[np.where(xs[:,2] < z_max)] # select rows where z < z_max
 
-    fig1 = plt.figure()
+    fig1, ax1 = plt.subplots()
     plt.plot(xy_slice[:,0], xy_slice[:,1],',')   # plot scatter xy-slice
     plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], color="green", label=w_hat)   # plot vector w_hat (no z)
     plt.axes().set_aspect("equal")      # square aspect ratio
     # plt.ylim((-400,400))
-    plt.xlabel("x (Mpc/h)")
-    plt.ylabel("y (Mpc/h)")
-    plt.title(output_file)
-    plt.legend()
+    ax.set_xlabel("x (Mpc/h)")
+    ax.set_ylabel("y (Mpc/h)")
+    ax.set_title(output_file)
+    ax.legend()
     fig1.savefig(f"gradient_mocks/{grad_dim}D/mocks/plots/gradmock_{output_file}.png")
     plt.cla()
 
     # plot different colors for clust and uncl
-    fig2 = plt.figure()
-
     xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
     xy_slice_uncl = xs_uncl_grad[np.where(xs_uncl_grad[:,2] < z_max)]
 
+    fig2, ax2 = subplots()
     plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], ',', c="C0", label="clustered")
     plt.plot(xy_slice_uncl[:,0], xy_slice_uncl[:,1], ',', c="orange", label="unclustered")
     plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], c="green", label=w_hat)   # plot vector w_hat (no z)
     plt.axes().set_aspect("equal")      # square aspect ratio
     # plt.ylim((-400,400))
     # plt.xlim((-400,400))
-    plt.xlabel("x (Mpc/h)")
-    plt.ylabel("y (Mpc/h)")
-    plt.title(output_file)
-    plt.legend()
+    ax.set_xlabel("x (Mpc/h)")
+    ax.set_ylabel("y (Mpc/h)")
+    ax.set_title(output_file)
+    ax.legend()
     fig2.savefig(f"gradient_mocks/{grad_dim}D/mocks/plots/color_gradmock_{output_file}.png")
     plt.cla()
 

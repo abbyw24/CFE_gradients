@@ -18,4 +18,4 @@ lognorm_file = "cat_L750_n3e-4_lognormal_rlz0.bin"
 for m in m_arr_perL:
     for b in b_arr:
         output_file = f"m-{m}-L_b-{b}"
-        generate_gradmock(1, path_to_lognorm_file, lognorm_file, output_file)
+        generate_gradmock(1, m, b, path_to_lognorm_file, lognorm_file, output_file)

@@ -18,7 +18,7 @@ np.random.seed(123456)
 # lognorm file used so far = "lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin"
 
 # function to generate gradient mock
-def generate_gradmock(grad_dim, path_to_lognorm_file, lognorm_file, output_file, z_max=-50):
+def generate_gradmock(grad_dim, m, b, path_to_lognorm_file, lognorm_file, output_file, z_max=-50):
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)
     assert isinstance(path_to_lognorm_file, str)

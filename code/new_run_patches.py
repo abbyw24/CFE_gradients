@@ -1,5 +1,6 @@
 from patchify_xi import patchify, xi, xi_in_patches
 from patches_lstsq_allbins import patches_lstsq_allbins
+from new_patches_lstsq_fit import patches_lstsq_fit
 
 import globals
 
@@ -28,8 +29,11 @@ for m in m_arr_perL:
     for b in b_arr:
         mock_name = "m-{:.2f}-L_b-{:.2f}".format(m, b)
 
-        # divide mock into patches and compute correlation function in each patch
-        xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches)
+        # # divide mock into patches and compute correlation function in each patch
+        # xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches)
 
-        # perform a least square fit of the clustering amplitudes in each patch
-        patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_patches)
+        # # perform a least square fit of the clustering amplitudes in each patch
+        # patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_patches)
+
+        # least square fit in bin 2
+        patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name)

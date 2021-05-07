@@ -20,7 +20,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
         assert isinstance(x, (int, float))
 
     # create desired path to mocks directory if it doesn't already exist
-    for sub_dir in ["mocks", "clust", "unclust"]:
+    for sub_dir in ["mocks", "clust", "unclust", "plots"]:
         if not os.path.exists(f"{path_to_mocks_dir}/{sub_dir}"):
             os.makedirs(f"{path_to_mocks_dir}/{sub_dir}")
             print(f"created path {path_to_mocks_dir}/{sub_dir}")

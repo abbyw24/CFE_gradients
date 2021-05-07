@@ -84,7 +84,7 @@ def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_
     b_fit = X[0]
     for i in range(len(dim)):
         plt.plot(x, X[i+1]*x + b_fit, color=bestfit_colors[i], label=dim[i]+" best fit: y = "+str("%.8f" %X[i+1])+"x + "+str("%.6f" %b_fit))
-    plt.plot(patch_centers[0,0], Y[0], alpha=0.0, label="(m/(b*L))" = {:.8f)}".format(m/(b*L))
+    plt.plot(patch_centers[0,0], Y[0], alpha=0.0, label="{:.8f)}".format(m/(b*L))
     plt.legend()
 
     # save figure

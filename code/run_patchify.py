@@ -7,6 +7,10 @@ import globals
 globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
+
+lognorm_file = globals.lognorm_file
+path_to_mocks_dir = globals.path_to_mocks_dir
+
 L = globals.L
 loop = globals.loop
 m_arr_perL = globals.m_arr_perL
@@ -21,19 +25,16 @@ nthreads = globals.nthreads
 
 n_patches = globals.n_patches
 
-lognorm_file = "cat_L750_n2e-4_z057_patchy_lognormal_rlz0" #.bin
-path_to_mocks_dir = f"mocks/{grad_dim}D/{lognorm_file}"
-
 # loop through m and b arrays
 for m in m_arr_perL:
     for b in b_arr:
         mock_name = "m-{:.2f}-L_b-{:.2f}".format(m, b)
 
-        # # divide mock into patches and compute correlation function in each patch
-        # xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches)
+        # divide mock into patches and compute correlation function in each patch
+        xi_in_patches(grad_dim, path_to_mocks_dir, mock_name)
 
-        # # perform a least square fit of the clustering amplitudes in each patch
-        # patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_patches)
+        # perform a least square fit of the clustering amplitudes in each patch
+        patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name)
 
         # least square fit in bin 2
         patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name)

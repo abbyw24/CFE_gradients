@@ -5,8 +5,14 @@ def initialize_vals():
     global grad_dim
     grad_dim = 1        # dimension of w_hat in gradient mock
 
-    global L
-    L = np.load("boxsize.npy")
+    global lognorm_file
+    lognorm_file = "cat_L750_n2e-4_z057_patchy_lognormal_rlz0" #.bin        # which lognormal realization to use
+
+    global path_to_mocks_dir
+    path_to_mocks_dir = f"mocks/{grad_dim}D/{lognorm_file}"
+
+    # global L
+    # L = np.load("boxsize.npy")
 
     global loop
     loop = True         # whether to loop through entire m and b array

@@ -5,6 +5,10 @@ import globals
 globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
+
+lognorm_file = globals.lognorm_file
+path_to_mocks_dir = globals.path_to_mocks_dir
+
 L = globals.L
 loop = globals.loop
 m_arr_perL = globals.m_arr_perL
@@ -18,9 +22,6 @@ nbins = globals.nbins
 nthreads = globals.nthreads
 
 n_patches = globals.n_patches
-
-lognorm_file = "cat_L750_n2e-4_z057_patchy_lognormal_rlz0" #.bin
-path_to_mocks_dir = f"mocks/{grad_dim}D/{lognorm_file}"
 
 # loop through m and b arrays
 for m in m_arr_perL:

@@ -73,7 +73,7 @@ def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_
     cmap = plt.cm.get_cmap("cool")
     ax2.set_prop_cycle('color',cmap(np.linspace(0,1,n_patches)))
     plt.scatter(patch_centers[:,0], Y, marker="o", c=Y, cmap="cool", label=f"Mock: {grad_dim}D, {mock_name}")
-    ax2.set_title(f"Linear least square fit, Clustering amps in patches (bin {r_bin}")
+    ax2.set_title(f"Linear least square fit, Clustering amps in patches (bin {r_bin})")
     ax2.set_xlabel(r"Patch Centers ($h^{-1}$Mpc)")
     ax2.set_ylabel(r"$\xi$(r)")
     x = np.linspace(min(patch_centers[:,0]),max(patch_centers[:,0]))
@@ -84,8 +84,10 @@ def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_
     b_fit = X[0]
     for i in range(len(dim)):
         plt.plot(x, X[i+1]*x + b_fit, color=bestfit_colors[i], label=dim[i]+" best fit: y = "+str("%.8f" %X[i+1])+"x + "+str("%.6f" %b_fit))
+    plt.plot(patch_centers[0,0], Y[0], alpha=0.0, label=f"Expected x grad (m/(b*L)) = {m/(b*L)}")
     plt.legend()
 
     # save figure
     fig2.savefig(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/bin-{r_bin}_{n_patches}patches_{mock_name}.png"))
     ax2.cla()
+    plt.close("all")

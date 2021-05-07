@@ -11,7 +11,10 @@ import globals
 
 globals.initialize_vals()  # brings in all the default parameters
 
+periodic = globals.periodic
 randmult = globals.randmult
+nthreads = globals.nthreads
+
 n_patches = globals.n_patches
 
 # define patchify
@@ -38,7 +41,7 @@ def patchify(data, boxsize, n_patches=n_patches):
     return patch_ids, idx_patches
 
 # define Corrfunc Landy-Szalay
-def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22):
+def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22, nthreads=12):
     # parameters
     r_edges = np.linspace(rmin, rmax, nbins+1)
     r_avg = 0.5*(r_edges[1:]+r_edges[:-1])

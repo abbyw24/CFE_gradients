@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from create_subdirs import create_subdirs
+import os
 import globals
 
 globals.initialize_vals()  # brings in all the default parameters

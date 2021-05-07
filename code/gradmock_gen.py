@@ -42,10 +42,12 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
     x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
     xs_clust = (np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2)).T
     np.save(os.path.join(path_to_mocks_dir, f"lognormal_set_{lognorm_file}"), xs_clust)
+    print(xs_clust.shape)
 
     # generate a random data set (same size as mock)
     xs_unclust = np.random.uniform(-L/2,L/2,(3,N)).T
     np.save(os.path.join(path_to_mocks_dir, f"dead_set_{lognorm_file}"), xs_unclust)
+    print(xs_unclust.shape)
 
     # generate unit vector– this is the direction of the gradient
     if grad_dim == 1:

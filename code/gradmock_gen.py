@@ -14,21 +14,16 @@ np.random.seed(123456)
 # function to generate gradient mock
 def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path_to_mocks_dir, mock_name, z_max=-50):
     # make sure all inputs have the right form
-    assert isinstance(grad_dim, int)
-    assert isinstance(m, (int, float))
-    assert isinstance(b, (int, float))
-    assert isinstance(path_to_lognorm_source, str)
-    assert isinstance(lognorm_file, str)
-    assert isinstance(path_to_mocks_dir, str)
-    assert isinstance(mock_name, str)
-    assert isinstance(z_max, (int, float))
+    for x in [path_to_lognorm_source, lognorm_file, path_to_mocks_dir, mock_name]:
+        assert isinstance(x, str)
+    for x in [grad_dim, m, b, z_max]:
+        assert isinstance(x, (int, float))
 
     # create desired path to mocks directory if it doesn't already exist
-    if not os.path.exists(f"{path_to_mocks_dir}/mocks"):
-        os.makedirs(path_to_mocks_dir)
-        for sub_dir in ["mocks", "clust", "unclust"]:
+    for sub_dir in ["mocks", "clust", "unclust"]:
+        if not os.path.exists(f"{path_to_mocks_dir}/{sub_dir}"):
             os.makedirs(f"{path_to_mocks_dir}/{sub_dir}")
-            print(f"{path_to_mocks_dir}/{sub_dir}")
+            print(f"created path {path_to_mocks_dir}/{sub_dir}")
 
     # load in lognormal set
     Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f"{lognorm_file}.bin"))

@@ -5,24 +5,7 @@ import math
 import Corrfunc
 import itertools as it
 import os
-import globals
-
-globals.initialize_vals()  # brings in all the default parameters
-
-grad_dim = globals.grad_dim
-L = globals.L
-loop = globals.loop
-m_arr_perL = globals.m_arr_perL
-b_arr = globals.b_arr
-
-randmult = globals.randmult
-periodic = globals.periodic
-rmin = globals.rmin
-rmax = globals.rmax
-nbins = globals.nbins
-nthreads = globals.nthreads
-
-n_sides = globals.n_sides
+from create_subdirs import create_subdirs
 
 # define patchify
 def patchify(data, boxsize, n_patches=n_patches):
@@ -72,17 +55,20 @@ def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22):
 fig, ax = plt.subplots()
 
 # define function to find xi in each patch
-def xi_in_patches(grad_dim, path_to_mock_file, mock_file, n_patches=n_patches, randmult=randmult):
+def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, randmult=randmult):
     # make sure all inputs have the right form
-    assert isinstance(path_to_mock_file, str)
-    assert isinstance(mock_file, str)
+    assert isinstance(path_to_mocks_dir, str)
+    assert isinstance(mock_name, str)
+
+    # create the needed subdirectories
+    create_subdirs(f"{path_to_mocks_dir}/patches", ["patch_centers", "xi", "plots"])
 
     # check that there is a corresponding boxsize file
-    boxsize_file = os.path.join(f"gradient_mocks/{grad_dim}D/mocks/mock_data/boxsizes/boxsize_"+mock_file)
+    boxsize_file = os.path.join(path_to_mocks_dir, f"boxsize")
     assert os.path.exists(boxsize_file)
 
     # load in mock data and boxsize
-    mock_data = np.load(mock_file)
+    mock_data = np.load(os.path.join(path_to_mocks_dir, f"grad_mocks/gradmock_data_{mock_name}")
     L = np.load(boxsize_file)
 
     # if there are negative values, shift by L/2, to 0 to L
@@ -90,6 +76,7 @@ def xi_in_patches(grad_dim, path_to_mock_file, mock_file, n_patches=n_patches, r
         mock_data += L/2
     else:
         print("input mock data must be from 0 to L (values are centered at 0 during xi_in_patches")
+        assert False
 
     nd = len(mock_data)
 
@@ -119,7 +106,7 @@ def xi_in_patches(grad_dim, path_to_mock_file, mock_file, n_patches=n_patches, r
         center = np.mean(patch_data, axis=0)
         patch_centers.append(center)
     patch_centers = np.array(patch_centers)
-    np.save(f"gradient_mocks/{grad_dim}D/patches/patch_centers/patch_centers_"+mock_file, patch_centers)
+    np.save(os.path.join(path_to_mocks_dir, f"patches/patch_centers/patch_centers_{mock_name}", patch_centers)
 
     # results for full mock
     results_xi_full = xi(mock_data, rand_set)
@@ -155,7 +142,8 @@ def xi_in_patches(grad_dim, path_to_mock_file, mock_file, n_patches=n_patches, r
         "xi_patch_avg" : xi_patch_avg,
         "xi_full" : xi_full
         }
-    np.save(f"gradient_mocks/{grad_dim}D/patches/xi/grad_xi_{n_patches}patches_"+mock_file, patches_xi, allow_pickle=True)
+    np.save(f"gradient_mocks/{grad_dim}D/patches/xi/xi_{n_patches}patches_"+mock_name, patches_xi, allow_pickle=True)
+    np.save(os.path.join(path_to_mocks_dir, f"patches/xi/xi_{n_patches}patches_{mock_name}"), patch_centers)
 
     # plot results
     plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")
@@ -164,9 +152,9 @@ def xi_in_patches(grad_dim, path_to_mock_file, mock_file, n_patches=n_patches, r
     plt.xlabel(r'r ($h^{-1}$Mpc)')
     plt.ylabel(r'$\xi$(r)')
     plt.rcParams["axes.titlesize"] = 10
-    plt.title(f"Standard Estimator, Grad Mock Patches, {grad_dim}D, m={m}/L, b={b}")
+    plt.title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name}")
     plt.legend(prop={'size': 8})
-    fig.savefig(f"gradient_mocks/{grad_dim}D/patches/grad_xi_{n_patches}patches_{mock_file}.png")
+    fig.savefig(os.path.join(path_to_mocks_dir, f"patches/plots/xi_{n_patches}patches_{mock_name}.png"))
     plt.cla()
 
     plt.close("all")

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import read_lognormal
 import os
+from create_subdirs import create_subdirs
 
 # we generate L in this script so no need to import
 
@@ -20,10 +21,8 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
         assert isinstance(x, (int, float))
 
     # create desired path to mocks directory if it doesn't already exist
-    for sub_dir in ["grad_mocks", "clust", "unclust", "plots"]:
-        if not os.path.exists(f"{path_to_mocks_dir}/{sub_dir}"):
-            os.makedirs(f"{path_to_mocks_dir}/{sub_dir}")
-            print(f"created path {path_to_mocks_dir}/{sub_dir}")
+    sub_dirs = ["grad_mocks", "clust", "unclust", "plots"]
+    create_subdirs(path_to_mocks_dir, sub_dirs)
 
     # load in lognormal set
     Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f"{lognorm_file}.bin"))

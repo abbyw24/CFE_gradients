@@ -109,4 +109,4 @@ def patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patche
 
     plt.legend()
     fig.savefig(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/allbins_{n_patches}patches_{mock_name}.png")
-    plt.cla()
+    ax.cla()

@@ -54,6 +54,7 @@ def patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patche
 
     # plot xi_patches
     fig, ax = plt.subplots()
+
     # plot xi in each patch across all bins
     cmap = plt.cm.get_cmap("cool")
     ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
@@ -108,5 +109,5 @@ def patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patche
     print(f"least square fit in all bins, {mock_name}, {n_patches} patches")
 
     plt.legend()
-    fig.savefig(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/allbins_{n_patches}patches_{mock_name}.png")
+    fig.savefig(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/allbins_{n_patches}patches_{mock_name}.png"))
     ax.cla()

@@ -11,6 +11,9 @@ def initialize_vals():
     global path_to_mocks_dir
     path_to_mocks_dir = f"mocks/{grad_dim}D/{lognorm_file}"
 
+    global path_to_lognorm_source
+    path_to_lognorm_source = "/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy"
+
     # global L
     # L = np.load("boxsize.npy")
 

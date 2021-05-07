@@ -5,8 +5,6 @@ import read_lognormal
 import os
 from create_subdirs import create_subdirs
 
-# we generate L in this script so no need to import
-
 # pick a seed number so that random set stays the same every time (for now)
 np.random.seed(123456)
 

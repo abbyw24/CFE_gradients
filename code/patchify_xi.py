@@ -124,13 +124,13 @@ def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, r
     # define r_avg (this is the same for all xi)
     r_avg = results_xi_full[0]
 
+    fig, ax = plt.subplots()
+
     # results in patches
     xi_patches = []
     k = 0
     cmap = plt.cm.get_cmap("cool")
     ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
-
-    fig, ax = plt.subplots()
 
     for patch_id in patch_id_list:
         patch_data = mock_data[patch_ids_mock == patch_id]

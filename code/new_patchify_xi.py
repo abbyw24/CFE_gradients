@@ -17,8 +17,8 @@ n_patches = globals.n_patches
 # define patchify
 def patchify(data, boxsize, n_patches=n_patches):
     n_sides = n_patches**(1/3)
-    print(n_sides)
-    assert isinstance(n_sides, int)
+    assert n_sides.is_integer()
+    n_sides = int(n_sides)
     nd, n_dim = data.shape
     boxsize_patch = boxsize/n_sides
     a = np.arange(n_sides)

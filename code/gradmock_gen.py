@@ -31,16 +31,16 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
     L = Lx
         # L = boxsize
     # save boxsize then load in this boxsize for all uses of gradient mock
-    np.save(os.path.join(path_to_mocks_dir, f"boxsize_{lognorm_file}"), L)
+    np.save(os.path.join(path_to_mocks_dir, f"boxsize"), L)
 
     # save lognormal set to mocks directory
     x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
     xs_clust = (np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2))
-    np.save(os.path.join(path_to_mocks_dir, f"lognormal_set_{lognorm_file}"), xs_clust)
+    np.save(os.path.join(path_to_mocks_dir, "lognormal_set"), xs_clust)
 
     # generate a random data set (same size as mock)
     xs_unclust = np.random.uniform(-L/2,L/2,(3,N))
-    np.save(os.path.join(path_to_mocks_dir, f"dead_set_{lognorm_file}"), xs_unclust)
+    np.save(os.path.join(path_to_mocks_dir, f"dead_set"), xs_unclust)
 
     # generate unit vector– this is the direction of the gradient
     if grad_dim == 1:
@@ -56,7 +56,9 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
 
     # normalize w_hat and print out result
     w_hat /= np.linalg.norm(w_hat)
-    print("grad dim = {}, w_hat = {}, m = {:.2f}, b = {:.2f}".format(grad_dim, w_hat, m, b))
+    ### might want to come back and save w_hat later
+
+    # print("grad dim = {}, w_hat = {}, m = {:.2f}, b = {:.2f}".format(grad_dim, w_hat, m, b))
 
     # for each catalog, make random uniform deviates
     rs_clust = np.random.uniform(size=N)

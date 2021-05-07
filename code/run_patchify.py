@@ -1,6 +1,6 @@
 from patchify_xi import patchify, xi, xi_in_patches
 from patches_lstsq_allbins import patches_lstsq_allbins
-from new_patches_lstsq_fit import patches_lstsq_fit
+from patches_lstsq_fit import patches_lstsq_fit
 
 import globals
 

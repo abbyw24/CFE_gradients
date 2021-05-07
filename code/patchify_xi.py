@@ -63,8 +63,6 @@ def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22, nthreads
 
     return r_avg, results_xi
 
-fig, ax = plt.subplots()
-
 # define function to find xi in each patch
 def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, randmult=randmult):
     # make sure all inputs have the right form
@@ -131,6 +129,8 @@ def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, r
     k = 0
     cmap = plt.cm.get_cmap("cool")
     ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
+
+    fig, ax = plt.subplots()
 
     for patch_id in patch_id_list:
         patch_data = mock_data[patch_ids_mock == patch_id]

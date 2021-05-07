@@ -20,7 +20,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
         assert isinstance(x, (int, float))
 
     # create desired path to mocks directory if it doesn't already exist
-    for sub_dir in ["mocks", "clust", "unclust", "plots"]:
+    for sub_dir in ["grad_mocks", "clust", "unclust", "plots"]:
         if not os.path.exists(f"{path_to_mocks_dir}/{sub_dir}"):
             os.makedirs(f"{path_to_mocks_dir}/{sub_dir}")
             print(f"created path {path_to_mocks_dir}/{sub_dir}")
@@ -84,7 +84,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
     xs = np.append(xs_clust.T[I_clust], xs_unclust.T[I_uncl], axis=0)
 
     # save xs
-    np.save(os.path.join(path_to_mocks_dir, f"mocks/mock_data_{mock_name}"), xs)
+    np.save(os.path.join(path_to_mocks_dir, f"grad_mocks/gradmock_data_{mock_name}"), xs)
 
     # also save clustered and unclustered separately (used to plot in separate colors later)
     xs_clust_grad = xs_clust.T[I_clust]

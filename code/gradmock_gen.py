@@ -26,6 +26,8 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
     # create desired path to mocks directory if it doesn't already exist
     if not os.path.exists(path_to_mocks_dir):
         os.makedirs(path_to_mocks_dir)
+        for sub_dir in ["mocks", "clust", "unclust"]:
+            os.makedirs(f"{path_to_mocks_dir}/{sub_dir}")
 
     # load in lognormal set
     Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f"{lognorm_file}.bin"))

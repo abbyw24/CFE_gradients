@@ -7,13 +7,7 @@ import globals
 
 globals.initialize_vals()  # brings in all the default parameters
 
-grad_dim = globals.grad_dim
-L = globals.L
-m_arr_perL = globals.m_arr_perL
-b_arr = globals.b_arr
-
 nbins = globals.nbins
-
 n_patches = globals.n_patches
 
 def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_patches, r_bin=2, nbins=nbins):

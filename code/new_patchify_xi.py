@@ -75,7 +75,7 @@ def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, r
     assert os.path.exists(boxsize_file)
 
     # load in mock data and boxsize
-    mock_data = np.load(os.path.join(path_to_mocks_dir, f"grad_mocks/gradmock_data_{mock_name}"))
+    mock_data = np.load(os.path.join(path_to_mocks_dir, f"grad_mocks/gradmock_data_{mock_name}.npy"))
     L = np.load(boxsize_file)
 
     # if there are negative values, shift by L/2, to 0 to L

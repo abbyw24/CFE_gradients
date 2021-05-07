@@ -15,9 +15,12 @@ path_to_lognorm_source = "/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_pa
 lognorm_file = "cat_L750_n2e-4_z057_patchy_lognormal_rlz0" #.bin
 path_to_mocks_dir = f"gradient_mocks/{grad_dim}D/mocks/{lognorm_file}"
 
-# loop through m and b arrays
-for m in m_arr_perL:
-    for b in b_arr:
-        mock_name = "m-{:.2f}-L_b-{:.2f}".format(m, b)
-        generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path_to_mocks_dir, mock_name)
-        print(f"mock {mock_name} generated")
+# # loop through m and b arrays
+# for m in m_arr_perL:
+#     for b in b_arr:
+#         mock_name = "m-{:.2f}-L_b-{:.2f}".format(m, b)
+#         generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path_to_mocks_dir, mock_name)
+
+# loop through lognormal realizations with m=0, b=0.5
+for n in range(0,100):
+    print(n)

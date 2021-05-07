@@ -77,7 +77,7 @@ def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, r
     assert os.path.exists(boxsize_file)
 
     # load in mock data and boxsize
-    mock_data = np.load(os.path.join(path_to_mocks_dir, f"grad_mocks/gradmock_data_{mock_name}.npy"))
+    mock_data = np.load(os.path.join(path_to_mocks_dir, f"gradmock_data/gradmock_data_{mock_name}.npy"))
     L = np.load(boxsize_file)
 
     # if there are negative values, shift by L/2, to 0 to L
@@ -153,8 +153,7 @@ def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, r
         "xi_patch_avg" : xi_patch_avg,
         "xi_full" : xi_full
         }
-    np.save(f"gradient_mocks/{grad_dim}D/patches/xi/xi_{n_patches}patches_"+mock_name, patches_xi, allow_pickle=True)
-    np.save(os.path.join(path_to_mocks_dir, f"patches/xi/xi_{n_patches}patches_{mock_name}"), patches_xi)
+    np.save(os.path.join(path_to_mocks_dir, f"patches/xi/xi_{n_patches}patches_{mock_name}"), patches_xi, allow_pickle=True)
 
     # plot results
     plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")

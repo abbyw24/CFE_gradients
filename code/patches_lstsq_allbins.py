@@ -25,7 +25,7 @@ def patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patche
         assert isinstance(x, (int, float))
 
     # create the needed subdirectories
-    create_subdirs(f"{path_to_mocks_dir}/patches", ["patch_centers", "xi", "plots", "lst_sq_fit"])
+    create_subdirs(f"{path_to_mocks_dir}/patches", ["patch_centers", "xi", "plots/allbins", "lst_sq_fit"])
 
     dim = ["x", "y", "z"]
     patch_centers = np.load(os.path.join(path_to_mocks_dir, f"patches/patch_centers/patch_centers_{mock_name}.npy"))
@@ -105,9 +105,9 @@ def patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patche
     }
 
     # save recovered gradient values
-    np.save(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/recovered_vals_{n_patches}patches_{mock_name}"), recovered_values)
+    np.save(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/recovered_vals_{n_patches}patches_{mock_name}"), recovered_values, allow_pickle=True)
     print(f"least square fit in all bins, {mock_name}, {n_patches} patches")
 
     plt.legend()
-    fig.savefig(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/allbins_{n_patches}patches_{mock_name}.png"))
+    fig.savefig(os.path.join(path_to_mocks_dir, f"patches/plots/allbins/allbins_{n_patches}patches_{mock_name}.png"))
     ax.cla()

@@ -83,7 +83,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
     xs = np.append(xs_clust.T[I_clust], xs_unclust.T[I_uncl], axis=0)
 
     # save xs
-    np.save(os.path.join(path_to_mocks_dir, f"grad_mocks/gradmock_data_{mock_name}"), xs)
+    np.save(os.path.join(path_to_mocks_dir, f"gradmock_data/gradmock_data_{mock_name}"), xs)
 
     # also save clustered and unclustered separately (used to plot in separate colors later)
     xs_clust_grad = xs_clust.T[I_clust]

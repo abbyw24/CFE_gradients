@@ -78,6 +78,10 @@ def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, r
     mock_data = np.load(os.path.join(path_to_mocks_dir, f"grad_mocks/gradmock_data_{mock_name}.npy"))
     L = np.load(boxsize_file)
 
+    print(mock_data.shape)
+    print(min(mock_data[0]), max(mock_data[0]))
+    assert False
+
     # if there are negative values, shift by L/2, to 0 to L
     if np.all(mock_data >= 0):
         mock_data += L/2

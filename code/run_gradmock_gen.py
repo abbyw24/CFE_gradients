@@ -19,4 +19,5 @@ path_to_mocks_dir = f"gradient_mocks/{grad_dim}D/mocks/{lognorm_file}"
 for m in m_arr_perL:
     for b in b_arr:
         mock_name = "m-{:.2f}-L_b-{:.2f}".format(m, b)
+        print(f"type(m): {type(m)}", f"type(b): {type(b)}")
         generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path_to_mocks_dir, mock_name)

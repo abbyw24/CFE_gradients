@@ -28,6 +28,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
         os.makedirs(path_to_mocks_dir)
         for sub_dir in ["mocks", "clust", "unclust"]:
             os.makedirs(f"{path_to_mocks_dir}/{sub_dir}")
+            print(f"{path_to_mocks_dir}/{sub_dir}")
 
     # load in lognormal set
     Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f"{lognorm_file}.bin"))
@@ -39,14 +40,12 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
 
     # save lognormal set to mocks directory
     x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
-    xs_clust = (np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2))
-    print(xs_clust.shape)
+    xs_clust = (np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2)).T
     np.save(os.path.join(path_to_mocks_dir, f"lognormal_set_{lognorm_file}"), xs_clust)
 
     # generate a random data set (same size as mock)
-    xs_uncl = np.random.uniform(-L/2,L/2,(3,N))
-    print(xs_uncl.shape)
-    # np.save("lognormal_data/dead_sets/dead_set_"+lognorm_file, xs_uncl.T)
+    xs_unclust = np.random.uniform(-L/2,L/2,(3,N)).T
+    np.save(os.path.join(path_to_mocks_dir, f"dead_set_{lognorm_file}"), xs_unclust)
 
     # generate unit vector– this is the direction of the gradient
     if grad_dim == 1:
@@ -70,7 +69,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
 
     # dot product onto the unit vectors
     ws_clust = np.dot(w_hat, xs_clust)
-    ws_uncl = np.dot(w_hat, xs_uncl)
+    ws_uncl = np.dot(w_hat, xs_unclust)
 
     # threshold
     ts_clust_squared = (m/L) * ws_clust + b  
@@ -85,17 +84,17 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
     I_uncl = rs_uncl**2 > ts_uncl_squared
 
     # append
-    xs = np.append(xs_clust.T[I_clust], xs_uncl.T[I_uncl], axis=0)
+    xs = np.append(xs_clust.T[I_clust], xs_unclust.T[I_uncl], axis=0)
 
     # save xs
     np.save(os.path.join(path_to_mocks_dir, f"mocks/mock_data_{mock_name}"), xs)
 
     # also save clustered and unclustered separately (used to plot in separate colors later)
     xs_clust_grad = xs_clust.T[I_clust]
-    xs_uncl_grad = xs_uncl.T[I_uncl]
+    xs_unclust_grad = xs_unclust.T[I_uncl]
 
     np.save(os.path.join(path_to_mocks_dir, f"clust/clust_data_{mock_name}"), xs_clust_grad)
-    np.save(os.path.join(path_to_mocks_dir, f"unclust/unclust_data_{mock_name}"), xs_uncl_grad)
+    np.save(os.path.join(path_to_mocks_dir, f"unclust/unclust_data_{mock_name}"), xs_unclust_grad)
 
     # visualisation! (we define z_max cutoff in function parameters)
 
@@ -116,7 +115,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
 
     # plot different colors for clust and uncl
     xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
-    xy_slice_uncl = xs_uncl_grad[np.where(xs_uncl_grad[:,2] < z_max)]
+    xy_slice_uncl = xs_unclust_grad[np.where(xs_unclust_grad[:,2] < z_max)]
 
     fig2, ax2 = plt.subplots()
     plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], ',', c="C0", label="clustered")

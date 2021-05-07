@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import read_lognormal
-from new_gradmock_gen import generate_gradmock
+from gradmock_gen import generate_gradmock
 import globals
 
 globals.initialize_vals()

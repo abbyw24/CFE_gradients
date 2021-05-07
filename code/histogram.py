@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
-def histogram(hist_type, grad_dim, data1, data2, label1="patches", label2="suave", nbins=10):
+def histogram(grad_dim, data1, data2, hist_name, path_to_hist_dir, label1="patches", label2="suave", nbins=10):
     dim = {
             0 : "x",
             1 : "y",
@@ -29,5 +30,5 @@ def histogram(hist_type, grad_dim, data1, data2, label1="patches", label2="suave
 
         plt.legend()
 
-        fig.savefig(f"gradient_mocks/{grad_dim}D/exp_vs_rec_hist_{dim[i]}_{hist_type}.png")
+        fig.savefig(os.path.join(path_to_hist_dir, f"hist_patches_vs_suave_{dim[i]}_{hist_name}.png"))
         plt.cla()

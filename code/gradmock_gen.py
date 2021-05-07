@@ -15,13 +15,13 @@ np.random.seed(123456)
 def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path_to_mocks_dir, mock_name, z_max=-50):
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)
-    assert isinstance(m, int or float)
-    assert isinstance(b, int or float)
+    assert type(m) == int or type(m) == float
+    assert type(b) == int or type(b) == float
     assert isinstance(path_to_lognorm_source, str)
     assert isinstance(lognorm_file, str)
     assert isinstance(path_to_mocks_dir, str)
     assert isinstance(mock_name, str)
-    assert isinstance(z_max, int or float)
+    assert type(z_max) == int or type(z_max) == float
 
     # load in lognormal set
     Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, lognorm_file))

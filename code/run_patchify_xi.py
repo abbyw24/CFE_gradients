@@ -1,4 +1,4 @@
-from new_patchify_xi import patchify, xi, xi_in_patches
+from patchify_xi import patchify, xi, xi_in_patches
 
 import globals
 

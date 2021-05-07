@@ -4,27 +4,24 @@ import matplotlib.image as img
 import math
 import Corrfunc
 import itertools as it
+import os
+from create_subdirs import create_subdirs
+
 import globals
 
 globals.initialize_vals()  # brings in all the default parameters
 
-grad_dim = globals.grad_dim
-L = globals.L
-loop = globals.loop
-m_arr_perL = globals.m_arr_perL
-b_arr = globals.b_arr
-
-randmult = globals.randmult
 periodic = globals.periodic
-rmin = globals.rmin
-rmax = globals.rmax
-nbins = globals.nbins
+randmult = globals.randmult
 nthreads = globals.nthreads
 
-n_sides = globals.n_sides
+n_patches = globals.n_patches
 
 # define patchify
-def patchify(data, boxsize, n_sides=2):
+def patchify(data, boxsize, n_patches=n_patches):
+    n_sides = n_patches**(1/3)
+    assert n_sides.is_integer()
+    n_sides = int(n_sides)
     nd, n_dim = data.shape
     boxsize_patch = boxsize/n_sides
     a = np.arange(n_sides)
@@ -44,7 +41,7 @@ def patchify(data, boxsize, n_sides=2):
     return patch_ids, idx_patches
 
 # define Corrfunc Landy-Szalay
-def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22):
+def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22, nthreads=12):
     # parameters
     r_edges = np.linspace(rmin, rmax, nbins+1)
     r_avg = 0.5*(r_edges[1:]+r_edges[:-1])
@@ -68,97 +65,107 @@ def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22):
 
 fig, ax = plt.subplots()
 
-# loop through the m and b values
-for m in m_arr_perL:
-    for b in b_arr:
-        mock_data = np.load(f"gradient_mocks/{grad_dim}D/mocks/grad_mock_m-{m}-L_b-{b}.npy")
-            # x,y,z values from -L/2 to L/2
-        # shift values to 0 to L
+# define function to find xi in each patch
+def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, randmult=randmult):
+    # make sure all inputs have the right form
+    assert isinstance(path_to_mocks_dir, str)
+    assert isinstance(mock_name, str)
+
+    # create the needed subdirectories
+    create_subdirs(f"{path_to_mocks_dir}/patches", ["patch_centers", "xi", "plots"])
+
+    # check that there is a corresponding boxsize file
+    boxsize_file = os.path.join(path_to_mocks_dir, f"boxsize.npy")
+    assert os.path.exists(boxsize_file)
+
+    # load in mock data and boxsize
+    mock_data = np.load(os.path.join(path_to_mocks_dir, f"grad_mocks/gradmock_data_{mock_name}.npy"))
+    L = np.load(boxsize_file)
+
+    # if there are negative values, shift by L/2, to 0 to L
+    if np.any(mock_data <= 0):
         mock_data += L/2
-        nd = len(mock_data)
+    else:
+        print("input mock data must be from -L/2 to L/2 (values shifted during xi_in_patches")
+        assert False
 
-        # create random set
-        nr = randmult*nd
-        rand_set = np.random.uniform(0, L, (nr,3))
+    nd = len(mock_data)
 
-        # patchify mock data and random set
-        patches_mock = patchify(mock_data, L, n_sides=n_sides)
-        patch_ids_mock = patches_mock[0]
-        patch_id_list_mock = np.unique(patch_ids_mock)
+    # create random set
+    nr = randmult*nd
+    rand_set = np.random.uniform(0, L, (nr,3))
 
-        patches_rand = patchify(rand_set, L, n_sides=n_sides)
-        patch_ids_rand = patches_rand[0]
-        patch_id_list_rand = np.unique(patch_ids_rand)
+    # patchify mock data and random set
+    patches_mock = patchify(mock_data, L, n_patches=n_patches)
+    patch_ids_mock = patches_mock[0]
+    patch_id_list_mock = np.unique(patch_ids_mock)
 
-        # make sure patch lists match for mock and random, that there's nothing weird going on
-        assert np.all(patch_id_list_mock == patch_id_list_rand)
-        patch_id_list = patch_id_list_mock
-        n_patches = len(patch_id_list)
-        patches_idx = patches_mock[1]
+    patches_rand = patchify(rand_set, L, n_patches=n_patches)
+    patch_ids_rand = patches_rand[0]
+    patch_id_list_rand = np.unique(patch_ids_rand)
 
-        # define patch centers by taking mean of the random set in each patch
-        patch_centers = []
-        for patch_id in patch_id_list:
-            patch_data = rand_set[patch_ids_rand == patch_id]
-            center = np.mean(patch_data, axis=0)
-            patch_centers.append(center)
-        patch_centers = np.array(patch_centers)
-        np.save(f"gradient_mocks/{grad_dim}D/patches/patch_centers/patch_centers_m-{m}-L_b-{b}_{n_patches}patches.npy", patch_centers)
+    # make sure patch lists match for mock and random, that there's nothing weird going on
+    assert np.all(patch_id_list_mock == patch_id_list_rand)
+    patch_id_list = patch_id_list_mock
+    n_patches = len(patch_id_list)
+    patches_idx = patches_mock[1]
 
-        # results for full mock
-        results_xi_full = xi(mock_data, rand_set)
-        xi_full = np.array(results_xi_full[1])
+    # define patch centers by taking mean of the random set in each patch
+    patch_centers = []
+    for patch_id in patch_id_list:
+        patch_data = rand_set[patch_ids_rand == patch_id]
+        center = np.mean(patch_data, axis=0)
+        patch_centers.append(center)
+    patch_centers = np.array(patch_centers)
+    np.save(os.path.join(path_to_mocks_dir, f"patches/patch_centers/patch_centers_{mock_name}"), patch_centers)
 
-        # define r_avg (this is the same for all xi)
-        r_avg = results_xi_full[0]
+    # results for full mock
+    results_xi_full = xi(mock_data, rand_set)
+    xi_full = np.array(results_xi_full[1])
 
-        # results in patches
-        xi_patches = []
-        k = 0
-        cmap = plt.cm.get_cmap("cool")
-        ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
+    # define r_avg (this is the same for all xi)
+    r_avg = results_xi_full[0]
 
-        for patch_id in patch_id_list:
-            patch_data = mock_data[patch_ids_mock == patch_id]
-            patch_rand = rand_set[patch_ids_rand == patch_id]
-            results_xi_patch = xi(patch_data, patch_rand)
-            xi_patch = results_xi_patch[1]
-            #print(f"m={m}, b={b}, patch {k+1} done")
+    # results in patches
+    xi_patches = []
+    k = 0
+    cmap = plt.cm.get_cmap("cool")
+    ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
 
-            plt.plot(r_avg, xi_patch, alpha=0.5, marker=".", label=patches_idx[k])
-            xi_patches.append(xi_patch)
-            k += 1
-        xi_patches = np.array(xi_patches)
+    for patch_id in patch_id_list:
+        patch_data = mock_data[patch_ids_mock == patch_id]
+        patch_rand = rand_set[patch_ids_rand == patch_id]
+        results_xi_patch = xi(patch_data, patch_rand)
+        xi_patch = results_xi_patch[1]
 
-        # average of patch results
-        xi_patch_avg = np.sum(xi_patches, axis=0)/len(xi_patches)
+        plt.plot(r_avg, xi_patch, alpha=0.5, marker=".", label=patches_idx[k])
+        xi_patches.append(xi_patch)
+        k += 1
+    xi_patches = np.array(xi_patches)
 
-        # save xi data– to load in separate file for least square fit
-        patches_xi = {
-            "r_avg" : r_avg,
-            "xi_patches" : xi_patches,
-            "xi_patch_avg" : xi_patch_avg,
-            "xi_full" : xi_full
-            }
-        np.save(f"gradient_mocks/{grad_dim}D/patches/xi/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.npy", patches_xi, allow_pickle=True)
+    # average of patch results
+    xi_patch_avg = np.sum(xi_patches, axis=0)/len(xi_patches)
 
-        # plot results
-        plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")
-        plt.plot(r_avg, xi_patch_avg, color="black", alpha=0.5, marker=".", label="Avg. of Patches")
-        # plot parameters
-        plt.xlabel(r'r ($h^{-1}$Mpc)')
-        plt.ylabel(r'$\xi$(r)')
-        plt.rcParams["axes.titlesize"] = 10
-        plt.title(f"Standard Estimator, Grad Mock Patches, {grad_dim}D, m={m}/L, b={b}")
-        plt.legend(prop={'size': 8})
-        fig.savefig(f"gradient_mocks/{grad_dim}D/patches/grad_xi_m-{m}-L_b-{b}_{n_patches}patches.png")
-        plt.cla()
+    # save xi data– to load in separate file for least square fit
+    patches_xi = {
+        "r_avg" : r_avg,
+        "xi_patches" : xi_patches,
+        "xi_patch_avg" : xi_patch_avg,
+        "xi_full" : xi_full
+        }
+    np.save(f"gradient_mocks/{grad_dim}D/patches/xi/xi_{n_patches}patches_"+mock_name, patches_xi, allow_pickle=True)
+    np.save(os.path.join(path_to_mocks_dir, f"patches/xi/xi_{n_patches}patches_{mock_name}"), patches_xi)
 
-if loop == False:
-    # pull up color mock for reference
-    fig2 = plt.figure()
-    ax = fig2.add_axes([0, 0, 1, 1])
-    ax.axis('off')
-    im = img.imread(f"gradient_mocks/{grad_dim}D/mocks_colored/color_grad_mock_m-{m}-L_b-{b}.png")
-    ax.imshow(im)
-    plt.show()
+    # plot results
+    plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")
+    plt.plot(r_avg, xi_patch_avg, color="black", alpha=0.5, marker=".", label="Avg. of Patches")
+    # plot parameters
+    plt.xlabel(r'r ($h^{-1}$Mpc)')
+    plt.ylabel(r'$\xi$(r)')
+    plt.rcParams["axes.titlesize"] = 10
+    plt.title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name}")
+    plt.legend(prop={'size': 8})
+    fig.savefig(os.path.join(path_to_mocks_dir, f"patches/plots/xi_{n_patches}patches_{mock_name}.png"))
+    plt.cla()
+
+    plt.close("all")

@@ -9,6 +9,8 @@ from create_subdirs import create_subdirs
 
 import globals
 
+globals.initialize_vals()  # brings in all the default parameters
+
 randmult = globals.randmult
 n_patches = globals.n_patches
 

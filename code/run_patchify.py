@@ -11,7 +11,6 @@ grad_dim = globals.grad_dim
 lognorm_file = globals.lognorm_file
 path_to_mocks_dir = globals.path_to_mocks_dir
 
-L = globals.L
 loop = globals.loop
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr

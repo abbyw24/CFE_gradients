@@ -11,8 +11,8 @@ grad_dim = globals.grad_dim
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 
-path_to_lognorm_source = "lss_data/lognormal_mocks/"
-lognorm_file = "cat_L750_n3e-4_lognormal_rlz0"
+path_to_lognorm_source = "/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy"           # locally: "lss_data/lognormal_mocks/"
+lognorm_file = "cat_L750_n2e-4_z057_patchy_lognormal_rlz0" #.bin
 path_to_mocks_dir = f"gradient_mocks/{grad_dim}D/mocks/{lognorm_file}"
 
 # loop through m and b arrays

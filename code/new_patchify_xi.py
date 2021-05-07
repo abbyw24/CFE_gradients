@@ -7,6 +7,11 @@ import itertools as it
 import os
 from create_subdirs import create_subdirs
 
+import globals
+
+randmult = globals.randmult
+n_patches = globals.n_patches
+
 # define patchify
 def patchify(data, boxsize, n_patches=n_patches):
     n_sides = n_patches**(1/3)

@@ -52,10 +52,14 @@ def patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patche
 
     assert len(xi_patches) == n_patches
 
-    print(xi_patches)
-
     # plot xi_patches
     fig, ax = plt.subplots()
+    # plot xi in each patch across all bins
+    cmap = plt.cm.get_cmap("cool")
+    ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
+    for patch in xi_patches:
+        plt.plot(r_avg, patch, alpha=0.5, marker=".")
+
     ax.set_title(f"Clustering amps in patches, {mock_name}")
     ax.set_xlabel(r"r ($h^{-1}$Mpc)")
     ax.set_ylabel(r"$\xi$(r)")
@@ -63,12 +67,6 @@ def patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patche
     # expected "strength of gradient"
     grad_expected = m/(b*L)
     ax.axhline(grad_expected, color="red", alpha=0.5)
-
-    # plot xi in each patch across all bins
-    cmap = plt.cm.get_cmap("cool")
-    ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
-    for patch in xi_patches:
-        plt.plot(r_avg, patch, alpha=0.5, marker=".")
 
     fits = []
     for r_bin in range(nbins):

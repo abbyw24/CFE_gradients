@@ -104,9 +104,9 @@ def patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patche
     }
 
     # save recovered gradient values
-    np.save(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/recovered_vals_{n_patches}_{mock_name}"), recovered_values)
+    np.save(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/recovered_vals_{n_patches}patches_{mock_name}"), recovered_values)
     print(f"least square fit in all bins, {mock_name}, {n_patches} patches")
 
     plt.legend()
-    fig.savefig(f"gradient_mocks/{grad_dim}D/patches/lst_sq_fit/allbins_m-{m}-L_b-{b}_{n_patches}patches.png")
+    fig.savefig(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/allbins_{n_patches}patches_{mock_name}.png")
     plt.cla()

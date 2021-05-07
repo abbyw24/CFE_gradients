@@ -52,6 +52,8 @@ def patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patche
 
     assert len(xi_patches) == n_patches
 
+    print(xi_patches)
+
     # plot xi_patches
     fig, ax = plt.subplots()
     ax.set_title(f"Clustering amps in patches, {mock_name}")

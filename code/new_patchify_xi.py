@@ -114,7 +114,7 @@ def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, r
         center = np.mean(patch_data, axis=0)
         patch_centers.append(center)
     patch_centers = np.array(patch_centers)
-    np.save(os.path.join(path_to_mocks_dir, f"patches/patch_centers/patch_centers_{mock_name}", patch_centers))
+    np.save(os.path.join(path_to_mocks_dir, f"patches/patch_centers/patch_centers_{mock_name}"), patch_centers)
 
     # results for full mock
     results_xi_full = xi(mock_data, rand_set)

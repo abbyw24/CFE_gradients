@@ -71,7 +71,7 @@ def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, r
     create_subdirs(f"{path_to_mocks_dir}/patches", ["patch_centers", "xi", "plots"])
 
     # check that there is a corresponding boxsize file
-    boxsize_file = os.path.join(path_to_mocks_dir, f"boxsize")
+    boxsize_file = os.path.join(path_to_mocks_dir, f"boxsize.npy")
     assert os.path.exists(boxsize_file)
 
     # load in mock data and boxsize

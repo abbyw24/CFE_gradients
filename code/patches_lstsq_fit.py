@@ -20,6 +20,11 @@ def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_
     # create the needed subdirectories
     create_subdirs(f"{path_to_mocks_dir}/patches", ["patch_centers", "xi", f"plots/bin{r_bin}", "lst_sq_fit"])
 
+    # check that there is a corresponding boxsize file
+    boxsize_file = os.path.join(path_to_mocks_dir, f"boxsize.npy")
+    assert os.path.exists(boxsize_file)
+    L = np.load(boxsize_file)
+
     dim = ["x", "y", "z"]
     patch_centers = np.load(os.path.join(path_to_mocks_dir, f"patches/patch_centers/patch_centers_{mock_name}.npy"))
     patch_centers -= L/2

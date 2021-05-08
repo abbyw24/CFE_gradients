@@ -87,7 +87,7 @@ def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_
     plt.legend()
 
     # save figure
-    fig2.savefig(os.path.join(path_to_mocks_dir, f"patches/plots/bin-{r_bin}_{n_patches}patches_{mock_name}.png"))
+    fig2.savefig(os.path.join(path_to_mocks_dir, f"patches/plots/bin{r_bin}/bin{r_bin}_{n_patches}patches_{mock_name}.png"))
     ax2.cla()
     plt.close("all")
 

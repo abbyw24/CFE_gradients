@@ -70,7 +70,7 @@ def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, r
     assert isinstance(mock_name, str)
 
     # create the needed subdirectories
-    create_subdirs(f"{path_to_mocks_dir}/patches", ["patch_centers", "xi", "plots"])
+    create_subdirs(f"{path_to_mocks_dir}/patches", ["patch_centers", "xi", "plots/xi"])
 
     # check that there is a corresponding boxsize file
     boxsize_file = os.path.join(path_to_mocks_dir, f"boxsize.npy")
@@ -164,7 +164,7 @@ def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, r
     plt.rcParams["axes.titlesize"] = 10
     ax.set_title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name}")
     plt.legend(prop={'size': 8})
-    fig.savefig(os.path.join(path_to_mocks_dir, f"patches/plots/xi_{n_patches}patches_{mock_name}.png"))
+    fig.savefig(os.path.join(path_to_mocks_dir, f"patches/plots/xi/xi_{n_patches}patches_{mock_name}.png"))
     ax.cla()
 
     plt.close("all")

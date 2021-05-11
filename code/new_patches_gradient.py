@@ -54,12 +54,12 @@ def patches_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name, z_max=
     xs_unclust_grad = np.load(os.path.join(path_to_mocks_dir, f"unclust/unclust_data_{mock_name}.npy"))
 
     xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
-    xy_slice_uncl = xs_unclust_grad[np.where(xs_unclust_grad[:,2] < z_max)]
+    xy_slice_unclust = xs_unclust_grad[np.where(xs_unclust_grad[:,2] < z_max)]
 
     fig, ax = plt.subplots()
 
-    plt.scatter(xy_slice_clust[:,0], xy_slice_clust[:,1], marker=',', c="C0")
-    plt.scatter(xy_slice_uncl[:,0], xy_slice_uncl[:,1], marker=',', c="orange")
+    plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], ',', c="C0")
+    plt.plot(xy_slice_unclust[:,0], xy_slice_unclust[:,1], ',', c="orange")
 
     # plot expected, recovered, and projection from origin (only in xy)
     V = np.array([grad_expected, grad_recovered, proj_rec_onto_exp])

@@ -109,11 +109,11 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
 
     # plot different colors for clust and uncl
     xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
-    xy_slice_uncl = xs_unclust_grad[np.where(xs_unclust_grad[:,2] < z_max)]
+    xy_slice_unclust = xs_unclust_grad[np.where(xs_unclust_grad[:,2] < z_max)]
 
     fig2, ax2 = plt.subplots()
     plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], ',', c="C0", label="clustered")
-    plt.plot(xy_slice_uncl[:,0], xy_slice_uncl[:,1], ',', c="orange", label="unclustered")
+    plt.plot(xy_slice_unclust[:,0], xy_slice_unclust[:,1], ',', c="orange", label="unclustered")
     plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], c="green", label=w_hat)   # plot vector w_hat (no z)
     ax2.set_aspect("equal")      # square aspect ratio
     # plt.ylim((-400,400))

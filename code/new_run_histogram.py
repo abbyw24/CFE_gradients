@@ -17,8 +17,7 @@ rmax = globals.rmax
 nbins = globals.nbins
 nthreads = globals.nthreads
 
-n_sides = globals.n_sides
-n_patches = n_sides**3
+n_patches = globals.n_patches
 
 def patches(method):
     if method == "patches":
@@ -38,7 +37,7 @@ for j in method:
     print(f"{hist_type} histogram, {j}")
     for m in m_arr_perL:
         for b in b_arr:
-            data = np.load(f"gradient_mocks/{grad_dim}D/{j}/exp_vs_rec_vals/{j}_exp_vs_rec_vals_m-{m}-L_b-{b}{patches(j)}.npy", allow_pickle=True).item()
+            data = np.load(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/exp_vs_rec_vals/patches_exp_vs_rec_{n_patches}patches_{mock_name}{patches(j)}.npy"), allow_pickle=True).item()
             grads_recovered.append(data["grad_recovered"])
 
     # add recovered gradients from this method to a dictionary entry
@@ -47,4 +46,4 @@ for j in method:
 patches_data = grads_recovered_dict["patches"]
 suave_data = grads_recovered_dict["suave"]
 
-histogram("yz", grad_dim, patches_data, suave_data)
+# histogram(patches_data, suave_data, 

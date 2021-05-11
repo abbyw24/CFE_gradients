@@ -14,7 +14,11 @@ n_patches = globals.n_patches
 
 # define function to import recovered fit values and nicely compare expected to recovered gradient in plot
 def patches_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name, z_max=-50, scale=200):
-
+    # make sure all inputs have the right form
+    assert isinstance(path_to_mocks_dir, str)
+    assert isinstance(mock_name, str)
+    for x in [grad_dim, m, b]:
+        assert isinstance(x, (int, float))
 
     # create the needed subdirectories
     create_subdirs(f"{path_to_mocks_dir}/patches", ["plots/exp_vs_rec", "lst_sq_fit/exp_vs_rec_vals"])

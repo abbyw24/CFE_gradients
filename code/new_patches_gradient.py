@@ -94,6 +94,6 @@ def patches_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name, z_max=
         "mean_sq_err" : mean_sq_err
     }
 
-    np.save(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/exp_vs_rec_vals/patches_exp_vs_rec_{n_patches}patches_{mock_name}", exp_vs_rec_vals, allow_pickle=True)
+    np.save(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/exp_vs_rec_vals/patches_exp_vs_rec_{n_patches}patches_{mock_name}"), exp_vs_rec_vals, allow_pickle=True)
 
     print(" ")      # line break for nice loop print formatting

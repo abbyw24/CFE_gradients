@@ -58,8 +58,8 @@ def patches_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name, z_max=
 
     fig, ax = plt.subplots()
 
-    plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], marker=',', c="C0")
-    plt.plot(xy_slice_uncl[:,0], xy_slice_uncl[:,1], marker=',', c="orange")
+    plt.scatter(xy_slice_clust[:,0], xy_slice_clust[:,1], marker=',', c="C0")
+    plt.scatter(xy_slice_uncl[:,0], xy_slice_uncl[:,1], marker=',', c="orange")
 
     # plot expected, recovered, and projection from origin (only in xy)
     V = np.array([grad_expected, grad_recovered, proj_rec_onto_exp])

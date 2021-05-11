@@ -40,6 +40,8 @@ def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_
 
     C_inv = np.linalg.inv(C)
 
+    print(C, C_inv)
+
     # Y matrix = clustering amplitudes
     patchify_data = np.load(os.path.join(path_to_mocks_dir, f"patches/xi/xi_{n_patches}patches_{mock_name}.npy"), allow_pickle=True).item()
     r_avg = patchify_data["r_avg"]
@@ -53,26 +55,12 @@ def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_
     Y = xi_patches[:,r_bin-1]
     r_avg_bin = r_avg[r_bin-1]*np.ones(n_patches)
 
-    # # plot xi_patches
-    # fig1, ax1 = plt.subplots()
-    # ax1.set_title(f"Clustering amps in patches, {mock_name}")
-    # ax1.set_xlabel(r"r ($h^{-1}$Mpc)")
-    # ax1.set_ylabel(r"$\xi$(r)")
-    # cmap = plt.cm.get_cmap("cool")
-    # ax1.set_prop_cycle('color',cmap(np.linspace(0,1,n_patches)))
-    # for patch in xi_patches:
-    #     plt.plot(r_avg, patch, alpha=0.5, marker=".")
-    # plt.scatter(r_avg_bin, Y, alpha=0.5, color="black")
-    # plt.legend()
-    # ax1.cla()
-
     # calculate matrix X = [b,m]
     fig2, ax2 = plt.subplots()
     # color map– color code points to match corresponding patch center in grad_xi figure
     cmap = plt.cm.get_cmap("cool")
     ax2.set_prop_cycle('color',cmap(np.linspace(0,1,n_patches)))
     plt.scatter(patch_centers[:,0], Y, marker="o", c=Y, cmap="cool", label=f"Mock: {grad_dim}D, {mock_name}")
-    ax2.set_title(f"Linear least square fit, Clustering amps in patches (bin {r_bin})")
     ax2.set_xlabel(r"Patch Centers ($h^{-1}$Mpc)")
     ax2.set_ylabel(r"$\xi$(r)")
     x = np.linspace(min(patch_centers[:,0]),max(patch_centers[:,0]))
@@ -81,9 +69,12 @@ def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_
     bestfit_colors = ["blue", "grey", "silver"]
     X = np.linalg.inv(A.T @ C_inv @ A) @ (A.T @ C_inv @ Y)
     b_fit = X[0]
+    expected = m/(b*L)
+    recovered = X[1]/b_fit
     for i in range(len(dim)):
         plt.plot(x, X[i+1]*x + b_fit, color=bestfit_colors[i], label=dim[i]+" best fit: y = "+str("%.8f" %X[i+1])+"x + "+str("%.6f" %b_fit))
     plt.plot(patch_centers[0,0], Y[0], alpha=0.0, label="{:.8f}".format(m/(b*L)))
+    ax2.set_title(f"Linear least square fit, Clustering amps in patches (bin {r_bin}); \n Expected: {expected}, Recovered: {recovered}, Ratio: {recovered/expected}")
     plt.legend()
 
     # save figure

@@ -50,8 +50,8 @@ def patches_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name, z_max=
     residual = grad_recovered - grad_expected
 
     # load in mock data
-    xs_clust_grad = np.load(os.path.join(path_to_mocks_dir, f"clust/clust_data_{mock_name}"))
-    xs_unclust_grad = np.load(os.path.join(path_to_mocks_dir, f"unclust/unclust_data_{mock_name}"))
+    xs_clust_grad = np.load(os.path.join(path_to_mocks_dir, f"clust/clust_data_{mock_name}.npy"))
+    xs_unclust_grad = np.load(os.path.join(path_to_mocks_dir, f"unclust/unclust_data_{mock_name}.npy"))
 
     xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
     xy_slice_uncl = xs_unclust_grad[np.where(xs_unclust_grad[:,2] < z_max)]

@@ -29,11 +29,11 @@ for m in m_arr_perL:
     for b in b_arr:
         mock_name = "m-{:.2f}-L_b-{:.2f}".format(m, b)
 
-        # divide mock into patches and compute correlation function in each patch
-        xi_in_patches(grad_dim, path_to_mocks_dir, mock_name)
+        # # divide mock into patches and compute correlation function in each patch
+        # xi_in_patches(grad_dim, path_to_mocks_dir, mock_name)
 
-        # perform a least square fit of the clustering amplitudes in each patch
-        patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name)
+        # # perform a least square fit of the clustering amplitudes in each patch
+        # patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name)
 
         # least square fit in bin 2
         patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name)

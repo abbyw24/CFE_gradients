@@ -15,6 +15,8 @@ from Corrfunc.utils import evaluate_xi
 from Corrfunc.utils import convert_3d_counts_to_cf
 from colossus.cosmology import cosmology
 
+from create_subdirs import create_subdirs
+
 import globals
 
 globals.initialize_vals()  # brings in all the default parameters

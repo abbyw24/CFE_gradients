@@ -211,6 +211,6 @@ def suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name):
         "mean_sq_err" : mean_sq_err
     }
 
-    np.save(os.path.join(path_to_mocks_dir, f"suave/recovered/exp_vs_rec_vals/suave_exp_vs_rec_vals_{mock_name}", exp_vs_rec_vals, allow_pickle=True)
+    np.save(os.path.join(path_to_mocks_dir, f"suave/recovered/exp_vs_rec_vals/suave_exp_vs_rec_vals_{mock_name}"), exp_vs_rec_vals, allow_pickle=True)
 
     print(" ")      # line break for nice loop print formatting

@@ -91,18 +91,6 @@ def suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name):
     r = bases[:,0]
     base_vals = bases[:,1]
 
-    # non-loop-required plot parameters
-    v_min = -L/2.
-    v_max = L/2.
-    vs_norm = matplotlib.colors.Normalize(vmin=v_min, vmax=v_max)
-    cmap = matplotlib.cm.get_cmap('cool')
-    nvs = 10
-    vs = np.linspace(v_min, v_max, nvs)
-
-    # check that there is a corresponding boxsize file
-    boxsize_file = os.path.join(path_to_mocks_dir, f"boxsize.npy")
-    assert os.path.exists(boxsize_file)
-
     # load in mock data and boxsize
     mock_data = np.load(os.path.join(path_to_mocks_dir, f"gradmock_data/gradmock_data_{mock_name}.npy"))
     L = np.load(boxsize_file)
@@ -116,6 +104,18 @@ def suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name):
 
     nd = len(mock_data)
     x, y, z = mock_data.T
+
+    # non-loop-required plot parameters
+    v_min = -L/2.
+    v_max = L/2.
+    vs_norm = matplotlib.colors.Normalize(vmin=v_min, vmax=v_max)
+    cmap = matplotlib.cm.get_cmap('cool')
+    nvs = 10
+    vs = np.linspace(v_min, v_max, nvs)
+
+    # check that there is a corresponding boxsize file
+    boxsize_file = os.path.join(path_to_mocks_dir, f"boxsize.npy")
+    assert os.path.exists(boxsize_file)
 
     # random set
     nr = randmult*nd

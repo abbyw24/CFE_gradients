@@ -91,6 +91,10 @@ def suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name):
     r = bases[:,0]
     base_vals = bases[:,1]
 
+    # check that there is a corresponding boxsize file
+    boxsize_file = os.path.join(path_to_mocks_dir, f"boxsize.npy")
+    assert os.path.exists(boxsize_file)
+
     # load in mock data and boxsize
     mock_data = np.load(os.path.join(path_to_mocks_dir, f"gradmock_data/gradmock_data_{mock_name}.npy"))
     L = np.load(boxsize_file)
@@ -112,10 +116,6 @@ def suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name):
     cmap = matplotlib.cm.get_cmap('cool')
     nvs = 10
     vs = np.linspace(v_min, v_max, nvs)
-
-    # check that there is a corresponding boxsize file
-    boxsize_file = os.path.join(path_to_mocks_dir, f"boxsize.npy")
-    assert os.path.exists(boxsize_file)
 
     # random set
     nr = randmult*nd

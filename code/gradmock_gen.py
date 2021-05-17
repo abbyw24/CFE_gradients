@@ -19,7 +19,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
         assert isinstance(x, (int, float))
 
     # create desired path to mocks directory if it doesn't already exist
-    sub_dirs = ["gradmock_data", "clust", "unclust", "plots"]
+    sub_dirs = ["gradmock_data", "clust", "unclust", "plots/colored_mocks", "plots/mocks"]
     create_subdirs(path_to_mocks_dir, sub_dirs)
 
     # load in lognormal set

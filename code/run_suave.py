@@ -1,4 +1,4 @@
-from new_suave_gradient import cosmo_bases, suave_exp_vs_rec_vals
+from suave_gradient import cosmo_bases, suave_exp_vs_rec_vals
 
 import globals
 

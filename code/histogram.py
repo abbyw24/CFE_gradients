@@ -33,15 +33,17 @@ def histogram(data1, data2, label1, label2, path_to_hist_dir, hist_name, nbins=1
 
         plt.legend()
 
-        fig.savefig(os.path.join(path_to_hist_dir, hist_name))
+        fig.savefig(os.path.join(path_to_hist_dir, f"{hist_name}_{dim[i]}.png"))
         plt.cla()
 
-def hist_patches_vs_suave(patches_data, suave_data, path_to_mocks_dir):
+def hist_patches_vs_suave_1rlz(patches_data, suave_data, path_to_mocks_dir):
+    assert isinstance(rlz_name, str)
+
     # create desired path to mocks directory if it doesn't already exist
     sub_dirs = ["plots/histograms"]
     create_subdirs(path_to_mocks_dir, sub_dirs)
 
     path_to_hist_dir = os.path.join(path_to_mocks_dir, f"plots/histograms")
-    hist_name = f"hist_patches_vs_suave_{dim[i]}.png"
+    hist_name = f"hist_patches_vs_suave_"
 
     histogram(patches_data, suave_data, label1="patches", label2="suave", path_to_hist_dir, hist_name)

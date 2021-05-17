@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os
 
 from histogram import histogram
-from histogram import hist_patches_vs_suave
+from histogram import hist_patches_vs_suave_1rlz
 import globals
 
 globals.initialize_vals()  # brings in all the default parameters
@@ -53,4 +53,4 @@ for j in method:
 patches_data = grads_recovered_dict["patches"]
 suave_data = grads_recovered_dict["suave"]
 
-hist_patches_vs_suave(patches_data, suave_data, path_to_mocks_dir)
+hist_patches_vs_suave_1rlz(patches_data, suave_data, path_to_mocks_dir)

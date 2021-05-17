@@ -104,7 +104,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
     ax1.set_ylabel("y (Mpc/h)")
     ax1.set_title(mock_name)
     ax1.legend()
-    fig1.savefig(os.path.join(path_to_mocks_dir, f"plots/mock_{mock_name}.png"))
+    fig1.savefig(os.path.join(path_to_mocks_dir, f"plots/mocks/mock_{mock_name}.png"))
     plt.cla()
 
     # plot different colors for clust and uncl
@@ -122,7 +122,7 @@ def generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path
     ax2.set_ylabel("y (Mpc/h)")
     ax2.set_title(mock_name)
     ax2.legend()
-    fig2.savefig(os.path.join(path_to_mocks_dir, f"plots/color_mock_{mock_name}.png"))
+    fig2.savefig(os.path.join(path_to_mocks_dir, f"plots/color_mocks/color_mock_{mock_name}.png"))
     plt.cla()
 
     plt.close("all")

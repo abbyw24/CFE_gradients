@@ -1,13 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import globals
+import os
 
 from histogram import histogram
+from histogram import hist_patches_vs_suave_1rlz
+import globals
 
 globals.initialize_vals()  # brings in all the default parameters
 
+path_to_mocks_dir = globals.path_to_mocks_dir
+
 grad_dim = globals.grad_dim
-L = globals.L
 loop = globals.loop
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
@@ -18,45 +21,36 @@ rmax = globals.rmax
 nbins = globals.nbins
 nthreads = globals.nthreads
 
-n_sides = globals.n_sides
-n_patches = n_sides**3
+n_patches = globals.n_patches
 
-def patches(method):
+def method_path(method, mock_name):
     if method == "patches":
-        return f"_{n_patches}patches"
+        return f"patches/lst_sq_fit/exp_vs_rec_vals/patches_exp_vs_rec_{n_patches}patches_{mock_name}.npy"
+    elif method == "suave":
+        return f"suave/recovered/exp_vs_rec_vals/suave_exp_vs_rec_{mock_name}.npy"
     else:
-        return ""
+        return "'method' must be either 'patches' or 'suave'"
 
 ## recovered gradient should have the form (3, nrealizations)
 
-### specify hist_type out of "yz" or "null-downsampled"
-hist_type = "yz"
-###
-
+# pull out recovered gradients that we need for the histogram
 method = ["suave", "patches"]
-
 grads_recovered_dict = {}
 
 for j in method:
     # create list to add the recovered gradients (shape (3,)) from each realization
     grads_recovered = []
-    if hist_type == "yz":
-        print(f"{hist_type} histogram, {j}")
-        for m in m_arr_perL:
-            for b in b_arr:
-                data = np.load(f"gradient_mocks/{grad_dim}D/{j}/exp_vs_rec_vals/{j}_exp_vs_rec_vals_m-{m}-L_b-{b}{patches(j)}.npy", allow_pickle=True).item()
-                grads_recovered.append(data["grad_recovered"])
-
-    elif hist_type == "null-full":
-        print(f"{hist_type} histogram, {j}")
-        assert False
-    else:
-        print("hist_type must be either 'yz' or 'null-full'")
-
+    print(f"histogram, {j}")
+    for m in m_arr_perL:
+        for b in b_arr:
+            mock_name = "m-{:.2f}-L_b-{:.2f}".format(m, b)
+            data = np.load(os.path.join(path_to_mocks_dir, method_path(j, mock_name)), allow_pickle=True).item()
+            assert isinstance(data, dict)
+            grads_recovered.append(data["grad_recovered"])
     # add recovered gradients from this method to a dictionary entry
     grads_recovered_dict[j] = np.array(grads_recovered)
 
 patches_data = grads_recovered_dict["patches"]
 suave_data = grads_recovered_dict["suave"]
 
-histogram("yz", grad_dim, patches_data, suave_data)
+hist_patches_vs_suave_1rlz(patches_data, suave_data, path_to_mocks_dir)

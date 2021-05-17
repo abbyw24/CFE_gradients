@@ -87,5 +87,9 @@ for m in m_arr_perL:
         grad_rec_s = suave_data["grad_recovered"]
         grads_exp_s.append(grad_exp_s)
         grads_rec_s.append(grad_rec_s)
+grads_exp_p = np.array(grads_exp_p)
+grads_rec_p = np.array(grads_rec_p)
+grads_exp_s = np.array(grads_exp_s)
+grads_rec_s = np.array(grads_rec_s)
 
 scatter_patches_vs_suave_1rlz(grads_exp_p, grads_rec_p, grads_exp_s, grads_rec_s, path_to_mocks_dir)

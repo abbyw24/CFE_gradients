@@ -37,8 +37,6 @@ def histogram(data1, data2, label1, label2, path_to_hist_dir, hist_name, nbins=1
         plt.cla()
 
 def hist_patches_vs_suave_1rlz(patches_data, suave_data, path_to_mocks_dir):
-    assert isinstance(rlz_name, str)
-
     # create desired path to mocks directory if it doesn't already exist
     sub_dirs = ["plots/histograms"]
     create_subdirs(path_to_mocks_dir, sub_dirs)

@@ -10,7 +10,6 @@ globals.initialize_vals()  # brings in all the default parameters
 path_to_mocks_dir = globals.path_to_mocks_dir
 
 grad_dim = globals.grad_dim
-L = globals.L
 loop = globals.loop
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
@@ -47,7 +46,7 @@ def scatter_patches_vs_suave_1rlz(grads_exp_patches, grads_rec_patches, grads_ex
     sub_dirs = ["plots/scatter"]
     create_subdirs(path_to_mocks_dir, sub_dirs)
     path_to_scatter_dir = os.path.join(path_to_mocks_dir, f"plots/scatter")
-    scatter_name = f"scatter_patches_vs_suave_"
+    scatter_name = f"scatter_patches_vs_suave"
 
     # make sure all inputs have the right form
     assert grads_exp_patches.shape == grads_exp_suave.shape == grads_rec_patches.shape == grads_rec_suave.shape
@@ -63,8 +62,8 @@ def scatter_patches_vs_suave_1rlz(grads_exp_patches, grads_rec_patches, grads_ex
 
         for j in range(grads_exp_patches):
             plt.plot(grads_exp_patches[j,0], grads_rec_patches[j,0], marker=".", color="C0", alpha=0.5, label=label_p(k))
-        for j in range(grads_exp_patches):
             plt.plot(grads_exp_suave[j,0], grads_rec_suave[j,0], marker=".", color="orange", alpha=0.5, label=label_p(k))
+            k += 1
         
         fig.savefig(os.path.join(path_to_scatter_dir, f"{scatter_name}_{dim[i]}.png"))
         plt.cla()

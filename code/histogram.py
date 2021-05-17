@@ -42,6 +42,6 @@ def hist_patches_vs_suave_1rlz(patches_data, suave_data, path_to_mocks_dir):
     create_subdirs(path_to_mocks_dir, sub_dirs)
 
     path_to_hist_dir = os.path.join(path_to_mocks_dir, f"plots/histograms")
-    hist_name = f"hist_patches_vs_suave_"
+    hist_name = f"hist_patches_vs_suave"
 
     histogram(patches_data, suave_data, "patches", "suave", path_to_hist_dir, hist_name)

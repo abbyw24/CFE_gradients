@@ -65,6 +65,11 @@ def scatter_patches_vs_suave_1rlz(grads_exp_patches, grads_rec_patches, grads_ex
             plt.plot(grads_exp_suave[j,i], grads_rec_suave[j,i], marker=".", color="orange", alpha=0.5, label=label_p(k))
             k += 1
         
+        # plot line y = x (the data points would fall on this line if the expected and recovered gradients matched up perfectly)
+        x = np.linspace(min(grads_exp_patches), max(grads_exp_patches), 10)
+        plt.plot(x, x, color="black", alpha=0.5)
+        plt.legend()
+        
         fig.savefig(os.path.join(path_to_scatter_dir, f"{scatter_name}_{dim[i]}.png"))
         plt.cla()
 

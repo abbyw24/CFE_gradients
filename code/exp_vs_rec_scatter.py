@@ -60,9 +60,9 @@ def scatter_patches_vs_suave_1rlz(grads_exp_patches, grads_rec_patches, grads_ex
         ax.set_ylabel("Recovered Gradient")
         ax.set_title(f"Expected vs. Recovered Gradient, {dim[i]}")
 
-        for j in range(grads_exp_patches):
-            plt.plot(grads_exp_patches[j,0], grads_rec_patches[j,0], marker=".", color="C0", alpha=0.5, label=label_p(k))
-            plt.plot(grads_exp_suave[j,0], grads_rec_suave[j,0], marker=".", color="orange", alpha=0.5, label=label_p(k))
+        for j in range(len(grads_exp_patches[:,0])):
+            plt.plot(grads_exp_patches[j,i], grads_rec_patches[j,i], marker=".", color="C0", alpha=0.5, label=label_p(k))
+            plt.plot(grads_exp_suave[j,i], grads_rec_suave[j,i], marker=".", color="orange", alpha=0.5, label=label_p(k))
             k += 1
         
         fig.savefig(os.path.join(path_to_scatter_dir, f"{scatter_name}_{dim[i]}.png"))

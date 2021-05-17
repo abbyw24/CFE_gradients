@@ -46,4 +46,4 @@ def hist_patches_vs_suave_1rlz(patches_data, suave_data, path_to_mocks_dir):
     path_to_hist_dir = os.path.join(path_to_mocks_dir, f"plots/histograms")
     hist_name = f"hist_patches_vs_suave_"
 
-    histogram(patches_data, suave_data, label1="patches", label2="suave", path_to_hist_dir, hist_name)
+    histogram(patches_data, suave_data, "patches", "suave", path_to_hist_dir, hist_name)

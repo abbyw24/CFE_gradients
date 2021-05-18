@@ -27,7 +27,7 @@ def initialize_vals():
         lognorm_file = "cat_L750_n2e-4_z057_patchy_lognormal_rlz1"
         for m in m_arr_perL:
             for b in b_arr:
-                mock_name = f"{}_m-{:.2f}-L_b-{:.2f}".format(lognorm_file, m, b)
+                mock_name = "{}_m-{:.2f}-L_b-{:.2f}".format(lognorm_file, m, b)
                 mock_name_list.append(mock_name)
 
     elif grad_type == "1m":
@@ -38,7 +38,7 @@ def initialize_vals():
             lognorm_file_list.append(f"cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
 
         for lognorm_file in lognorm_file_list:
-            mock_name = f"{}_m-{:.2f}-L_b-{:.2f}".format(lognorm_file, m, b)
+            mock_name = "{}_m-{:.2f}-L_b-{:.2f}".format(lognorm_file, m, b)
             mock_name_list.append(mock_name)
     
     elif grad_type == "1rlz_per_m":
@@ -47,14 +47,14 @@ def initialize_vals():
 
         lognorm_file_list = []
         for i in range(201):
-            lognorm_file_list.append(f"cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
+            lognorm_file_list.append("cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
         lognorm_file_arr = np.array(lognorm_file_list)
 
         # make sure each m value corresponds to its own lognorm rlz
         assert len(m_arr_perL) == len(lognorm_file_arr)
 
         for i in range(len(m_arr_perL)):
-            mock_name = f"{}_m-{:.2f}-L_b-{:.2f}".format(lognorm_file_list[i], m_arr_perL[i], b)
+            mock_name = "{}_m-{:.2f}-L_b-{:.2f}".format(lognorm_file_list[i], m_arr_perL[i], b)
             mock_name_list.append(mock_name)
     
     else:

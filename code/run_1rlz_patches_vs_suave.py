@@ -43,7 +43,7 @@ for m in m_arr_perL:
         # SUAVE
         suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name)
 
-        # PATCHES VS SUAVE, EXPECTED VS RECOVERED
-        scatter_patches_vs_suave_1rlz(mock_name, path_to_mocks_dir)
-        hist_patches_vs_suave_1rlz(mock_name, path_to_mocks_dir)
+# PATCHES VS SUAVE, EXPECTED VS RECOVERED
+scatter_patches_vs_suave_1rlz(mock_name, path_to_mocks_dir)
+hist_patches_vs_suave_1rlz(mock_name, path_to_mocks_dir)
 

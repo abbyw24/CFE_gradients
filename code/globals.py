@@ -19,7 +19,7 @@ def initialize_vals():
     b = 0.5
 
     global grad_type
-    grad_type = "1rlz"
+    grad_type = "1m"
 
     if grad_type == "1rlz":
         m_arr_perL = np.linspace(-1.0, 1.0, 201)

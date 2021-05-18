@@ -66,8 +66,6 @@ def suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name):
     assert isinstance(mock_name, str)
     for x in [grad_dim, m, b]:
         assert isinstance(x, (int, float))
-    
-    print(mock_name)
 
     # create the needed subdirectories
     create_subdirs(f"{path_to_mocks_dir}/suave", ["plots/recovered_grad", "recovered/exp_vs_rec_vals"])
@@ -132,18 +130,18 @@ def suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name):
     dd_res, dd_proj, _ = DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z, weights1=weights, 
                             proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
                             periodic=periodic, weight_type=weight_type)
-    print("DD:", np.array(dd_proj))
+    # print("DD:", np.array(dd_proj))
 
     dr_res, dr_proj, _ = DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z, weights1=weights, 
                             X2=xr, Y2=yr, Z2=zr, weights2=weights_r, 
                             proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
                             periodic=periodic, weight_type=weight_type)
-    print("DR:", np.array(dr_proj))
+    # print("DR:", np.array(dr_proj))
 
     rr_res, rr_proj, qq_proj = DDsmu(1, nthreads, r_edges, mumax, nmubins, xr, yr, zr, weights1=weights_r, 
                                     proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
                                     periodic=periodic, weight_type=weight_type)
-    print("RR:", np.array(rr_proj))
+    # print("RR:", np.array(rr_proj))
 
     amps = compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj, rr_proj, qq_proj)
     xi_proj = evaluate_xi(amps, r_fine, proj_type, rbins=r_edges, projfn=projfn)
@@ -156,25 +154,25 @@ def suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name):
     r_avg = 0.5*(r_edges[:-1] + r_edges[1:])
 
     # recovered gradient
-    print("amps = ", amps)
+    # print("amps = ", amps)
     w_cont = amps[1:]/amps[0]
     w_cont_norm = np.linalg.norm(w_cont)
     w_cont_hat = w_cont/w_cont_norm
-    print("w_cont = ", w_cont)
-    print(f"||w_cont|| = {w_cont_norm:.6f}")
+    # print("w_cont = ", w_cont)
+    # print(f"||w_cont|| = {w_cont_norm:.6f}")
     #b_guess = 0.5
     #m_recovered_perL = w_cont_norm*b_guess*L
     grad_recovered = w_cont 
 
-    print("recovered gradient (a/a_0) =", grad_recovered)
+    # print("recovered gradient (a/a_0) =", grad_recovered)
 
     # expected gradient (only in x direction)
     grad_expected = np.array([m/(b*L),0,0])
-    print("expected gradient (m_input/b_input)w_hat =", grad_expected)
+    # print("expected gradient (m_input/b_input)w_hat =", grad_expected)
 
     # mean squared error just to see for now how close we are
     mean_sq_err = (1/len(grad_expected))*np.sum((grad_recovered - grad_expected)**2)
-    print(f"mean squared error = {mean_sq_err}")
+    # print(f"mean squared error = {mean_sq_err}")
 
     fig, ax = plt.subplots()
 
@@ -213,5 +211,7 @@ def suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name):
     }
 
     np.save(os.path.join(path_to_mocks_dir, f"suave/recovered/exp_vs_rec_vals/suave_exp_vs_rec_{mock_name}"), exp_vs_rec_vals, allow_pickle=True)
+
+    print(f"suave, {mock_name}")
 
     print(" ")      # line break for nice loop print formatting

@@ -6,6 +6,7 @@ from gradmock_gen import generate_gradmock
 from patchify_xi import xi_in_patches
 from patches_lstsq_allbins import patches_lstsq_allbins
 from patches_lstsq_fit import patches_lstsq_fit
+from patches_gradient import patches_exp_vs_rec_vals
 from suave_gradient import suave_exp_vs_rec_vals
 from exp_vs_rec_scatter import scatter_patches_vs_suave_1rlz
 from exp_vs_rec_histogram import hist_patches_vs_suave_1rlz
@@ -40,6 +41,9 @@ for lognorm_file in lognorm_file_arr:
 
             # least square fit in bin 2
             patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name)
+
+            # exp vs rec vals
+            suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name)
 
             # SUAVE
             suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name)

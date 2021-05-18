@@ -9,7 +9,7 @@ def initialize_vals():
     path_to_lognorm_source = "/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy"
 
     # lognorm rlz loop
-    lognorm_loop = True
+    lognorm_loop = False
 
     global lognorm_file_arr
     # if loop is false, the script will use:

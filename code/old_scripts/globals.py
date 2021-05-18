@@ -36,6 +36,15 @@ def initialize_vals():
             lognorm_file_list.append(f"cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
         lognorm_file_arr = np.array(lognorm_file_list)
     
+    elif grad_type == "1rlz_per_m":
+        m_arr_perL = np.linspace(-1.0, 1.0, 201)
+        b_arr = np.array([0.5])
+
+        lognorm_file_list = []
+        for i in range(101):
+            lognorm_file_list.append(f"cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
+        lognorm_file_arr = np.array(lognorm_file_list)
+    
     else:
         print("'grad_type' must be '1rlz' or '1m'")
         assert False

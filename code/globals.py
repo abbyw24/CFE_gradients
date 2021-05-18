@@ -8,26 +8,9 @@ def initialize_vals():
     global path_to_lognorm_source
     path_to_lognorm_source = "/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy"
 
-    # lognorm rlz loop
-    lognorm_loop = True
-
     global lognorm_file_arr
     # if loop is false, the script will use:
     lognorm_file = "cat_L750_n2e-4_z057_patchy_lognormal_rlz1" #.bin        # which lognormal realization to use
-
-    if lognorm_loop == True:
-        lognorm_file_list = []
-        for i in range(101):
-            lognorm_file_list.append(f"cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
-        lognorm_file_arr = np.array(lognorm_file_list)
-    elif lognorm_loop == False:
-        lognorm_file_arr = np.array([lognorm_file])
-    else:
-        print("lognorm_loop must be True or False")
-        assert False
-
-    # m and b loop
-    mb_loop = False         # whether to loop through entire m and b array
 
     global m_arr_perL
     global b_arr
@@ -35,14 +18,26 @@ def initialize_vals():
     m = 0.5
     b = 0.5
 
-    if mb_loop == True:
+    global grad_type
+    grad_type = "1rlz"
+
+    if grad_type = "1rlz":
         m_arr_perL = np.linspace(-1.0, 1.0, 201)
         b_arr = np.array([0.5])
-    elif mb_loop == False:
+
+        lognorm_file_arr = np.array([lognorm_file])
+
+    elif grad_type = "1m":
         m_arr_perL = np.array([m])
         b_arr = np.array([b])
+
+        lognorm_file_list = []
+        for i in range(101):
+            lognorm_file_list.append(f"cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
+        lognorm_file_arr = np.array(lognorm_file_list)
+    
     else:
-        print("mb_loop must be True or False")
+        print("'grad_type' must be '1rlz' or '1m'")
         assert False
 
     # parameters for landy-szalay:

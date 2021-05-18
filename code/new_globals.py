@@ -47,7 +47,7 @@ def initialize_vals():
 
         lognorm_file_list = []
         for i in range(201):
-            lognorm_file_list.append("cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
+            lognorm_file_list.append(f"cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
         lognorm_file_arr = np.array(lognorm_file_list)
 
         # make sure each m value corresponds to its own lognorm rlz

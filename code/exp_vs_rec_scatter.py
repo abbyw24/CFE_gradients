@@ -14,14 +14,6 @@ loop = globals.loop
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 
-periodic = globals.periodic
-rmin = globals.rmin
-rmax = globals.rmax
-nbins = globals.nbins
-nthreads = globals.nthreads
-
-n_patches = globals.n_patches
-
 def label_s(k):
     if k == 0:
         return "suave"
@@ -50,7 +42,7 @@ def scatter_patches_vs_suave_1rlz(grads_exp_patches, grads_rec_patches, grads_ex
 
     # make sure all inputs have the right form
     assert grads_exp_patches.shape == grads_exp_suave.shape == grads_rec_patches.shape == grads_rec_suave.shape
-    print(grads_exp_patches.shape)
+    # grads.shape == (201, 3)
     assert isinstance(path_to_mocks_dir, str)
 
     for i in dim:
@@ -62,7 +54,7 @@ def scatter_patches_vs_suave_1rlz(grads_exp_patches, grads_rec_patches, grads_ex
 
         for j in range(len(grads_exp_patches[:,i])):
             plt.plot(grads_exp_patches[j,i], grads_rec_patches[j,i], marker=".", color="C0", alpha=0.5, label=label_p(k))
-            plt.plot(grads_exp_suave[j,i], grads_rec_suave[j,i], marker=".", color="orange", alpha=0.5, label=label_p(k))
+            plt.plot(grads_exp_suave[j,i], grads_rec_suave[j,i], marker=".", color="orange", alpha=0.5, label=label_s(k))
             k += 1
         
         # plot line y = x (the data points would fall on this line if the expected and recovered gradients matched up perfectly)

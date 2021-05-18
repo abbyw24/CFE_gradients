@@ -46,4 +46,3 @@ for m in m_arr_perL:
 # PATCHES VS SUAVE, EXPECTED VS RECOVERED
 scatter_patches_vs_suave_1rlz(mock_name, path_to_mocks_dir)
 hist_patches_vs_suave_1rlz(mock_name, path_to_mocks_dir)
-

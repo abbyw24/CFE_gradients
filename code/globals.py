@@ -21,13 +21,13 @@ def initialize_vals():
     global grad_type
     grad_type = "1rlz"
 
-    if grad_type = "1rlz":
+    if grad_type == "1rlz":
         m_arr_perL = np.linspace(-1.0, 1.0, 201)
         b_arr = np.array([0.5])
 
         lognorm_file_arr = np.array([lognorm_file])
 
-    elif grad_type = "1m":
+    elif grad_type == "1m":
         m_arr_perL = np.array([m])
         b_arr = np.array([b])
 

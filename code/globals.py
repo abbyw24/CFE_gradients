@@ -9,7 +9,7 @@ def initialize_vals():
     path_to_lognorm_source = "/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy"
 
     # lognorm rlz loop
-    lognorm_loop = False
+    lognorm_loop = True
 
     global lognorm_file_arr
     # if loop is false, the script will use:
@@ -27,7 +27,7 @@ def initialize_vals():
         assert False
 
     # m and b loop
-    mb_loop = True         # whether to loop through entire m and b array
+    mb_loop = False         # whether to loop through entire m and b array
 
     global m_arr_perL
     global b_arr

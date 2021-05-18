@@ -13,6 +13,8 @@ from exp_vs_rec_scatter import scatter_exp_vs_rec
 
 from exp_vs_rec_histogram import hist_patches_vs_suave_1rlz
 
+from create_subdirs import create_subdirs
+
 import globals
 
 globals.initialize_vals()
@@ -58,6 +60,7 @@ grad_type = globals.grad_type
 grads = extract_grads_exp_vs_rec()
 
 # PATCHES VS SUAVE, EXPECTED VS RECOVERED
+create_subdirs(f"mocks/{grad_dim}D", ["plots/scatter"])
 path_to_scatter_dir = f"mocks/{grad_dim}D/plots/scatter"
 scatter_exp_vs_rec(grads["grads_exp_p"], grads["grads_rec_p"], grads["grads_exp_s"], grads["grads_rec_s"], path_to_scatter_dir)
 # hist_patches_vs_suave_1rlz(mock_name, path_to_mocks_dir)

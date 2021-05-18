@@ -7,10 +7,8 @@ from create_subdirs import create_subdirs
 
 globals.initialize_vals()  # brings in all the default parameters
 
-path_to_mocks_dir = globals.path_to_mocks_dir
-
 grad_dim = globals.grad_dim
-loop = globals.loop
+
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 

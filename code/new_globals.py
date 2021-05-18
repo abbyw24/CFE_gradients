@@ -22,7 +22,6 @@ def initialize_vals():
     mock_name_list = []
 
     if grad_type == "1rlz":
-        print(grad_type)
         m_arr_perL = np.linspace(-1.0, 1.0, 201)
         b_arr = np.array([0.5])
         lognorm_file = "cat_L750_n2e-4_z057_patchy_lognormal_rlz1"
@@ -32,7 +31,6 @@ def initialize_vals():
                 mock_name_list.append(mock_name)
 
     elif grad_type == "1m":
-        print(grad_type)
         m = 0.5
         b = 0.5
         lognorm_file_list = []
@@ -44,7 +42,6 @@ def initialize_vals():
             mock_name_list.append(mock_name)
     
     elif grad_type == "1rlz_per_m":
-        print(grad_type)
         m_arr_perL = np.linspace(-1.0, 1.0, 201)
         b_arr = np.array([0.5])
 
@@ -82,3 +79,5 @@ def initialize_vals():
     # patch values
     global n_patches
     n_patches = 8         # define number of patches by number of patches per side length
+
+initialize_vals()

@@ -59,5 +59,5 @@ grads = extract_grads_exp_vs_rec()
 
 # PATCHES VS SUAVE, EXPECTED VS RECOVERED
 path_to_scatter_dir = f"mocks/{grad_dim}D/plots/scatter"
-scatter_exp_vs_rec(grad_type, grads["grads_exp_p"], grads["grads_rec_p"], grads["grads_exp_s"], grads["grads_rec_s"], path_to_scatter_dir)
+scatter_exp_vs_rec(grads["grads_exp_p"], grads["grads_rec_p"], grads["grads_exp_s"], grads["grads_rec_s"], path_to_scatter_dir)
 # hist_patches_vs_suave_1rlz(mock_name, path_to_mocks_dir)

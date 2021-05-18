@@ -5,35 +5,44 @@ def initialize_vals():
     global grad_dim
     grad_dim = 1        # dimension of w_hat in gradient mock
 
-    global lognorm_file
-    lognorm_file = "cat_L750_n2e-4_z057_patchy_lognormal_rlz1" #.bin        # which lognormal realization to use
-
-    global path_to_mocks_dir
-    path_to_mocks_dir = f"mocks/{grad_dim}D/{lognorm_file}"
-
     global path_to_lognorm_source
     path_to_lognorm_source = "/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy"
 
-    # global L
-    # L = np.load("boxsize.npy")
+    # lognorm rlz loop
+    lognorm_loop = True
 
-    global loop
-    loop = True         # whether to loop through entire m and b array
+    global lognorm_file_arr
+    # if loop is false, the script will use:
+    lognorm_file = "cat_L750_n2e-4_z057_patchy_lognormal_rlz1" #.bin        # which lognormal realization to use
+
+    if lognorm_loop == True:
+        lognorm_file_list = []
+        for i in range(101):
+            lognorm_file_list.append(f"cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
+        lognorm_file_arr = np.array(lognorm_file_list)
+    elif lognorm_loop == False:
+        lognorm_file_arr = np.array([lognorm_file])
+    else:
+        print("lognorm_loop must be True or False")
+        assert False
+
+    # m and b loop
+    mb_loop = True         # whether to loop through entire m and b array
 
     global m_arr_perL
     global b_arr
     # if loop is false, the script will use:
-    m = 0.75
+    m = 0.5
     b = 0.5
 
-    if loop == True:
+    if mb_loop == True:
         m_arr_perL = np.linspace(-1.0, 1.0, 201)
         b_arr = np.array([0.5])
-    elif loop == False:
+    elif mb_loop == False:
         m_arr_perL = np.array([m])
         b_arr = np.array([b])
     else:
-        print("loop must be True or False")
+        print("mb_loop must be True or False")
         assert False
 
     # parameters for landy-szalay:

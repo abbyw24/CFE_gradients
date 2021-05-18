@@ -53,7 +53,8 @@ def initialize_vals():
         # make sure each m value corresponds to its own lognorm rlz
         assert len(m_arr_perL) == len(lognorm_file_arr)
         mock_arr = np.vstack((m_arr_perL, lognorm_file_arr))
-        print(mock_arr)
+        print(mock_arr[0])
+        print(mock_arr[:,0])
     
     else:
         print("'grad_type' must be '1rlz', '1m', or '1rlz_per_m'")

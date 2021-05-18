@@ -1,4 +1,3 @@
-from code.extract_grads import extract_grads_exp_vs_rec
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D

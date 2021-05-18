@@ -43,7 +43,7 @@ for lognorm_file in lognorm_file_arr:
             patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name)
 
             # exp vs rec vals
-            suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name)
+            patches_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name)
 
             # SUAVE
             suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name)

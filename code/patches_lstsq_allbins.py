@@ -11,7 +11,7 @@ nbins = globals.nbins
 n_patches = globals.n_patches
 
 # define function to find least square fit in every bin
-def patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_patches, nbins=nbins):
+def patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name):
     # make sure all inputs have the right form
     assert isinstance(path_to_mocks_dir, str)
     assert isinstance(mock_name, str)

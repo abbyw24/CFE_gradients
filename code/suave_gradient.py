@@ -22,7 +22,6 @@ import globals
 globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
-loop = globals.loop
 m_arr_perL = globals.m_arr_perL
 b_arr = globals.b_arr
 
@@ -32,8 +31,6 @@ rmin = globals.rmin
 rmax = globals.rmax
 nbins = globals.nbins
 nthreads = globals.nthreads
-
-n_patches = globals.n_patches
 
 # define cosmo_bases function
 def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000, 

@@ -11,8 +11,11 @@ import globals
 
 globals.initialize_vals()  # brings in all the default parameters
 
-periodic = globals.periodic
 randmult = globals.randmult
+periodic = globals.periodic
+rmin = globals.rmin
+rmax = globals.rmax
+nbins = globals.nbins
 nthreads = globals.nthreads
 
 n_patches = globals.n_patches
@@ -41,7 +44,7 @@ def patchify(data, boxsize, n_patches=n_patches):
     return patch_ids, idx_patches
 
 # define Corrfunc Landy-Szalay
-def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22, nthreads=12):
+def xi(data, rand_set):
     # parameters
     r_edges = np.linspace(rmin, rmax, nbins+1)
     r_avg = 0.5*(r_edges[1:]+r_edges[:-1])
@@ -64,7 +67,7 @@ def xi(data, rand_set, periodic=False, rmin=20.0, rmax=100.0, nbins=22, nthreads
     return r_avg, results_xi
 
 # define function to find xi in each patch
-def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches, randmult=randmult):
+def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name):
     # make sure all inputs have the right form
     assert isinstance(path_to_mocks_dir, str)
     assert isinstance(mock_name, str)

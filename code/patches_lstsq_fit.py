@@ -10,7 +10,7 @@ globals.initialize_vals()  # brings in all the default parameters
 nbins = globals.nbins
 n_patches = globals.n_patches
 
-def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_patches, r_bin=2, nbins=nbins):
+def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, r_bin=2):
     # make sure all inputs have the right form
     assert isinstance(path_to_mocks_dir, str)
     assert isinstance(mock_name, str)

@@ -58,12 +58,3 @@ def initialize_vals():
     # patch values
     global n_patches
     n_patches = 8         # define number of patches by number of patches per side length
-
-def initialize_path():
-    global path_to_dir     # PATH TO RESEARCH DIRECTORY
-    # relative path
-    path_to_dir = ""
-    # if running on cluster
-    #path_to_dir = "/home/aew492/research-summer2020/"
-    # if running locally
-    #path_to_dir = "/Users/abbywilliams/Physics/research-summer2020/"

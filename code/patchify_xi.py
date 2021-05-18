@@ -67,7 +67,7 @@ def xi(data, rand_set):
     return r_avg, results_xi
 
 # define function to find xi in each patch
-def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name):
+def xi_in_patches(grad_dim, path_to_mocks_dir, mock_name, n_patches=n_patches):
     # make sure all inputs have the right form
     assert isinstance(path_to_mocks_dir, str)
     assert isinstance(mock_name, str)

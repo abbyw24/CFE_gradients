@@ -40,8 +40,6 @@ def patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name, n_patches=n_
 
     C_inv = np.linalg.inv(C)
 
-    print(C, C_inv)
-
     # Y matrix = clustering amplitudes
     patchify_data = np.load(os.path.join(path_to_mocks_dir, f"patches/xi/xi_{n_patches}patches_{mock_name}.npy"), allow_pickle=True).item()
     r_avg = patchify_data["r_avg"]

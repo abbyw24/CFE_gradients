@@ -60,13 +60,13 @@ def scatter_patches_vs_suave_1rlz(grads_exp_patches, grads_rec_patches, grads_ex
         ax.set_ylabel("Recovered Gradient")
         ax.set_title(f"Expected vs. Recovered Gradient, {dim[i]}")
 
-        for j in range(len(grads_exp_patches[:,0])):
+        for j in range(len(grads_exp_patches[:,i])):
             plt.plot(grads_exp_patches[j,i], grads_rec_patches[j,i], marker=".", color="C0", alpha=0.5, label=label_p(k))
             plt.plot(grads_exp_suave[j,i], grads_rec_suave[j,i], marker=".", color="orange", alpha=0.5, label=label_p(k))
             k += 1
         
         # plot line y = x (the data points would fall on this line if the expected and recovered gradients matched up perfectly)
-        x = np.linspace(min(grads_exp_patches), max(grads_exp_patches), 10)
+        x = np.linspace(min(grads_exp_patches[:,i]), max(grads_exp_patches[:,i]), 10)
         plt.plot(x, x, color="black", alpha=0.5)
         plt.legend()
         

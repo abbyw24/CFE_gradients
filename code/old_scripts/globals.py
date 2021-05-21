@@ -32,7 +32,7 @@ def initialize_vals():
         b_arr = np.array([b])
 
         lognorm_file_list = []
-        for i in range(101):
+        for i in range(501):
             lognorm_file_list.append(f"cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
         lognorm_file_arr = np.array(lognorm_file_list)
     

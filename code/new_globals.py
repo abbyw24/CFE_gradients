@@ -100,3 +100,5 @@ def initialize_vals():
     # patch values
     global n_patches
     n_patches = 8         # define number of patches by number of patches per side length
+
+initialize_vals()

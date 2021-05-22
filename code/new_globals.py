@@ -80,7 +80,7 @@ def initialize_vals():
     # create dictionary from mock data
     mock_arr = np.array([lognorm_file_list, m_arr_perL, b_arr])
     mock_info = dict(zip(mock_name_list, zip(*mock_arr)))
-    print(mock_info["cat_L750_n2e-4_z057_patchy_lognormal_rlz86_m--0.14-L_b-0.50"])
+    print(mock_info["cat_L750_n2e-4_z057_patchy_lognormal_rlz86_m--0.14-L_b-0.50"[0]])
 
     # parameters for landy-szalay:
     #   by default in patchify_xi.xi, periodic=False, rmin=20.0, rmax=100.0, nbins=22

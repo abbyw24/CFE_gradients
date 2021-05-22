@@ -82,7 +82,10 @@ def initialize_vals():
     mock_info = dict(zip(mock_name_list, zip(*mock_arr)))
     #a = mock_info["cat_L750_n2e-4_z057_patchy_lognormal_rlz86_m--0.14-L_b-0.50"]
     for mock_name in mock_info:
+        print(mock_name)
+        print(mock_name[0])
         print(mock_name[1])
+        print(mock_name[2])
 
     # parameters for landy-szalay:
     #   by default in patchify_xi.xi, periodic=False, rmin=20.0, rmax=100.0, nbins=22

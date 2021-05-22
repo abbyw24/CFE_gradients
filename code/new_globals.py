@@ -15,7 +15,7 @@ def initialize_vals():
     global lognorm_file_list
 
     global path_to_data_dir
-    path_to_data_dir = f"/home/aew492/research-summer2020/{grad_dim}D"
+    path_to_data_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D"
 
     global grad_type
     grad_type = "1rlz_per_m"

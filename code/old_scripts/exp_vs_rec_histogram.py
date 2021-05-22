@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+
+from create_subdirs import create_subdirs
 import globals
 
 globals.initialize_vals()
@@ -10,7 +12,7 @@ b_arr = globals.b_arr
 
 n_patches = globals.n_patches
 
-from create_subdirs import create_subdirs
+grad_type = globals.grad_type
 
 def histogram_exp_vs_rec(patches_data, suave_data, path_to_hist_dir, label1="patches", label2="suave", nbins=10):
     dim = {
@@ -41,5 +43,5 @@ def histogram_exp_vs_rec(patches_data, suave_data, path_to_hist_dir, label1="pat
 
         plt.legend()
 
-        fig.savefig(os.path.join(path_to_hist_dir, f"hist_patches_vs_suave_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_hist_dir, f"hist_patches_vs_suave_{dim[i]}_{grad_type}.png"))
         plt.cla()

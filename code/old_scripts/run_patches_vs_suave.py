@@ -28,32 +28,32 @@ b_arr = globals.b_arr
 
 grad_type = globals.grad_type
 
-for lognorm_file in lognorm_file_arr:
-    for m in m_arr_perL:
-        for b in b_arr:
-            mock_name = "m-{:.2f}-L_b-{:.2f}".format(m, b)
-            path_to_mocks_dir = f"mocks/{grad_dim}D/{lognorm_file}"
+# for lognorm_file in lognorm_file_arr:
+#     for m in m_arr_perL:
+#         for b in b_arr:
+#             mock_name = "m-{:.2f}-L_b-{:.2f}".format(m, b)
+#             path_to_mocks_dir = f"mocks/{grad_dim}D/{lognorm_file}"
 
-            # generate grad mocks from specified lognorm file, and m and b arrays
-            generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path_to_mocks_dir, mock_name)
+#             # generate grad mocks from specified lognorm file, and m and b arrays
+#             generate_gradmock(grad_dim, m, b, path_to_lognorm_source, lognorm_file, path_to_mocks_dir, mock_name)
 
-            # PATCHES
-            # divide mock into patches and compute correlation function in each patch
-            xi_in_patches(grad_dim, path_to_mocks_dir, mock_name)
+#             # PATCHES
+#             # divide mock into patches and compute correlation function in each patch
+#             xi_in_patches(grad_dim, path_to_mocks_dir, mock_name)
 
-            # perform a least square fit of the clustering amplitudes in each patch
-            patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name)
+#             # perform a least square fit of the clustering amplitudes in each patch
+#             patches_lstsq_allbins(grad_dim, m, b, path_to_mocks_dir, mock_name)
 
-            # least square fit in bin 2
-            patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name)
+#             # least square fit in bin 2
+#             patches_lstsq_fit(grad_dim, m, b, path_to_mocks_dir, mock_name)
 
-            # exp vs rec vals
-            patches_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name)
+#             # exp vs rec vals
+#             patches_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name)
 
-            # SUAVE
-            suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name)
+#             # SUAVE
+#             suave_exp_vs_rec_vals(grad_dim, m, b, path_to_mocks_dir, mock_name)
 
-            print (" ") # for nice loop print formatting
+#             print (" ") # for nice loop print formatting
 
 # extract recovered and expected values for patches and suave
 grads = extract_grads_exp_vs_rec()

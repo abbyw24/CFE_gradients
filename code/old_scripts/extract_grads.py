@@ -24,7 +24,7 @@ def extract_grads_exp_vs_rec():
         for m in m_arr_perL:
             for b in b_arr:
                 mock_name = "m-{:.2f}-L_b-{:.2f}".format(m, b)
-                path_to_mocks_dir = f"/scratch/aew492/{grad_dim}D/{lognorm_file}"
+                path_to_mocks_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D/{lognorm_file}"
                 
                 patches_data = np.load(os.path.join(path_to_mocks_dir, f"patches/lst_sq_fit/exp_vs_rec_vals/patches_exp_vs_rec_{n_patches}patches_{mock_name}.npy"), allow_pickle=True).item()
                 grad_exp_p = patches_data["grad_expected"]

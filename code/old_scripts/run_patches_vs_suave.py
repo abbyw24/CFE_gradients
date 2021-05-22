@@ -60,11 +60,11 @@ grads = extract_grads_exp_vs_rec()
 
 # PATCHES VS SUAVE, EXPECTED VS RECOVERED
 # scatter
-create_subdirs(f"scratch/aew492/{grad_dim}D", ["plots/scatter"])
-path_to_scatter_dir = f"/scratch/aew492/{grad_dim}D/plots/scatter"
+create_subdirs(f"scratch/aew492/research-summer2020_output/{grad_dim}D", ["plots/scatter"])
+path_to_scatter_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D/plots/scatter"
 scatter_exp_vs_rec(grads["grads_exp_p"], grads["grads_rec_p"], grads["grads_exp_s"], grads["grads_rec_s"], path_to_scatter_dir)
 
 # histogram
-create_subdirs(f"scratch/aew492/{grad_dim}D", ["plots/histograms"])
-path_to_hist_dir = f"/scratch/aew492/{grad_dim}D/plots/histograms"
+create_subdirs(f"scratch/aew492/research-summer2020_output/{grad_dim}D", ["plots/histograms"])
+path_to_hist_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D/plots/histograms"
 histogram_exp_vs_rec(grads["grads_rec_p"], grads["grads_rec_s"], path_to_hist_dir)

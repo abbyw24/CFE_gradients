@@ -33,7 +33,7 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
     "mock_data/clust",
     "mock_data/unclust",
     "mock_data/boxsizes",
-    "mock_data/grad_mocks"
+    "mock_data/grad_mocks",
     "plots/color_mocks",
     "plots/samecolor_mocks"
     ]

@@ -180,3 +180,5 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, path_to_
         ax.cla()
 
         plt.close("all")
+
+xi_in_patches()

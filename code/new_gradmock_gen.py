@@ -68,12 +68,10 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         xs_lognorm = (np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2))
         mock_info["lognorm_set"] = xs_lognorm
 
-        assert False
-
         # RANDOM SET
         # generate a random data set (same size as mock)
         xs_rand = np.random.uniform(-L/2,L/2,(3,N))
-        np.save(os.path.join(path_to_data_dir, f"mock_data/unclust/rand_set_{mock_name}"), xs_rand)
+        mock_info["rand_set"] = xs_rand
 
         # INJECT GRADIENT
         # for each catalog, make random uniform deviates
@@ -99,14 +97,12 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         # clustered and unclustered sets for gradient
         xs_clust_grad = xs_lognorm.T[I_clust]
         xs_unclust_grad = xs_rand.T[I_uncl]
-        np.save(os.path.join(path_to_data_dir, f"mock_data/clust/clust_{mock_name}"), xs_clust_grad)
-        np.save(os.path.join(path_to_data_dir, f"mock_data/unclust/unclust_{mock_name}"), xs_unclust_grad)
+        mock_info["clust_set"] = xs_clust_grad
+        mock_info["unclust_set"] = xs_unclust_grad
 
         # append to create gradient mock data
         xs_grad = np.append(xs_clust_grad, xs_unclust_grad, axis=0)
-        np.save(os.path.join(path_to_data_dir, f"mock_data/grad_mocks/{mock_name}"), xs_grad)
-        # add mock data to dictionary
-        mock_info["data"]
+        mock_info["grad_set"] = xs_grad
 
         # visualisation! (we define z_max cutoff in function parameters)
 

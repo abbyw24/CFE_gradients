@@ -159,7 +159,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, path_to_
 
         # save xi data– to load in separate file for least square fit
         patch_info = {
-            "patch_centers" : patch_centers
+            "patch_centers" : patch_centers,
             "r_avg" : r_avg,
             "xi_patches" : xi_patches,
             "xi_patch_avg" : xi_patch_avg,

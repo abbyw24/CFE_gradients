@@ -144,6 +144,7 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         plt.close("all") 
 
         # resave dictionary
+        print(mock_info)
         np.save(path, mock_info)
 
         print(f"gradient generated --> {mock_name}")

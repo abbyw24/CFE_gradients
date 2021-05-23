@@ -23,7 +23,7 @@ def initialize_vals():
     global n_mocks
     n_mocks = 201
 
-    global mock_info
+    global mocks_info
 
     global mock_name_list
     mock_name_list = []

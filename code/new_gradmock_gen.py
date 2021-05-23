@@ -54,7 +54,7 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
 
     for path in path_to_mock_dict_list:
         # define mock
-        mock_info = np.load(path, allow_pickle=True).item()
+        mock_info = np.load(f"{path}.npy", allow_pickle=True).item()
         mock_name = str(mock_info["mock_name"])
         lognorm_file = str(mock_info["lognorm_file"])
         m = float(mock_info["m"])

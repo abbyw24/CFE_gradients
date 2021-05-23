@@ -34,6 +34,7 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
     "mock_data/unclust",
     "mock_data/boxsizes",
     "mock_data/grad_mocks",
+    "mock_data/dicts",
     "plots/color_mocks",
     "plots/samecolor_mocks"
     ]
@@ -148,6 +149,11 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         plt.cla()
 
         plt.close("all")
+
+        # save mock data as a dictionary
+        print(type(mock_info), mock_info)
+        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name}")
+        np.save(path_to_mock_dict, mock_info)
 
         print(f"gradient generated from {lognorm_file} --> {mock_name}")
 

@@ -75,8 +75,6 @@ def initialize_vals():
     
     # create dictionary from mock data
     mock_arr = np.array([lognorm_file_list, m_arr_perL, b_arr])
-    print(zip(*mock_arr))
-    print(zip(mock_name_list, zip(*mock_arr)))
     mock_info = dict(zip(mock_name_list, zip(*mock_arr)))
 
     # parameters for landy-szalay:
@@ -98,4 +96,4 @@ def initialize_vals():
     global n_patches
     n_patches = 8         # define number of patches by number of patches per side length
 
-initialize_vals()
+#initialize_vals()

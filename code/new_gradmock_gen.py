@@ -66,7 +66,9 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         # save lognormal set to mocks directory
         x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
         xs_lognorm = (np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2))
+        velocities = np.array([vx_lognorm, vy_lognorm, vz_lognorm])
         mock_info["lognorm_set"] = xs_lognorm
+        mock_info["velocities"] = velocities
 
         # RANDOM SET
         # generate a random data set (same size as mock)

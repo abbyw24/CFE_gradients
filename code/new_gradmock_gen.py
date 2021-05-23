@@ -141,6 +141,6 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
 
         plt.close("all") 
 
-        print(f"gradient generated from {lognorm_file} --> {mock_name}")
+        print(f"gradient generated --> {mock_name}")
 
 generate_gradmocks()

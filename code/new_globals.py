@@ -1,6 +1,8 @@
 import numpy as np
 import os
 
+from create_subdirs import create_subdirs
+
 # every mock should be identifiable via a "mock_file"; I could create an array of absolute mock files and should be able to do everything
 #   via that mock_file, and via globals; no internally-defined parameters
 
@@ -16,6 +18,9 @@ def initialize_vals():
 
     global path_to_data_dir
     path_to_data_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D"
+
+    global path_to_mock_dict_list
+    path_to_mock_dict_list = []
 
     global grad_type
     grad_type = "1rlz_per_m"
@@ -74,8 +79,18 @@ def initialize_vals():
         assert False
     
     # create dictionary from mock data
-    mocks_arr = np.array([lognorm_file_list, m_arr_perL, b_arr])
-    mocks_info = dict(zip(mock_name_list, zip(*mocks_arr)))
+    create_subdirs(path_to_data_dir, "mock_data/dicts") # create directory to store dictionaries
+
+    for i in range(len(mock_name_list)):
+        mock_info = {
+            "mock_name" : mock_name_list[i],
+            "lognorm_file" : lognorm_file_list[i],
+            "m" : m_arr_perL[i],
+            "b" : b_arr[i]
+        }
+        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}")
+        path_to_mock_dict_list.append(path_to_mock_dict)
+        np.save(path_to_mock_dict, mock_info)
 
     # parameters for landy-szalay:
     #   by default in patchify_xi.xi, periodic=False, rmin=20.0, rmax=100.0, nbins=22

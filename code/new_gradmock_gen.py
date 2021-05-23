@@ -12,12 +12,7 @@ path_to_data_dir = new_globals.path_to_data_dir
 grad_dim = new_globals.grad_dim
 path_to_lognorm_source = new_globals.path_to_lognorm_source
 lognorm_file_list = new_globals.lognorm_file_list
-m_arr_perL = new_globals.m_arr_perL
-b_arr = new_globals.b_arr
-
-mock_name_list = new_globals.mock_name_list
-
-mocks_info = new_globals.mocks_info
+path_to_mock_dict_list = new_globals.path_to_mock_dict_list
 
 # pick a seed number so that random set stays the same every time (for now)
 np.random.seed(123456)
@@ -25,7 +20,8 @@ np.random.seed(123456)
 # lognorm file used so far = "lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin"
 
 # function to generate gradient mock
-def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source, mocks_info=mocks_info, z_max=-50):
+def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source,
+    path_to_mock_dict_list=path_to_mock_dict_list, z_max=-50):
 
     # create desired path to mocks directory if it doesn't already exist
     sub_dirs = ["mock_data/rand_sets",
@@ -34,7 +30,6 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
     "mock_data/unclust",
     "mock_data/boxsizes",
     "mock_data/grad_mocks",
-    "mock_data/dicts",
     "plots/color_mocks",
     "plots/samecolor_mocks"
     ]
@@ -57,12 +52,13 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
     w_hat /= np.linalg.norm(w_hat)
     ### might want to come back and save w_hat later
 
-    for mock_name in mocks_info:
+    for path in path_to_mock_dict_list:
         # define mock
-        mock_info = mocks_info[mock_name]
-        lognorm_file = str(mock_info[0])
-        m = float(mock_info[1])
-        b = float(mock_info[2])
+        mock_info = np.load(path, allow_pickle=True).item()
+        mock_name = str(mock_info["mock_name"])
+        lognorm_file = str(mock_info["lognorm_file"])
+        m = float(mock_info["m"])
+        b = float(mock_info["b"])
 
         # LOGNORMAL SET
         Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f"{lognorm_file}.bin"))
@@ -152,8 +148,7 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
 
         # save mock data as a dictionary
         print(type(mock_info), mock_info)
-        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name}")
-        np.save(path_to_mock_dict, mock_info)
+        
 
         print(f"gradient generated from {lognorm_file} --> {mock_name}")
 

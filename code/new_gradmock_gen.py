@@ -62,6 +62,7 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         lognorm_file = mock[0]
         m = mock[1]
         b = mock[2]
+        print(type(m), type(b))
 
         # LOGNORMAL SET
         Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f"{lognorm_file}.bin"))

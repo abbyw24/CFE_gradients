@@ -17,7 +17,7 @@ b_arr = new_globals.b_arr
 
 mock_name_list = new_globals.mock_name_list
 
-mock_info = new_globals.mock_info
+mocks_info = new_globals.mocks_info
 
 # pick a seed number so that random set stays the same every time (for now)
 np.random.seed(123456)
@@ -25,7 +25,7 @@ np.random.seed(123456)
 # lognorm file used so far = "lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin"
 
 # function to generate gradient mock
-def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source, mock_info=mock_info, z_max=-50):
+def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source, mocks_info=mocks_info, z_max=-50):
 
     # create desired path to mocks directory if it doesn't already exist
     sub_dirs = ["mock_data/rand_sets",
@@ -56,14 +56,12 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
     w_hat /= np.linalg.norm(w_hat)
     ### might want to come back and save w_hat later
 
-    for mock_name in mock_info:
+    for mock_name in mocks_info:
         # define mock
-        print(mock_name)
-        assert False
-        mock = mock_info[mock_name]
-        lognorm_file = str(mock[0])
-        m = float(mock[1])
-        b = float(mock[2])
+        mock_info = mocks_info[mock_name]
+        lognorm_file = str(mock_info[0])
+        m = float(mock_info[1])
+        b = float(mock_info[2])
 
         # LOGNORMAL SET
         Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f"{lognorm_file}.bin"))
@@ -81,7 +79,7 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         # RANDOM SET
         # generate a random data set (same size as mock)
         xs_rand = np.random.uniform(-L/2,L/2,(3,N))
-        np.save(os.path.join(path_to_data_dir, f"mock_data/unclust/rand_set_{mock}"), xs_rand)
+        np.save(os.path.join(path_to_data_dir, f"mock_data/unclust/rand_set_{mock_name}"), xs_rand)
 
         # INJECT GRADIENT
         # for each catalog, make random uniform deviates
@@ -107,12 +105,12 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         # clustered and unclustered sets for gradient
         xs_clust_grad = xs_lognorm.T[I_clust]
         xs_unclust_grad = xs_rand.T[I_uncl]
-        np.save(os.path.join(path_to_data_dir, f"mock_data/clust/clust_{mock}"), xs_clust_grad)
-        np.save(os.path.join(path_to_data_dir, f"mock_data/unclust/unclust_{mock}"), xs_unclust_grad)
+        np.save(os.path.join(path_to_data_dir, f"mock_data/clust/clust_{mock_name}"), xs_clust_grad)
+        np.save(os.path.join(path_to_data_dir, f"mock_data/unclust/unclust_{mock_name}"), xs_unclust_grad)
 
         # append to create gradient mock data
         xs_grad = np.append(xs_clust_grad, xs_unclust_grad, axis=0)
-        np.save(os.path.join(path_to_data_dir, f"mock_data/grad_mocks/{mock}"), xs_grad)
+        np.save(os.path.join(path_to_data_dir, f"mock_data/grad_mocks/{mock_name}"), xs_grad)
 
         # visualisation! (we define z_max cutoff in function parameters)
 
@@ -126,9 +124,9 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         # plt.ylim((-400,400))
         ax1.set_xlabel("x (Mpc/h)")
         ax1.set_ylabel("y (Mpc/h)")
-        ax1.set_title(mock)
+        ax1.set_title(mock_name)
         ax1.legend()
-        fig1.savefig(os.path.join(path_to_data_dir, f"plots/samecolor_mocks/{mock}.png"))
+        fig1.savefig(os.path.join(path_to_data_dir, f"plots/samecolor_mocks/{mock_name}.png"))
         plt.cla()
 
         # plot different colors for clust and uncl
@@ -146,11 +144,11 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         ax2.set_ylabel("y (Mpc/h)")
         ax2.set_title(mock_name)
         ax2.legend()
-        fig2.savefig(os.path.join(path_to_data_dir, f"plots/color_mocks/color_{mock}.png"))
+        fig2.savefig(os.path.join(path_to_data_dir, f"plots/color_mocks/color_{mock_name}.png"))
         plt.cla()
 
         plt.close("all")
 
-        print(f"gradient generated from {lognorm_file} --> {mock}")
+        print(f"gradient generated from {lognorm_file} --> {mock_name}")
 
 generate_gradmocks()

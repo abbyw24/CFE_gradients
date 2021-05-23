@@ -24,14 +24,9 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
     path_to_mock_dict_list=path_to_mock_dict_list, z_max=-50):
 
     # create desired path to mocks directory if it doesn't already exist
-    sub_dirs = ["mock_data/rand_sets",
-    "mock_data/lognorm_sets",
-    "mock_data/clust",
-    "mock_data/unclust",
-    "mock_data/boxsizes",
-    "mock_data/grad_mocks",
-    "plots/color_mocks",
-    "plots/samecolor_mocks"
+    sub_dirs = [
+        "plots/color_mocks",
+        "plots/samecolor_mocks"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
@@ -66,12 +61,14 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         L = Lx
             # L = boxsize
         # save boxsize then load in this boxsize for all uses of gradient mock
-        np.save(os.path.join(path_to_data_dir, f"mock_data/boxsizes/boxsize_{lognorm_file}"), L)
+        mock_info["boxsize"] = L
 
         # save lognormal set to mocks directory
         x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
         xs_lognorm = (np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2))
-        np.save(os.path.join(path_to_data_dir, f"mock_data/lognorm_sets/{lognorm_file}"), xs_lognorm)
+        mock_info["lognorm_set"] = xs_lognorm
+
+        assert False
 
         # RANDOM SET
         # generate a random data set (same size as mock)
@@ -108,6 +105,8 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         # append to create gradient mock data
         xs_grad = np.append(xs_clust_grad, xs_unclust_grad, axis=0)
         np.save(os.path.join(path_to_data_dir, f"mock_data/grad_mocks/{mock_name}"), xs_grad)
+        # add mock data to dictionary
+        mock_info["data"]
 
         # visualisation! (we define z_max cutoff in function parameters)
 
@@ -144,11 +143,7 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         fig2.savefig(os.path.join(path_to_data_dir, f"plots/color_mocks/color_{mock_name}.png"))
         plt.cla()
 
-        plt.close("all")
-
-        # save mock data as a dictionary
-        print(type(mock_info), mock_info)
-        
+        plt.close("all") 
 
         print(f"gradient generated from {lognorm_file} --> {mock_name}")
 

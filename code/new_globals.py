@@ -79,7 +79,7 @@ def initialize_vals():
         assert False
     
     # create dictionary from mock data
-    create_subdirs(path_to_data_dir, "mock_data/dicts") # create directory to store dictionaries
+    create_subdirs(path_to_data_dir, ["mock_data/dicts"]) # create directory to store dictionaries
 
     for i in range(len(mock_name_list)):
         mock_info = {

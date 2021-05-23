@@ -75,6 +75,8 @@ def initialize_vals():
     
     # create dictionary from mock data
     mock_arr = np.array([lognorm_file_list, m_arr_perL, b_arr])
+    print(zip(*mock_arr))
+    print(zip(mock_name_list, zip(*mock_arr)))
     mock_info = dict(zip(mock_name_list, zip(*mock_arr)))
 
     # parameters for landy-szalay:

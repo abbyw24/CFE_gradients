@@ -44,8 +44,6 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         r_avg = patch_info["r_avg"]
         xi_patches = patch_info["xi_patches"]
         assert len(xi_patches) == n_patches
-        xi_patch_avg = patch_info["xi_patch_avg"]
-        xi_full = patch_info["xi_full"]
 
         # create A matrix
         A = np.ones(len(patch_centers))
@@ -120,4 +118,84 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
 
         print(f"least square fit in all bins, {mock_name}, {n_patches} patches")
 
+def patches_lstsq_fit_1bin(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches, r_bin=2):
+    # make sure all inputs have the right form
+    assert isinstance(path_to_data_dir, str)
+    for i in [grad_dim, n_patches, r_bin]:
+        assert isinstance(i, int)
+
+    # create the needed subdirectories
+    sub_dirs = [
+        f"plots/patches/lst_sq_fit/bin{r_bin}"
+    ]
+    create_subdirs(path_to_data_dir, sub_dirs)
+
+    dim = ["x", "y", "z"]
+
+    for i in range(len(mock_name_list)):
+        # load in mock and patch info
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_name = mock_info["mock_name"]
+        L = mock_info["boxsize"]
+        m = mock_info["m"]
+        b = mock_info["b"]
+
+        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/patches_{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        patch_centers = patch_info["patch_centers"]
+        patch_centers -= L/2
+            # this centers the fiducial point in the box
+        r_avg = patch_info["r_avg"]
+        xi_patches = patch_info["xi_patches"]
+        assert len(xi_patches) == n_patches
+
+    # create A matrix
+    A = np.ones(len(patch_centers))
+    for i in range(len(dim)):
+        A = np.c_[A, patch_centers[:,i]]
+
+    # create C covariance matrix
+        # for now, C = identity matrix
+    C = np.identity(len(patch_centers))
+
+    C_inv = np.linalg.inv(C)
+
+    # clustering amplitudes
+    Y = xi_patches[:,r_bin-1]
+    r_avg_bin = r_avg[r_bin-1]*np.ones(n_patches)
+
+    # calculate matrix X = [b,m]
+    fig2, ax2 = plt.subplots()
+    # color map– color code points to match corresponding patch center in grad_xi figure
+    cmap = plt.cm.get_cmap("cool")
+    ax2.set_prop_cycle('color',cmap(np.linspace(0,1,n_patches)))
+    plt.scatter(patch_centers[:,0], Y, marker="o", c=Y, cmap="cool", label=f"Mock: {grad_dim}D, {mock_name}")
+    ax2.set_xlabel(r"Patch Centers ($h^{-1}$Mpc)")
+    ax2.set_ylabel(r"$\xi$(r)")
+    x = np.linspace(min(patch_centers[:,0]),max(patch_centers[:,0]))
+
+    # set colors for best fit lines
+    bestfit_colors = ["blue", "grey", "silver"]
+
+    # perform least square fit in specified r_bin
+    X = np.linalg.inv(A.T @ C_inv @ A) @ (A.T @ C_inv @ Y)
+    b_fit = X[0]
+    expected = m/(b*L)
+    recovered = X[1]/b_fit
+
+    # plot results
+    for i in range(len(dim)):
+        plt.plot(x, X[i+1]*x + b_fit, color=bestfit_colors[i], label=dim[i]+" best fit: y = "+str("%.8f" %X[i+1])+"x + "+str("%.6f" %b_fit))
+    plt.plot(patch_centers[0,0], Y[0], alpha=0.0, label="{:.8f}".format(m/(b*L)))
+    ax2.set_title(f"Linear least square fit, Clustering amps in patches (bin {r_bin}); \n Expected: {expected}, Recovered: {recovered}, Ratio: {recovered/expected}")
+    plt.legend()
+
+    # save figure
+    fig2.savefig(os.path.join(path_to_data_dir, f"plots/patches/lst_sq_fit/bin{r_bin}/bin{r_bin}_{n_patches}patches_{mock_name}.png"))
+    ax2.cla()
+    plt.close("all")
+
+    print(f"least square fit in bin {r_bin}, {mock_name}, {n_patches} patches")
+
 patches_lstsq_allbins()
+
+patches_lstsq_fit_1bin(r_bin=2)

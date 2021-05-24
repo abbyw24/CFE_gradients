@@ -87,6 +87,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, path_to_
 
     for i in range(len(mock_name_list)):
         mock_info = np.load(f"{path_to_mock_dict_list[i]}.npy", allow_pickle=True).item()
+        print(path_to_mock_dict_list[i])
         print(mock_info)
         mock_data = mock_info["grad_set"]
         L = mock_info["boxsize"]

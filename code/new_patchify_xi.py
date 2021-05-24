@@ -86,6 +86,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
 
     for i in range(len(mock_name_list)):
         mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_name = mock_info["mock_name"]
         mock_data = mock_info["grad_set"]
         L = mock_info["boxsize"]
 
@@ -167,7 +168,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
             "xi_patch_avg" : xi_patch_avg,
             "xi_full" : xi_full
             }
-        np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches_{mock_name_list[i]}"), patch_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches_{mock_name}"), patch_info, allow_pickle=True)
 
         # plot results
         plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")
@@ -176,11 +177,13 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
         ax.set_xlabel(r'r ($h^{-1}$Mpc)')
         ax.set_ylabel(r'$\xi$(r)')
         plt.rcParams["axes.titlesize"] = 10
-        ax.set_title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name_list[i]}")
+        ax.set_title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name}")
         plt.legend(prop={'size': 8})
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/xi/xi_{n_patches}patches_{mock_name_list[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/xi/xi_{n_patches}patches_{mock_name}.png"))
         ax.cla()
 
         plt.close("all")
+
+        print(f"xi in patches --> {mock_name}")
 
 xi_in_patches()

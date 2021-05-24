@@ -111,8 +111,11 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
 
     # resave patch info dictionary
     np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches_{mock_name}"), patch_info, allow_pickle=True)
-    print(f"least square fit in all bins, {mock_name}, {n_patches} patches")
 
     plt.legend()
     fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/lst_sq_fit/allbins/allbins_{n_patches}patches_{mock_name}.png"))
     ax.cla()
+
+    print(f"least square fit in all bins, {mock_name}, {n_patches} patches")
+
+patches_lstsq_allbins()

@@ -77,20 +77,6 @@ def initialize_vals():
     else:
         print("'grad_type' must be '1rlz', '1m', or '1rlz_per_m'")
         assert False
-    
-    # create dictionary from mock data
-    create_subdirs(path_to_data_dir, ["mock_data/dicts"]) # create directory to store dictionaries
-
-    for i in range(len(mock_name_list)):
-        mock_info = {
-            "mock_name" : mock_name_list[i],
-            "lognorm_file" : lognorm_file_list[i],
-            "m" : m_arr_perL[i],
-            "b" : b_arr[i]
-        }
-        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}")
-        path_to_mock_dict_list.append(path_to_mock_dict)
-        np.save(path_to_mock_dict, mock_info)
 
     # parameters for landy-szalay:
     #   by default in patchify_xi.xi, periodic=False, rmin=20.0, rmax=100.0, nbins=22

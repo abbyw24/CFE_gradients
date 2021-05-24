@@ -13,6 +13,10 @@ grad_dim = new_globals.grad_dim
 path_to_lognorm_source = new_globals.path_to_lognorm_source
 lognorm_file_list = new_globals.lognorm_file_list
 path_to_mock_dict_list = new_globals.path_to_mock_dict_list
+mock_name_list = new_globals.mock_name_list
+lognorm_file_list = new_globals.lognorm_file_list
+m_arr_perL = new_globals.m_arr_perL
+b_arr = new_globals.b_arr
 
 # pick a seed number so that random set stays the same every time (for now)
 np.random.seed(123456)
@@ -21,14 +25,27 @@ np.random.seed(123456)
 
 # function to generate gradient mock
 def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source,
-    path_to_mock_dict_list=path_to_mock_dict_list, z_max=-50):
+    path_to_mock_dict_list=path_to_mock_dict_list, mock_name_list=mock_name_list, z_max=-50):
 
     # create desired path to mocks directory if it doesn't already exist
     sub_dirs = [
+        "mock_data/dicts",
         "plots/color_mocks",
         "plots/samecolor_mocks"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
+
+    # create dictionary with mock info– to start, mock name, lognorm rlz, m, and b
+    for i in range(len(mock_name_list)):
+        mock_info = {
+            "mock_name" : mock_name_list[i],
+            "lognorm_rlz" : lognorm_file_list[i],
+            "m" : m_arr_perL[i],
+            "b" : b_arr[i]
+        }
+        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}")
+        path_to_mock_dict_list.append(path_to_mock_dict)
+        np.save(path_to_mock_dict, mock_info)
 
     ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
     # generate unit vector– this is the direction of the gradient

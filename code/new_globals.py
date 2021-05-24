@@ -14,13 +14,8 @@ def initialize_vals():
     global path_to_lognorm_source
     path_to_lognorm_source = "/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy"
 
-    global lognorm_file_list
-
     global path_to_data_dir
     path_to_data_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D"
-
-    global path_to_mock_dict_list
-    path_to_mock_dict_list = []
 
     global grad_type
     grad_type = "1rlz_per_m"

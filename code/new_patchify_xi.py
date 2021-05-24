@@ -13,7 +13,6 @@ new_globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = new_globals.grad_dim
 path_to_data_dir = new_globals.path_to_data_dir
-path_to_mock_dict_list = new_globals.path_to_mock_dict_list
 mock_name_list = new_globals.mock_name_list
 
 randmult = new_globals.randmult
@@ -72,10 +71,10 @@ def xi(data, rand_set):
     return r_avg, results_xi
 
 # define function to find xi in each patch
-def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, path_to_mock_dict_list=path_to_mock_dict_list, n_patches=n_patches):
+def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches):
     # make sure all inputs have the right form
+    assert isinstance(grad_dim, int)
     assert isinstance(path_to_data_dir, str)
-    assert isinstance(path_to_mock_dict_list, list)
     assert isinstance(n_patches, int)
 
     # create the needed subdirectories
@@ -86,8 +85,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, path_to_
     create_subdirs(f"{path_to_data_dir}", sub_dirs)
 
     for i in range(len(mock_name_list)):
-        mock_info = np.load(f"{path_to_mock_dict_list[i]}.npy", allow_pickle=True).item()
-        print(path_to_mock_dict_list[i])
+        mock_info = np.load(f"mock_data/dicts/{mock_name_list[i]}.npy", allow_pickle=True).item()
         print(mock_info)
         mock_data = mock_info["grad_set"]
         L = mock_info["boxsize"]

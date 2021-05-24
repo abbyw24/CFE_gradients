@@ -11,8 +11,6 @@ new_globals.initialize_vals()
 path_to_data_dir = new_globals.path_to_data_dir
 grad_dim = new_globals.grad_dim
 path_to_lognorm_source = new_globals.path_to_lognorm_source
-lognorm_file_list = new_globals.lognorm_file_list
-path_to_mock_dict_list = new_globals.path_to_mock_dict_list
 mock_name_list = new_globals.mock_name_list
 lognorm_file_list = new_globals.lognorm_file_list
 m_arr_perL = new_globals.m_arr_perL
@@ -24,8 +22,7 @@ np.random.seed(123456)
 # lognorm file used so far = "lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin"
 
 # function to generate gradient mock
-def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source,
-    path_to_mock_dict_list=path_to_mock_dict_list, mock_name_list=mock_name_list, z_max=-50):
+def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source, mock_name_list=mock_name_list, z_max=-50):
 
     # create desired path to mocks directory if it doesn't already exist
     sub_dirs = [
@@ -34,18 +31,6 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         "plots/samecolor_mocks"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
-
-    # create dictionary with mock info– to start, mock name, lognorm rlz, m, and b
-    for i in range(len(mock_name_list)):
-        mock_info = {
-            "mock_name" : mock_name_list[i],
-            "lognorm_rlz" : lognorm_file_list[i],
-            "m" : m_arr_perL[i],
-            "b" : b_arr[i]
-        }
-        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}")
-        path_to_mock_dict_list.append(path_to_mock_dict)
-        np.save(path_to_mock_dict, mock_info)
 
     ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
     # generate unit vector– this is the direction of the gradient
@@ -64,11 +49,19 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
     w_hat /= np.linalg.norm(w_hat)
     ### might want to come back and save w_hat later
 
-    for path in path_to_mock_dict_list:
-        # define mock
-        mock_info = np.load(f"{path}.npy", allow_pickle=True).item()
+    for i in range(len(mock_name_list)):
+        # create dictionary with mock info– to start, mock name, lognorm rlz, m, and b
+        mock_info = {
+            "mock_name" : mock_name_list[i],
+            "lognorm_rlz" : lognorm_file_list[i],
+            "m" : m_arr_perL[i],
+            "b" : b_arr[i]
+        }
+        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}")
+
+        # redefine dictionary values for simplicity
         mock_name = str(mock_info["mock_name"])
-        lognorm_file = str(mock_info["lognorm_file"])
+        lognorm_file = str(mock_info["lognorm_rlz"])
         m = float(mock_info["m"])
         b = float(mock_info["b"])
 
@@ -160,9 +153,8 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
 
         plt.close("all") 
 
-        # resave dictionary
-        print(path)
-        np.save(path, mock_info)
+        # save dictionary
+        np.save(path_to_mock_dict, mock_info)
 
         print(f"gradient generated --> {mock_name}")
 

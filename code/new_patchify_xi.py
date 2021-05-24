@@ -71,7 +71,7 @@ def xi(data, rand_set):
     return r_avg, results_xi
 
 # define function to find xi in each patch
-def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches):
+def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_name_list = mock_name_list, n_patches=n_patches):
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)
     assert isinstance(path_to_data_dir, str)
@@ -88,6 +88,9 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patche
         mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}.npy"), allow_pickle=True).item()
         mock_data = mock_info["grad_set"]
         L = mock_info["boxsize"]
+
+        # add number of patches to dictionary
+        mock_info["n_patches"] = n_patches
 
         # if there are negative values, shift by L/2, to 0 to L
         if np.any(mock_data <= 0):
@@ -164,7 +167,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patche
             "xi_patch_avg" : xi_patch_avg,
             "xi_full" : xi_full
             }
-        np.save(os.path.join(path_to_data_dir, f"patch_data/patches_{mock_name_list[i]}"), patch_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches_{mock_name_list[i]}"), patch_info, allow_pickle=True)
 
         # plot results
         plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")

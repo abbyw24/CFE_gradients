@@ -85,7 +85,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patche
     create_subdirs(f"{path_to_data_dir}", sub_dirs)
 
     for i in range(len(mock_name_list)):
-        mock_info = np.load(f"mock_data/dicts/{mock_name_list[i]}.npy", allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}.npy"), allow_pickle=True).item()
         print(mock_info)
         mock_data = mock_info["grad_set"]
         L = mock_info["boxsize"]

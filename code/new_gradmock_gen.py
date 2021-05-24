@@ -148,5 +148,6 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         np.save(path, mock_info)
 
         print(f"gradient generated --> {mock_name}")
+        assert False
 
 generate_gradmocks()

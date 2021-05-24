@@ -103,19 +103,19 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
                 # average of the fit value in each bin up to cutoff
             recovered_vals.append(val_rec)
     
-    # add recovered values to patch info dictionary
-    patch_info["b_fit"] = recovered_vals[0]
-    patch_info["m_fit_x"] = recovered_vals[1]
-    patch_info["m_fit_y"] = recovered_vals[2]
-    patch_info["m_fit_z"] = recovered_vals[3]
+        # add recovered values to patch info dictionary
+        patch_info["b_fit"] = recovered_vals[0]
+        patch_info["m_fit_x"] = recovered_vals[1]
+        patch_info["m_fit_y"] = recovered_vals[2]
+        patch_info["m_fit_z"] = recovered_vals[3]
 
-    # resave patch info dictionary
-    np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches_{mock_name}"), patch_info, allow_pickle=True)
+        # resave patch info dictionary
+        np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches_{mock_name}"), patch_info, allow_pickle=True)
 
-    plt.legend()
-    fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/lst_sq_fit/allbins/allbins_{n_patches}patches_{mock_name}.png"))
-    ax.cla()
+        plt.legend()
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/lst_sq_fit/allbins/allbins_{n_patches}patches_{mock_name}.png"))
+        ax.cla()
 
-    print(f"least square fit in all bins, {mock_name}, {n_patches} patches")
+        print(f"least square fit in all bins, {mock_name}, {n_patches} patches")
 
 patches_lstsq_allbins()

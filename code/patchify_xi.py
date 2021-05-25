@@ -58,7 +58,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
     # create the needed subdirectories
     sub_dirs = [
         f"patch_data/{n_patches}patches",
-        "plots/patches/xi"
+        f"plots/patches/{n_patches}patches/xi"
     ]
     create_subdirs(f"{path_to_data_dir}", sub_dirs)
 

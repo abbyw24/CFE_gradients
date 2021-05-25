@@ -81,6 +81,8 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         # expected gradient
         mock_info["grad_expected"] = m/(b*L)*w_hat
         print(mock_info["grad_expected"])
+        grad_expected = [m/(b*L), 0, 0]
+        print(grad_expected)
         assert False
 
         # save lognormal set to mocks directory

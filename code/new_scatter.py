@@ -11,6 +11,8 @@ grad_dim = new_globals.grad_dim
 path_to_data_dir = new_globals.path_to_data_dir
 mock_name_list = new_globals.mock_name_list
 
+grad_type = new_globals.grad_type
+
 n_patches = new_globals.n_patches
 
 def label_s(k):
@@ -28,7 +30,7 @@ def label_p(k):
 def scatter_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches):
     # create the needed subdirectories
     sub_dirs = [
-        "plots/patches_vs_suave/scatter"
+        f"plots/patches_vs_suave/scatter/{grad_type}"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
@@ -69,7 +71,7 @@ def scatter_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_di
         fig, ax = plt.subplots()
         ax.set_xlabel("Expected Gradient")
         ax.set_ylabel("Recovered Gradient")
-        ax.set_title(f"Expected vs. Recovered Gradient, {dim[i]}")
+        ax.set_title(f"Expected vs. Recovered Gradient, {dim[i]}, {grad_type}")
 
         for j in range(len(grads_exp[:,i])):
             plt.plot(grads_exp[j,i], grads_rec_patches[j,i], marker=".", color="C0", alpha=0.5, label=label_p(k))
@@ -81,7 +83,7 @@ def scatter_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_di
         plt.plot(x, x, color="black", alpha=0.5)
         plt.legend()
         
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/scatter/scatter_patches_vs_suave_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/scatter/{grad_type}/scatter_patches_vs_suave_{dim[i]}.png"))
         plt.cla()
     
         print(f"scatter plot for patches vs. suave, dim {dim[i]}, done")

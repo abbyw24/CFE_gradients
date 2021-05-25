@@ -15,7 +15,7 @@ nbins = new_globals.nbins
 n_patches = new_globals.n_patches
 
 # define function to find least square fit in every bin
-def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches):
+def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches, bin_cutoff_val=2):
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)
     assert isinstance(path_to_data_dir, str)
@@ -37,7 +37,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         m = mock_info["m"]
         b = mock_info["b"]
 
-        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches_{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{n_patches}patches_{mock_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
         patch_centers -= L/2
             # this centers the fiducial point in the box
@@ -70,8 +70,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         ax.set_ylabel(r"$\xi$(r)")
 
         # expected "strength of gradient"
-        grad_expected = m/(b*L)
-        ax.axhline(grad_expected, color="red", alpha=0.5)
+        ax.axhline(mock_info["grad_expected"], color="red", alpha=0.5)
 
         fits = []
         for r_bin in range(nbins):
@@ -90,7 +89,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         plt.plot(r_avg, fit_vals[3]/fit_vals[0], color="black", marker=".", alpha=0.4, label="z fit")
 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
-        bin_cutoff = int(nbins/2)
+        bin_cutoff = int(nbins/bin_cutoff_val)
         # plot bin cutoff
         ax.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
 
@@ -100,15 +99,23 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
             val_rec = np.mean(fits_rec)
                 # average of the fit value in each bin up to cutoff
             recovered_vals.append(val_rec)
+        b_fit = recovered_vals[0]
+        m_fit = recovered_vals[1:]
+        print(m_fit)
+        assert False
     
         # add recovered values to patch info dictionary
-        patch_info["b_fit"] = recovered_vals[0]
+        patch_info["b_fit"] = 
         patch_info["m_fit_x"] = recovered_vals[1]
         patch_info["m_fit_y"] = recovered_vals[2]
         patch_info["m_fit_z"] = recovered_vals[3]
 
+        # add recovered gradient value to patch info dictionary
+        
+        patch_info[f"grad_recovered"] = np.sqrt(
+
         # resave patch info dictionary
-        np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches_{mock_name}"), patch_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{n_patches}patches_{mock_name}"), patch_info, allow_pickle=True)
 
         plt.legend()
         fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/lst_sq_fit/allbins/allbins_{n_patches}patches_{mock_name}.png"))
@@ -140,7 +147,7 @@ def patches_lstsq_fit_1bin(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir,
         m = mock_info["m"]
         b = mock_info["b"]
 
-        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/patches_{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{n_patches}patches_{mock_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
         patch_centers -= L/2
             # this centers the fiducial point in the box
@@ -179,8 +186,14 @@ def patches_lstsq_fit_1bin(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir,
     # perform least square fit in specified r_bin
     X = np.linalg.inv(A.T @ C_inv @ A) @ (A.T @ C_inv @ Y)
     b_fit = X[0]
-    expected = m/(b*L)
+    expected = mock_info["grad_expected"]
     recovered = X[1]/b_fit
+
+    # add recovered values to patch info dictionary
+    patch_info[f"b_fit_bin{r_bin}"] = b_fit
+    patch_info[f"m_fit_x_bin{r_bin}"] = X[1]
+    patch_info[f"m_fit_y_bin{r_bin}"] = X[2]
+    patch_info[f"m_fit_z_bin{r_bin}"] = X[3]
 
     # plot results
     for i in range(len(dim)):

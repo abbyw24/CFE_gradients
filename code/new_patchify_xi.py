@@ -79,12 +79,13 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
 
     # create the needed subdirectories
     sub_dirs = [
-        "patch_data",
+        f"patch_data/{n_patches}patches",
         "plots/patches/xi"
     ]
     create_subdirs(f"{path_to_data_dir}", sub_dirs)
 
     for i in range(len(mock_name_list)):
+        # retrieve mock info dictionary
         mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}.npy"), allow_pickle=True).item()
         mock_name = mock_info["mock_name"]
         mock_data = mock_info["grad_set"]
@@ -168,7 +169,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
             "xi_patch_avg" : xi_patch_avg,
             "xi_full" : xi_full
             }
-        np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches_{mock_name}"), patch_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{n_patches}patches_{mock_name}"), patch_info, allow_pickle=True)
 
         # plot results
         plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")

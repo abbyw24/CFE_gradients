@@ -116,6 +116,9 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         xs_grad = np.append(xs_clust_grad, xs_unclust_grad, axis=0)
         mock_info["grad_set"] = xs_grad
 
+        # also save expected gradient value to dictionary
+        mock_info["grad_expected"] = m/(b*L)
+
         # visualisation! (we define z_max cutoff in function parameters)
 
         # plot all points in same color

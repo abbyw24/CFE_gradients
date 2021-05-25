@@ -60,7 +60,6 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         # generate unit vector– this is the direction of the gradient
         if grad_dim == 1:
             w_hat = np.array([1.0,0,0])
-            mock_info["grad_expected"] = [m/(b*L), 0, 0]
         elif grad_dim == 2:
             w_hat = np.random.normal(size=3)
             w_hat[2] = 0
@@ -74,9 +73,15 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
             print("Invalid dimension; must be 1, 2, or 3")
             assert False
     
-        # normalize w_hat and print out result
+        # normalize w_hat
         w_hat /= np.linalg.norm(w_hat)
-        ### might want to come back and save w_hat later
+        # save w_hat to dictionary
+        mock_info["w_hat"] = w_hat
+
+        # expected gradient
+        mock_info["grad_expected"] = m/(b*L)*w_hat
+        print(mock_info["grad_expected"])
+        assert False
 
         # save lognormal set to mocks directory
         x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T

@@ -57,7 +57,7 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
     return bases
 
 # define function to estimate gradient using suave
-def suave_exp_vs_rec_vals(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
+def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)
     assert isinstance(path_to_data_dir, str)

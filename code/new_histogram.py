@@ -11,6 +11,8 @@ grad_dim = new_globals.grad_dim
 path_to_data_dir = new_globals.path_to_data_dir
 mock_name_list = new_globals.mock_name_list
 
+grad_type = new_globals.grad_type
+
 n_patches = new_globals.n_patches
 
 def histogram_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches, label1="patches", label2="suave", nbins=10):
@@ -48,7 +50,7 @@ def histogram_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_
     for i in dim:
         # create plot
         fig = plt.figure()
-        plt.title(f"Histogram of Recovered Gradient, {dim[i]}")
+        plt.title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}")
         plt.xlabel("Recovered Gradient")
 
         # line at x = 0
@@ -60,7 +62,7 @@ def histogram_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_
 
         plt.legend()
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/hist_patches_vs_suave_{nbins}bins_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{grad_type}/hist_patches_vs_suave_{nbins}bins_{dim[i]}.png"))
         plt.cla()
 
         print(f"scatter plot for patches vs. suave, dim {dim[i]}, done")

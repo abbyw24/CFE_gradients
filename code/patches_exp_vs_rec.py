@@ -25,7 +25,7 @@ def patches_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_p
     sub_dirs = [
         "plots/patches/exp_vs_rec"
     ]
-    create_subdirs(path_to_data_dir, sub_dirs
+    create_subdirs(path_to_data_dir, sub_dirs)
     
     for i in range(len(mock_name_list)):
         # load in mock and patch info

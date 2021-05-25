@@ -29,6 +29,7 @@ rand_set = np.random.uniform(-L/2,L/2,(3,N))
 results_xi = xi(data, rand_set, periodic, nthreads, rmin, rmax, nbins)
 r_avg = results_xi[0]
 xi = np.array(results_xi[1])
+print(r_avg, xi)
 
 # plot results
 fig, ax = plt.subplots()
@@ -37,4 +38,4 @@ ax.set_xlabel(r'r ($h^{-1}$Mpc)')
 ax.set_ylabel(r'$\xi$(r)')
 ax.set_title(f"Standard Estimator, {clust_val}x Lognormal Mock")
 
-fig.savefig("/scratch/aew492/research-summer2020_output")
+fig.savefig(f"/scratch/aew492/research-summer2020_output/Corrfunc_{clust_val}x")

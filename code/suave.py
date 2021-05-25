@@ -210,4 +210,4 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
 
         print(f"suave, {mock_name}")
 
-suave_exp_vs_rec_vals()
+suave_exp_vs_rec()

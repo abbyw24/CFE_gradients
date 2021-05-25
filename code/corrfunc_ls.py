@@ -5,9 +5,7 @@ import Corrfunc
 def xi(data, rand_set, periodic, nthreads, rmin, rmax, nbins):
     # parameters
     r_edges = np.linspace(rmin, rmax, nbins+1)
-    print(f"r_edges: {r_edges}")
     r_avg = 0.5*(r_edges[1:]+r_edges[:-1])
-    print(f"r_avg: {r_avg}")
     nd = len(data)
     nr = len(rand_set)
 

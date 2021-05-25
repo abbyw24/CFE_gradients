@@ -18,12 +18,19 @@ nthreads = globals.nthreads
 
 clust_val = 2
 
-Lx, Ly, Lz, N, data = read_lognormal.read(f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As{clust_val}x/cat_L750_n2e-4_z057_patchy_As{clust_val}x_lognormal_rlz0.bin")
-
+Lx, Ly, Lz, nd, data = read_lognormal.read(f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As{clust_val}x/cat_L750_n2e-4_z057_patchy_As{clust_val}x_lognormal_rlz0.bin")
+data = data.T   # transpose to fit requirements for xi function
 L = Lx  # boxsize
 
-# random set
-rand_set = np.random.uniform(-L/2,L/2,(3,N))
+# if there are negative values, shift by L/2, to 0 to L
+if np.any(data <= 0):
+    data += L/2
+else:
+    assert np.all(data >= 0 and data <= L)
+
+# create random set
+nr = randmult*nd
+rand_set = np.random.uniform(0, L, (nr,3))
 
 # Corrfunc
 results_xi = xi(data, rand_set, periodic, nthreads, rmin, rmax, nbins)

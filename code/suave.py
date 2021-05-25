@@ -184,8 +184,8 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         # plot correlation functions along the gradient axis
         for i, v in enumerate(vs):
             loc = loc_pivot + v*w_cont_hat
-            if i==len(vs)-1:
-                # print(loc)
+            # if i==len(vs)-1:
+            #     print(loc)
             weights1 = np.array(np.concatenate(([1.0], loc-loc_pivot)))
             weights2 = weights1 #because we just take the average of these and want to get this back
             

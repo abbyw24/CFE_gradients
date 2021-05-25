@@ -28,11 +28,12 @@ if np.any(data <= 0):
 else:
     assert np.all(data >= 0 and data <= L)
 
-# create random set
+# CORRFUNC
+# random set
 nr = randmult*nd
 rand_set = np.random.uniform(0, L, (nr,3))
 
-# Corrfunc
+# results
 results_xi = xi(data, rand_set, periodic, nthreads, rmin, rmax, nbins)
 r_avg = results_xi[0]
 xi = np.array(results_xi[1])
@@ -46,3 +47,5 @@ ax.set_ylabel(r'$\xi$(r)')
 ax.set_title(f"Standard Estimator, {clust_val}x Lognormal Mock")
 
 fig.savefig(f"/scratch/aew492/research-summer2020_output/Corrfunc_{clust_val}x")
+
+# SUAVE

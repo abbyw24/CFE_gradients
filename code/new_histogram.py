@@ -68,4 +68,4 @@ def histogram_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_
 
         print(f"scatter plot for patches vs. suave, dim {dim[i]}, done")
 
-histogram_patches_vs_suave()
+histogram_patches_vs_suave(nbins=20)

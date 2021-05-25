@@ -4,17 +4,17 @@ from mpl_toolkits.mplot3d import Axes3D
 import os
 import read_lognormal
 from create_subdirs import create_subdirs
-import new_globals
+import globals
 
-new_globals.initialize_vals()
+globals.initialize_vals()
 
-path_to_data_dir = new_globals.path_to_data_dir
-grad_dim = new_globals.grad_dim
-path_to_lognorm_source = new_globals.path_to_lognorm_source
-mock_name_list = new_globals.mock_name_list
-lognorm_file_list = new_globals.lognorm_file_list
-m_arr_perL = new_globals.m_arr_perL
-b_arr = new_globals.b_arr
+path_to_data_dir = globals.path_to_data_dir
+grad_dim = globals.grad_dim
+path_to_lognorm_source = globals.path_to_lognorm_source
+mock_name_list = globals.mock_name_list
+lognorm_file_list = globals.lognorm_file_list
+m_arr_perL = globals.m_arr_perL
+b_arr = globals.b_arr
 
 # # pick a seed number so that random set stays the same every time (for now)
 # np.random.seed(123456)

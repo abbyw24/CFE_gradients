@@ -3,17 +3,17 @@ import matplotlib.pyplot as plt
 import os
 
 from create_subdirs import create_subdirs
-import new_globals
+import globals
 
-new_globals.initialize_vals()
+globals.initialize_vals()
 
-grad_dim = new_globals.grad_dim
-path_to_data_dir = new_globals.path_to_data_dir
-mock_name_list = new_globals.mock_name_list
+grad_dim = globals.grad_dim
+path_to_data_dir = globals.path_to_data_dir
+mock_name_list = globals.mock_name_list
 
-grad_type = new_globals.grad_type
+grad_type = globals.grad_type
 
-n_patches = new_globals.n_patches
+n_patches = globals.n_patches
 
 def histogram_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches, label1="patches", label2="suave", nbins=10):
    # create the needed subdirectories

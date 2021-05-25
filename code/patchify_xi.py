@@ -7,22 +7,22 @@ import itertools as it
 import os
 from create_subdirs import create_subdirs
 
-import new_globals
+import globals
 
-new_globals.initialize_vals()  # brings in all the default parameters
+globals.initialize_vals()  # brings in all the default parameters
 
-grad_dim = new_globals.grad_dim
-path_to_data_dir = new_globals.path_to_data_dir
-mock_name_list = new_globals.mock_name_list
+grad_dim = globals.grad_dim
+path_to_data_dir = globals.path_to_data_dir
+mock_name_list = globals.mock_name_list
 
-randmult = new_globals.randmult
-periodic = new_globals.periodic
-rmin = new_globals.rmin
-rmax = new_globals.rmax
-nbins = new_globals.nbins
-nthreads = new_globals.nthreads
+randmult = globals.randmult
+periodic = globals.periodic
+rmin = globals.rmin
+rmax = globals.rmax
+nbins = globals.nbins
+nthreads = globals.nthreads
 
-n_patches = new_globals.n_patches
+n_patches = globals.n_patches
 
 # define patchify
 def patchify(data, boxsize, n_patches=n_patches):

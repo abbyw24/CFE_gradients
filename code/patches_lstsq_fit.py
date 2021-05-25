@@ -3,16 +3,16 @@ import matplotlib.pyplot as plt
 import math
 from create_subdirs import create_subdirs
 import os
-import new_globals
+import globals
 
-new_globals.initialize_vals()  # brings in all the default parameters
+globals.initialize_vals()  # brings in all the default parameters
 
-grad_dim = new_globals.grad_dim
-path_to_data_dir = new_globals.path_to_data_dir
-mock_name_list = new_globals.mock_name_list
+grad_dim = globals.grad_dim
+path_to_data_dir = globals.path_to_data_dir
+mock_name_list = globals.mock_name_list
 
-nbins = new_globals.nbins
-n_patches = new_globals.n_patches
+nbins = globals.nbins
+n_patches = globals.n_patches
 
 # define function to find least square fit in every bin
 def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches, bin_cutoff_val=2):

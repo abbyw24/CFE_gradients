@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import os
 
 import read_lognormal
@@ -15,6 +16,25 @@ rmax = globals.rmax
 nbins = globals.nbins
 nthreads = globals.nthreads
 
-mock_2x = read_lognormal.read("/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As2x/cat_L750_n2e-4_z057_patchy_As2x_lognormal_rlz0.bin")
-print(type(mock_2x))
-print(mock_2x)
+clust_val = 2
+
+Lx, Ly, Lz, N, data = read_lognormal.read(f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As{clust_val}x/cat_L750_n2e-4_z057_patchy_As{clust_val}x_lognormal_rlz0.bin")
+
+L = Lx  # boxsize
+
+# random set
+rand_set = np.random.uniform(-L/2,L/2,(3,N))
+
+# Corrfunc
+results_xi = xi(data, rand_set, periodic, nthreads, rmin, rmax, nbins)
+r_avg = results_xi[0]
+xi = np.array(results_xi[1])
+
+# plot results
+fig, ax = plt.subplots()
+plt.plot(r_avg, xi, color="black", marker=".", label="Full Mock")
+ax.set_xlabel(r'r ($h^{-1}$Mpc)')
+ax.set_ylabel(r'$\xi$(r)')
+ax.set_title(f"Standard Estimator, {clust_val}x Lognormal Mock")
+
+fig.savefig("/scratch/aew492/research-summer2020_output")

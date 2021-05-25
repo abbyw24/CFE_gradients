@@ -83,5 +83,7 @@ def scatter_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_di
         
         fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/scatter/scatter_patches_vs_suave_{dim[i]}.png"))
         plt.cla()
+    
+        print(f"scatter plot for patches vs. suave, dim {dim}, done")
 
 scatter_patches_vs_suave()

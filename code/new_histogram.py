@@ -18,7 +18,7 @@ n_patches = new_globals.n_patches
 def histogram_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches, label1="patches", label2="suave", nbins=10):
    # create the needed subdirectories
     sub_dirs = [
-        "plots/patches_vs_suave/histogram"
+        f"plots/patches_vs_suave/histogram/{grad_type}"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
     

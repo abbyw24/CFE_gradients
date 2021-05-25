@@ -40,6 +40,9 @@ def histogram_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_
         # append values to list of all mocks
         grads_rec_patches.append(grad_rec_patches)
         grads_rec_suave.append(grad_rec_suave)
+    
+    grads_rec_patches = np.array(grads_rec_patches)
+    grads_rec_suave = np.array(grads_rec_suave)
 
     # loop through desired dimensions with patches and suave
     for i in dim:

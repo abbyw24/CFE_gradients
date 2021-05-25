@@ -115,7 +115,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         # ratio of recovered to expected
         ratio_rec_exp = grad_recovered[0]/grad_expected[0]
         # again, need to figure this out for grad_dim > 1 !
-        patch_info[f"ratio_rec_exp"] = ratio_rec_exp
+        patch_info["ratio_rec_exp"] = ratio_rec_exp
 
         # resave patch info dictionary
         np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{n_patches}patches_{mock_name}"), patch_info, allow_pickle=True)

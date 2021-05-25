@@ -91,9 +91,6 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
         mock_data = mock_info["grad_set"]
         L = mock_info["boxsize"]
 
-        # add number of patches to dictionary
-        mock_info["n_patches"] = n_patches
-
         # if there are negative values, shift by L/2, to 0 to L
         if np.any(mock_data <= 0):
             mock_data += L/2
@@ -163,6 +160,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
 
         # save xi data– to load in separate file for least square fit
         patch_info = {
+            "n_patches" : n_patches,
             "patch_centers" : patch_centers,
             "r_avg" : r_avg,
             "xi_patches" : xi_patches,

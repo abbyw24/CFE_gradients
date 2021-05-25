@@ -15,7 +15,7 @@ n_patches = new_globals.n_patches
 # ** this is currently for the x dimension only **
 
 # define function to import recovered fit values and nicely compare expected to recovered gradient in plot
-def patches_exp_vs_rec_vals(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches, z_max=-50, scale=200):
+def patches_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches, z_max=-50, scale=200):
     # make sure all inputs have the right form
     assert isinstance(path_to_data_dir, str)
     for x in [grad_dim, n_patches, z_max, scale]:
@@ -91,3 +91,5 @@ def patches_exp_vs_rec_vals(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir
 
         # resave patch info dictionary
         np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{n_patches}patches_{mock_name}"), patch_info, allow_pickle=True)
+    
+    patches_exp_vs_rec()

@@ -90,7 +90,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
 
     for i in range(len(mock_name_list)):
         # load in mock and patch info
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{mock_name_list[i]}.npy"), allow_pickle=True).item()
         mock_name = mock_info["mock_name"]
         L = mock_info["boxsize"]
         m = mock_info["m"]
@@ -202,7 +202,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         ax.set_ylabel(r'$\xi(r)$')
         ax.set_title(f"Recovered Gradient, {mock_name}")
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/suave/grad_recovered/grad_rec_{mock_name}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/suave/grad_recovered/{mock_name}.png"))
         plt.cla()
 
         # save suave info dictionary

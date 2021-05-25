@@ -10,6 +10,4 @@ import patches_lstsq_fit
 import suave
 
 # compare performance of patches and suave
-import scatter
-
-import histogram
+import patches_vs_suave_stats

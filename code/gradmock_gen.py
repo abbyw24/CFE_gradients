@@ -10,6 +10,7 @@ globals.initialize_vals()
 
 path_to_data_dir = globals.path_to_data_dir
 grad_dim = globals.grad_dim
+grad_type = globals.grad_type
 path_to_lognorm_source = globals.path_to_lognorm_source
 mock_name_list = globals.mock_name_list
 lognorm_file_list = globals.lognorm_file_list
@@ -22,11 +23,11 @@ b_arr = globals.b_arr
 # lognorm file used so far = "lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin"
 
 # function to generate gradient mock
-def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source, mock_name_list=mock_name_list, z_max=-50):
+def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source, mock_name_list=mock_name_list, z_max=-50):
 
     # create desired path to mocks directory if it doesn't already exist
     sub_dirs = [
-        "mock_data/dicts",
+        "mock_data",
         "plots/color_mocks",
         "plots/samecolor_mocks"
     ]
@@ -56,7 +57,7 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
             "m" : m_arr_perL[i],
             "b" : b_arr[i]
         }
-        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}")
+        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/{mock_name_list[i]}")
 
         # redefine dictionary values for simplicity
         mock_name = str(mock_info["mock_name"])

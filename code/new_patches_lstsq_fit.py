@@ -36,6 +36,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         L = mock_info["boxsize"]
         m = mock_info["m"]
         b = mock_info["b"]
+        grad_expected = mock_info["grad_expected"]
 
         patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{n_patches}patches_{mock_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
@@ -70,7 +71,8 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         ax.set_ylabel(r"$\xi$(r)")
 
         # expected "strength of gradient"
-        ax.axhline(mock_info["grad_expected"], color="red", alpha=0.5)
+        # figure this out for grad_dim > 1
+        ax.axhline(grad_expected[0], color="red", alpha=0.5)
 
         fits = []
         for r_bin in range(nbins):
@@ -105,14 +107,11 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         assert False
     
         # add recovered values to patch info dictionary
-        patch_info["b_fit"] = 
-        patch_info["m_fit_x"] = recovered_vals[1]
-        patch_info["m_fit_y"] = recovered_vals[2]
-        patch_info["m_fit_z"] = recovered_vals[3]
+        patch_info["b_fit"] = b_fit
+        patch_info["m_fit"] = m_fit
 
         # add recovered gradient value to patch info dictionary
-        
-        patch_info[f"grad_recovered"] = np.sqrt(
+        patch_info[f"grad_recovered"] = m_fit/b_fit
 
         # resave patch info dictionary
         np.save(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{n_patches}patches_{mock_name}"), patch_info, allow_pickle=True)

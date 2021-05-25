@@ -32,23 +32,6 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
-    ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
-    # generate unit vector– this is the direction of the gradient
-    if grad_dim == 1:
-        w_hat = np.array([1.0,0,0])
-    elif grad_dim == 2:
-        w_hat = np.random.normal(size=3)
-        w_hat[2] = 0
-    elif grad_dim == 3:
-        w_hat = np.random.normal(size=3)
-    else:
-        print("Invalid dimension; must be 1, 2, or 3")
-        assert False
-    
-    # normalize w_hat and print out result
-    w_hat /= np.linalg.norm(w_hat)
-    ### might want to come back and save w_hat later
-
     for i in range(len(mock_name_list)):
         # create dictionary with mock info– to start, mock name, lognorm rlz, m, and b
         mock_info = {
@@ -72,6 +55,28 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
             # L = boxsize
         # save boxsize then load in this boxsize for all uses of gradient mock
         mock_info["boxsize"] = L
+
+        ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
+        # generate unit vector– this is the direction of the gradient
+        if grad_dim == 1:
+            w_hat = np.array([1.0,0,0])
+            mock_info["grad_expected"] = [m/(b*L), 0, 0]
+        elif grad_dim == 2:
+            w_hat = np.random.normal(size=3)
+            w_hat[2] = 0
+            print("need to figure out grad_expected for grad_dim > 1 !")
+            assert False
+        elif grad_dim == 3:
+            w_hat = np.random.normal(size=3)
+            print("need to figure out grad_expected for grad_dim > 1 !")
+            assert False
+        else:
+            print("Invalid dimension; must be 1, 2, or 3")
+            assert False
+    
+        # normalize w_hat and print out result
+        w_hat /= np.linalg.norm(w_hat)
+        ### might want to come back and save w_hat later
 
         # save lognormal set to mocks directory
         x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
@@ -115,9 +120,6 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         # append to create gradient mock data
         xs_grad = np.append(xs_clust_grad, xs_unclust_grad, axis=0)
         mock_info["grad_set"] = xs_grad
-
-        # also save expected gradient value to dictionary
-        mock_info["grad_expected"] = m/(b*L)
 
         # visualisation! (we define z_max cutoff in function parameters)
 

@@ -164,8 +164,8 @@ def suave_exp_vs_rec_vals(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         w_cont_hat = w_cont/w_cont_norm
         # print("w_cont = ", w_cont)
         # print(f"||w_cont|| = {w_cont_norm:.6f}")
-        #b_guess = 0.5
-        #m_recovered_perL = w_cont_norm*b_guess*L
+        # b_guess = 0.5
+        # m_recovered_perL = w_cont_norm*b_guess*L
         grad_recovered = w_cont 
         suave_info["grad_recovered"] = grad_recovered
 
@@ -185,7 +185,7 @@ def suave_exp_vs_rec_vals(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         for i, v in enumerate(vs):
             loc = loc_pivot + v*w_cont_hat
             if i==len(vs)-1:
-                print(loc)
+                # print(loc)
             weights1 = np.array(np.concatenate(([1.0], loc-loc_pivot)))
             weights2 = weights1 #because we just take the average of these and want to get this back
             

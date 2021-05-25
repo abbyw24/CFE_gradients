@@ -16,8 +16,8 @@ lognorm_file_list = new_globals.lognorm_file_list
 m_arr_perL = new_globals.m_arr_perL
 b_arr = new_globals.b_arr
 
-# pick a seed number so that random set stays the same every time (for now)
-np.random.seed(123456)
+# # pick a seed number so that random set stays the same every time (for now)
+# np.random.seed(123456)
 
 # lognorm file used so far = "lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin"
 

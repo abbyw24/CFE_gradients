@@ -33,7 +33,7 @@ def patches_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_p
         mock_name = mock_info["mock_name"]
         grad_expected = mock_info["grad_expected"]
 
-        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{n_patches}patches_{mock_name_list[i]}.npy"), allow_pickle=True).item())
+        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{n_patches}patches_{mock_name_list[i]}.npy"), allow_pickle=True).item()
         grad_recovered = patch_info["grad_recovered"]
         ratio_rec_exp = patch_info["ratio_rec_exp"]
 

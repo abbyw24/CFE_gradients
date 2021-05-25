@@ -2,18 +2,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-import new_globals
+import globals
 from create_subdirs import create_subdirs
 
-new_globals.initialize_vals()  # brings in all the default parameters
+globals.initialize_vals()  # brings in all the default parameters
 
-grad_dim = new_globals.grad_dim
-path_to_data_dir = new_globals.path_to_data_dir
-mock_name_list = new_globals.mock_name_list
+grad_dim = globals.grad_dim
+path_to_data_dir = globals.path_to_data_dir
+mock_name_list = globals.mock_name_list
 
-grad_type = new_globals.grad_type
+grad_type = globals.grad_type
 
-n_patches = new_globals.n_patches
+n_patches = globals.n_patches
 
 def label_s(k):
     if k == 0:

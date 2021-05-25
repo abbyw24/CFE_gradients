@@ -149,19 +149,17 @@ def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type
         mean_patches = np.mean(grads_rec_patches[:,i])
         print(f"mean rec. grad., patches = {mean_patches}")
         mean_suave = np.mean(grads_rec_suave[:,i])
-        print(f"mean rec. grad., patches = {mean_suave}")
+        print(f"mean rec. grad., suave = {mean_suave}")
         # median
         median_patches = np.median(grads_rec_patches[:,i])
         print(f"median rec. grad., patches = {median_patches}")
         median_suave = np.median(grads_rec_suave[:,i])
-        print(f"median rec. grad., patches = {median_suave}")
+        print(f"median rec. grad., suave = {median_suave}")
         # standard deviation
         std_patches = np.std(grads_rec_patches[:,i])
         print(f"std rec. grad., patches = {std_patches}")
         std_suave = np.std(grads_rec_suave[:,i])
-        print(f"std rec. grad., patches = {std_suave}")
-
-        print("")   # for nice loop printing
+        print(f"std rec. grad., suave = {std_suave}")
 
         # save to dictionary
         stats = {

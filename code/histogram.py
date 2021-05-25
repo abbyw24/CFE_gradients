@@ -48,6 +48,7 @@ def histogram_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_
 
     # loop through desired dimensions with patches and suave
     for i in dim:
+        print(f"{dim[i]}:")
         # create plot
         fig = plt.figure()
         plt.title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}")
@@ -65,6 +66,12 @@ def histogram_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_
 
         fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{grad_type}/hist_patches_vs_suave_{nbins}bins_{dim[i]}.png"))
         plt.cla()
+
+        # stats
+        mean_patches = np.mean(grads_rec_patches[:,i])
+        print(f"mean rec. grad., patches = {mean_patches}")
+        mean_suave = np.mean(grads_rec_suave[:,i])
+        print(f"mean rec. grad., patches = {mean_suave}")
 
         print(f"scatter plot for patches vs. suave, dim {dim[i]}, done")
 

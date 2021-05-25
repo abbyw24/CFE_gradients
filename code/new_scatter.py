@@ -47,7 +47,7 @@ def scatter_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_di
     for i in range(len(mock_name_list)):
         mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/dicts/{mock_name_list[i]}.npy"), allow_pickle=True).item()
         mock_name = mock_info["mock_name"]
-        grad_expected = mock_info[grad_expected]
+        grad_expected = mock_info["grad_expected"]
         
         patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{n_patches}patches_{mock_name_list[i]}.npy"), allow_pickle=True).item()
         grad_rec_patches = patch_info["grad_recovered"]

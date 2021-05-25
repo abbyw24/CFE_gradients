@@ -25,7 +25,7 @@ def label_p(k):
     else:
         return None
 
-def scatter_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches):
+def scatter_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches):
     # create the needed subdirectories
     sub_dirs = [
         "plots/patches_vs_suave/scatter"
@@ -83,3 +83,5 @@ def scatter_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_p
         
         fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/scatter/scatter_patches_vs_suave_{dim[i]}.png"))
         plt.cla()
+
+scatter_patches_vs_suave()

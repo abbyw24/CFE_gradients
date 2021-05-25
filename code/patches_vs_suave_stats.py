@@ -78,7 +78,6 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
 
     # loop through desired dimensions with patches and suave
     for i in dim:
-        print(f"{dim[i]}:")
         # create plot
         fig = plt.figure()
         plt.title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}")

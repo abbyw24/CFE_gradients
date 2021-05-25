@@ -14,6 +14,6 @@ rmax = globals.rmax
 nbins = globals.nbins
 nthreads = globals.nthreads
 
-mock_2x = np.load("/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As2x/cat_L750_n2e-4_z057_patchy_As2x_lognormal_rlz0.bin")
+mock_2x = np.load("/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As2x/cat_L750_n2e-4_z057_patchy_As2x_lognormal_rlz0.bin", allow_pickle=True)
 print(type(mock_2x))
 print(mock_2x.shape)

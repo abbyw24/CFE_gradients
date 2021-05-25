@@ -32,6 +32,22 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
+    ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
+    # generate unit vector– this is the direction of the gradient
+    if grad_dim == 1:
+        w_hat = np.array([1.0,0,0])
+    elif grad_dim == 2:
+        w_hat = np.random.normal(size=3)
+        w_hat[2] = 0
+    elif grad_dim == 3:
+        w_hat = np.random.normal(size=3)
+    else:
+        print("Invalid dimension; must be 1, 2, or 3")
+        assert False
+
+    # normalize w_hat
+    w_hat /= np.linalg.norm(w_hat)
+
     for i in range(len(mock_name_list)):
         # create dictionary with mock info– to start, mock name, lognorm rlz, m, and b
         mock_info = {
@@ -56,21 +72,6 @@ def generate_gradmocks(grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm
         # save boxsize then load in this boxsize for all uses of gradient mock
         mock_info["boxsize"] = L
 
-        ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
-        # generate unit vector– this is the direction of the gradient
-        if grad_dim == 1:
-            w_hat = np.array([1.0,0,0])
-        elif grad_dim == 2:
-            w_hat = np.random.normal(size=3)
-            w_hat[2] = 0
-        elif grad_dim == 3:
-            w_hat = np.random.normal(size=3)
-        else:
-            print("Invalid dimension; must be 1, 2, or 3")
-            assert False
-    
-        # normalize w_hat
-        w_hat /= np.linalg.norm(w_hat)
         # save w_hat to dictionary
         mock_info["w_hat"] = w_hat
 

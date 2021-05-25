@@ -56,9 +56,10 @@ def histogram_patches_vs_suave(grad_dim=grad_dim, path_to_data_dir=path_to_data_
         # line at x = 0
         plt.vlines(0, 0, 20, color="black", alpha=0.4)
 
-        # histogram for patches
-        plt.hist(grads_rec_patches[:,i], bins=nbins, alpha=0.5, label=label1)
-        plt.hist(grads_rec_suave[:,i], bins=nbins, alpha=0.5, label=label2)
+        # define bins
+        bins = np.linspace(1.5*min(grads_rec_patches[:,i]), 1.5*max(grads_rec_patches[:,i]), nbins)
+        plt.hist(grads_rec_patches[:,i], bins=bins, alpha=0.5, label=label1)
+        plt.hist(grads_rec_suave[:,i], bins=bins, alpha=0.5, label=label2)
 
         plt.legend()
 

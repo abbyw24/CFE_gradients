@@ -204,9 +204,11 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         ax.set_title(f"Recovered Gradient, {mock_name}")
 
         fig.savefig(os.path.join(path_to_data_dir, f"plots/suave/{lognormal_density}/grad_recovered/{mock_name}.png"))
-        plt.cla()
 
         # save suave info dictionary
         np.save(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_name}"), suave_info, allow_pickle=True)
+
+        plt.cla()
+        plt.close("all")
 
         print(f"suave, {mock_name}")

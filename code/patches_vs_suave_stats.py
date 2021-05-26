@@ -11,22 +11,11 @@ grad_dim = globals.grad_dim
 path_to_data_dir = globals.path_to_data_dir
 mock_name_list = globals.mock_name_list
 lognormal_density = globals.lognormal_density
+n_mocks = globals.n_mocks
 
 grad_type = globals.grad_type
 
 n_patches = globals.n_patches
-
-def label_s(k):
-    if k == 0:
-        return "suave"
-    else:
-        return None
-
-def label_p(k):
-    if k == 0:
-        return "patches"
-    else:
-        return None
 
 def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
     lognormal_density = lognormal_density):
@@ -42,19 +31,16 @@ def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad
             1 : "y",
             2 : "z"
             }
-    k = 0
 
     for i in dim:
         # create plot
         fig, ax = plt.subplots()
         ax.set_xlabel("Expected Gradient")
         ax.set_ylabel("Recovered Gradient")
-        ax.set_title(f"Expected vs. Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}")
+        ax.set_title(f"Expected vs. Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}, {n_mocks} mocks")
 
-        for j in range(len(grads_exp[:,i])):
-            plt.plot(grads_exp[j,i], grads_rec_patches[j,i], marker=".", color="C0", alpha=0.5, label=label_p(k))
-            plt.plot(grads_exp[j,i], grads_rec_suave[j,i], marker=".", color="orange", alpha=0.5, label=label_s(k))
-            k += 1
+        plt.scatter(grads_exp[:,i], grads_rec_patches[:,i], marker=".", color="gray", alpha=0.5, label="Standard")
+        plt.scatter(grads_exp[:,i], grads_rec_suave[:,i], marker=".", color="black", alpha=0.5, label="CFE")
         
         # plot line y = x (the data points would fall on this line if the expected and recovered gradients matched up perfectly)
         x = np.linspace(min(grads_exp[:,i]), max(grads_exp[:,i]), 10)
@@ -67,7 +53,7 @@ def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad
         print(f"scatter plot for patches vs. suave, dim {dim[i]}, done")
 
 def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
-    lognormal_density=lognormal_density, label1="patches", label2="suave", nbins=10):
+    lognormal_density=lognormal_density, nbins=10):
 
     # create the needed subdirectories
     sub_dirs = [
@@ -85,7 +71,7 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
     for i in dim:
         # create plot
         fig = plt.figure()
-        plt.title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}")
+        plt.title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}, {n_mocks} mocks")
         plt.xlabel("Recovered Gradient")
 
         # line at x = 0
@@ -93,8 +79,8 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
 
         # define bins
         bins = np.linspace(1.5*min(grads_rec_patches[:,i]), 1.5*max(grads_rec_patches[:,i]), nbins)
-        plt.hist(grads_rec_patches[:,i], bins=bins, alpha=0.5, label=label1)
-        plt.hist(grads_rec_suave[:,i], bins=bins, alpha=0.5, label=label2)
+        plt.hist(grads_rec_patches[:,i], bins=bins, alpha=0.5, label="Standard")
+        plt.hist(grads_rec_suave[:,i], bins=bins, alpha=0.5, label="CFE")
 
         plt.legend()
 

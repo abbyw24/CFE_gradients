@@ -48,7 +48,6 @@ x_rand, y_rand, z_rand = rand_set
 results_xi = xi(data, rand_set, periodic, nthreads, rmin, rmax, nbins)
 r_avg = results_xi[0]
 xi = np.array(results_xi[1])
-print(r_avg, xi)
 
 # plot results
 fig1, ax1 = plt.subplots()

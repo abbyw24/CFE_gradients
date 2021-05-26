@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+from create_subdirs import create_subdirs
 import read_lognormal
 from corrfunc_ls import xi
 
@@ -21,6 +22,9 @@ clust_val = 2
 Lx, Ly, Lz, nd, data = read_lognormal.read(f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As{clust_val}x/cat_L750_n2e-4_z057_patchy_As{clust_val}x_lognormal_rlz0.bin")
 data = data.T   # transpose to fit requirements for xi function
 L = Lx  # boxsize
+
+# create necessary subdirectories
+create_subdirs("/scratch/aew492/research-summer2020_output/", ["lognormal"])
 
 # if there are negative values, shift by L/2, to 0 to L
 if np.any(data <= 0):
@@ -46,6 +50,6 @@ ax.set_xlabel(r'r ($h^{-1}$Mpc)')
 ax.set_ylabel(r'$\xi$(r)')
 ax.set_title(f"Standard Estimator, {clust_val}x Lognormal Mock")
 
-fig.savefig(f"/scratch/aew492/research-summer2020_output/Corrfunc_{clust_val}x")
+fig.savefig(f"/scratch/aew492/research-summer2020_output/lognormal/Corrfunc_{clust_val}x")
 
 # SUAVE

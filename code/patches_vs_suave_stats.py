@@ -110,14 +110,14 @@ def extract_grads_patches_suave():
 
     # load in mock, patches, and suave info
     for i in range(len(mock_name_list)):
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_name_list[i]}.npy"), allow_pickle=True).item()
         mock_name = mock_info["mock_name"]
         grad_expected = mock_info["grad_expected"]
         
-        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{n_patches}patches/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_name_list[i]}.npy"), allow_pickle=True).item()
         grad_rec_patches = patch_info["grad_recovered"]
 
-        suave_info = np.load(os.path.join(path_to_data_dir, f"suave_data/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        suave_info = np.load(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_name_list[i]}.npy"), allow_pickle=True).item()
         grad_rec_suave = suave_info["grad_recovered"]
 
         # append values to list of all mocks

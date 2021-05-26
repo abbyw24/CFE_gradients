@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import os
+
+from numpy.random import lognormal
 import read_lognormal
 from create_subdirs import create_subdirs
 import globals
@@ -28,9 +30,9 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
 
     # create desired path to mocks directory if it doesn't already exist
     sub_dirs = [
-        "mock_data",
-        "plots/color_mocks",
-        "plots/samecolor_mocks"
+        f"mock_data/{lognormal_density}",
+        f"plots/color_mocks/{lognormal_density}",
+        f"plots/samecolor_mocks/{lognormal_density}"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
@@ -59,7 +61,7 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
             "b" : b_arr[i],
             "lognorm_density" : lognormal_density
         }
-        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/{mock_name_list[i]}")
+        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_name_list[i]}")
 
         # redefine dictionary values for simplicity
         mock_name = str(mock_info["mock_name"])
@@ -138,7 +140,7 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         ax1.set_ylabel("y (Mpc/h)")
         ax1.set_title(mock_name)
         ax1.legend()
-        fig1.savefig(os.path.join(path_to_data_dir, f"plots/samecolor_mocks/{mock_name}.png"))
+        fig1.savefig(os.path.join(path_to_data_dir, f"plots/samecolor_mocks/{lognormal_density}/{mock_name}.png"))
         plt.cla()
 
         # plot different colors for clust and uncl
@@ -156,7 +158,7 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         ax2.set_ylabel("y (Mpc/h)")
         ax2.set_title(mock_name)
         ax2.legend()
-        fig2.savefig(os.path.join(path_to_data_dir, f"plots/color_mocks/color_{mock_name}.png"))
+        fig2.savefig(os.path.join(path_to_data_dir, f"plots/color_mocks/{lognormal_density}/color_{mock_name}.png"))
         plt.cla()
 
         plt.close("all") 

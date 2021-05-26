@@ -22,6 +22,7 @@ import globals
 globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
+lognormal_density = globals.lognormal_density
 path_to_data_dir = globals.path_to_data_dir
 mock_name_list = globals.mock_name_list
 
@@ -64,8 +65,8 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
 
     # create the needed subdirectories
     sub_dirs = [
-        "suave_data",
-        "plots/suave/grad_recovered"
+        f"suave_data/{lognormal_density}",
+        f"plots/suave/{lognormal_density}/grad_recovered"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
@@ -90,7 +91,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
 
     for i in range(len(mock_name_list)):
         # load in mock and patch info
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_name_list[i]}.npy"), allow_pickle=True).item()
         mock_name = mock_info["mock_name"]
         L = mock_info["boxsize"]
         m = mock_info["m"]
@@ -202,10 +203,10 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         ax.set_ylabel(r'$\xi(r)$')
         ax.set_title(f"Recovered Gradient, {mock_name}")
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/suave/grad_recovered/{mock_name}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/suave/{lognormal_density}/grad_recovered/{mock_name}.png"))
         plt.cla()
 
         # save suave info dictionary
-        np.save(os.path.join(path_to_data_dir, f"suave_data/{mock_name}"), suave_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_name}"), suave_info, allow_pickle=True)
 
         print(f"suave, {mock_name}")

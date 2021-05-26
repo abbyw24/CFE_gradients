@@ -56,8 +56,8 @@ def patches_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_p
         residual = grad_recovered - grad_expected
 
         # load in mock data
-        xs_clust_grad = mock_info["clust"]
-        xs_unclust_grad = mock_info["unclust"]
+        xs_clust_grad = mock_info["clust_set"]
+        xs_unclust_grad = mock_info["unclust_set"]
 
         xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
         xy_slice_unclust = xs_unclust_grad[np.where(xs_unclust_grad[:,2] < z_max)]

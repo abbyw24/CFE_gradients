@@ -58,40 +58,45 @@ ax1.set_title(f"Standard Estimator, {clust_val}x Lognormal Mock")
 fig1.savefig(f"/scratch/aew492/research-summer2020_output/lognormal/Corrfunc_{clust_val}x")
 
 # SUAVE
+import numpy as np
+import Corrfunc
+from Corrfunc import bases, theory, utils, io
+from matplotlib import pyplot as plt
+
 # spline basis
 proj_type = 'generalr'
 kwargs = {'order': 3}
 projfn = 'cubic_spline.dat'
-bases = cosmo_bases(rmin, rmax, projfn)
-ncomponents = 4*(bases.shape[1]-1)
+rmin, rmax, ncomponents = 40.0, 152.0, 14
+bases = bases.spline_bases(rmin, rmax, projfn, ncomponents, ncont=2000, **kwargs)
 
 # computing projection vectors with DDsmu
 r_edges = np.linspace(rmin, rmax, ncomponents+1)
 nmubins = 1
 mumax = 1.0
 
-dd_res, dd_proj, _ = Corrfunc.theory.DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z,
+dd_res, dd_proj, _ = theory.DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z,
                                   boxsize=L, periodic=periodic, proj_type=proj_type,
                                   ncomponents=ncomponents, projfn=projfn)
-dr_res, dr_proj, _ = Corrfunc.theory.DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z,
+dr_res, dr_proj, _ = theory.DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z,
                                   X2=x_rand, Y2=y_rand, Z2=z_rand,
                                   boxsize=L, periodic=periodic, proj_type=proj_type,
                                   ncomponents=ncomponents, projfn=projfn)
-rr_res, rr_proj, trr_proj = Corrfunc.theory.DDsmu(1, nthreads, r_edges, mumax, nmubins,
+rr_res, rr_proj, trr_proj = theory.DDsmu(1, nthreads, r_edges, mumax, nmubins,
                                          x_rand, y_rand, z_rand, boxsize=L,
                                          periodic=periodic, proj_type=proj_type,
                                          ncomponents=ncomponents, projfn=projfn)
 
 # computing amplitudes
-amps = Corrfunc.utils.compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj, rr_proj, trr_proj)
+amps = utils.compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj, rr_proj, trr_proj)
 r_fine = np.linspace(rmin, rmax, 2000)
-xi_proj = Corrfunc.utils.evaluate_xi(amps, r_fine, proj_type, projfn=projfn)
+xi_proj = utils.evaluate_xi(amps, r_fine, proj_type, projfn=projfn)
 
 # plotting results with matplotlib
-xi_res = Corrfunc.theory.xi(L, nthreads, r_edges, x, y, z, output_ravg=True)
+xi_res = theory.xi(L, nthreads, r_edges, x, y, z, output_ravg=True)
 r_avg, xi_standard = xi_res['ravg'], xi_res['xi']
 
-fig2, ax2 = plt.subplots()
+plt.figure(figsize=(10,7))
 plt.plot(r_fine, xi_proj, color='red', lw=1.5, label='Continuous-Function Estimator with spline basis')
 
 r = bases[:,0]
@@ -105,10 +110,10 @@ for i in range(base_vals.shape[1]):
 plt.plot(r_avg, xi_standard, marker='o', ls='None', color='grey', label='Standard binned estimator')
 
 plt.axhline(0.0, color='k', lw=1)
-ax2.set_xlim(min(r), max(r))
-ax2.set_ylim(-0.005, 0.025)
-ax2.set_xlabel(r'separation r ($h^{-1}$Mpc)')
-ax2.set_ylabel(r'$\xi$(r)')
+plt.xlim(min(r), max(r))
+plt.ylim(-0.005, 0.025)
+plt.xlabel(r'separation r ($h^{-1}$Mpc)')
+plt.ylabel(r'$\xi$(r)')
 plt.legend()
 
-fig2.savefig(f"/scratch/aew492/research-summer2020_output/lognormal/suave_{clust_val}x")
+plt.savefig(f"/scratch/aew492/research-summer2020_output/lognormal/suave_{clust_val}x")

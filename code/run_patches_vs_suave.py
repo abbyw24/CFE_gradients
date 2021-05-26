@@ -10,8 +10,8 @@
 # patches_lstsq_fit.patches_lstsq_allbins()
 # patches_lstsq_fit.patches_lstsq_fit_1bin(r_bin=2)
 
-import patches_exp_vs_rec
-patches_exp_vs_rec.patches_exp_vs_rec()
+# import patches_exp_vs_rec
+# patches_exp_vs_rec.patches_exp_vs_rec()
 
 # run suave
 import suave

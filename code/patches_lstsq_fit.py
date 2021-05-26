@@ -221,7 +221,3 @@ def patches_lstsq_fit_1bin(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir,
         plt.close("all")
 
         print(f"least square fit in bin {r_bin}, {mock_name}, {n_patches} patches")
-
-patches_lstsq_allbins()
-
-patches_lstsq_fit_1bin(r_bin=2)

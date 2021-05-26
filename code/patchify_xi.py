@@ -162,5 +162,3 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
         plt.close("all")
 
         print(f"xi in patches --> {mock_name}")
-
-xi_in_patches()

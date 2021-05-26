@@ -30,7 +30,7 @@ def label_p(k):
 
 def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
     lognormal_density = lognormal_density):
-    
+
     # create the needed subdirectories
     sub_dirs = [
         f"plots/patches_vs_suave/scatter/{lognormal_density}/{grad_type}"
@@ -178,15 +178,3 @@ def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type
         }
 
         np.save(os.path.join(path_to_data_dir, f"patches_vs_suave_data/{lognormal_density}/{grad_type}/{n_mocks}mocks/stats_{dim[i]}"), stats)
-
-
-grads = extract_grads_patches_suave()
-grads_exp = grads["grads_exp"]
-grads_rec_patches = grads["grads_rec_patches"]
-grads_rec_suave = grads["grads_rec_suave"]
-
-scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave)
-
-histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, nbins=20)
-
-stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave)

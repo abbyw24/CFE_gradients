@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import os
 
 import Corrfunc
-from Corrfunc import bases, theory, utils, io
 
 from suave import cosmo_bases
 from create_subdirs import create_subdirs
@@ -71,27 +70,25 @@ r_edges = np.linspace(rmin, rmax, ncomponents+1)
 nmubins = 1
 mumax = 1.0
 
-assert False
-
-dd_res, dd_proj, _ = theory.DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z,
+dd_res, dd_proj, _ = Corrfunc.theory.DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z,
                                   boxsize=L, periodic=periodic, proj_type=proj_type,
                                   ncomponents=ncomponents, projfn=projfn)
-dr_res, dr_proj, _ = theory.DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z,
+dr_res, dr_proj, _ = Corrfunc.theory.DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z,
                                   X2=x_rand, Y2=y_rand, Z2=z_rand,
                                   boxsize=L, periodic=periodic, proj_type=proj_type,
                                   ncomponents=ncomponents, projfn=projfn)
-rr_res, rr_proj, trr_proj = theory.DDsmu(1, nthreads, r_edges, mumax, nmubins,
+rr_res, rr_proj, trr_proj = Corrfunc.theory.DDsmu(1, nthreads, r_edges, mumax, nmubins,
                                          x_rand, y_rand, z_rand, boxsize=L,
                                          periodic=periodic, proj_type=proj_type,
                                          ncomponents=ncomponents, projfn=projfn)
 
 # computing amplitudes
-amps = utils.compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj, rr_proj, trr_proj)
+amps = Corrfunc.utils.compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj, rr_proj, trr_proj)
 r_fine = np.linspace(rmin, rmax, 2000)
-xi_proj = utils.evaluate_xi(amps, r_fine, proj_type, projfn=projfn)
+xi_proj = Corrfunc.utils.evaluate_xi(amps, r_fine, proj_type, projfn=projfn)
 
 # plotting results with matplotlib
-xi_res = theory.xi(L, nthreads, r_edges, x, y, z, output_ravg=True)
+xi_res = Corrfunc.theory.xi(L, nthreads, r_edges, x, y, z, output_ravg=True)
 r_avg, xi_standard = xi_res['ravg'], xi_res['xi']
 
 fig2, ax2 = plt.subplots()

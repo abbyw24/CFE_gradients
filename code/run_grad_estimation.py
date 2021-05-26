@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import os
 
 import Corrfunc
+from Corrfunc import bases, theory, utils, io
 
 from suave import cosmo_bases
 from create_subdirs import create_subdirs
@@ -58,10 +59,6 @@ ax1.set_title(f"Standard Estimator, {clust_val}x Lognormal Mock")
 fig1.savefig(f"/scratch/aew492/research-summer2020_output/lognormal/Corrfunc_{clust_val}x")
 
 # SUAVE
-import numpy as np
-import Corrfunc
-from Corrfunc import bases, theory, utils, io
-from matplotlib import pyplot as plt
 
 # spline basis
 proj_type = 'generalr'

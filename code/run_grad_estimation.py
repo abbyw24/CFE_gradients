@@ -58,7 +58,7 @@ ax1.set_title(f"Standard Estimator, {clust_val}x Lognormal Mock")
 
 fig1.savefig(f"/scratch/aew492/research-summer2020_output/lognormal/Corrfunc_{clust_val}x")
 
-
+assert False
 # SUAVE
 # spline basis
 proj_type = 'generalr'

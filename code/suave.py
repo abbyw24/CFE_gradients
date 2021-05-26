@@ -209,5 +209,3 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         np.save(os.path.join(path_to_data_dir, f"suave_data/{mock_name}"), suave_info, allow_pickle=True)
 
         print(f"suave, {mock_name}")
-
-suave_exp_vs_rec()

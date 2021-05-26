@@ -58,13 +58,13 @@ ax1.set_title(f"Standard Estimator, {clust_val}x Lognormal Mock")
 
 fig1.savefig(f"/scratch/aew492/research-summer2020_output/lognormal/Corrfunc_{clust_val}x")
 
-assert False
 # SUAVE
 # spline basis
 proj_type = 'generalr'
 kwargs = {'order': 3}
 projfn = 'cubic_spline.dat'
 bases = cosmo_bases(rmin, rmax, projfn)
+assert False
 ncomponents = 4*(bases.shape[1]-1)
 
 # computing projection vectors with DDsmu

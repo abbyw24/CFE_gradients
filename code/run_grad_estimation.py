@@ -64,7 +64,6 @@ proj_type = 'generalr'
 kwargs = {'order': 3}
 projfn = 'cubic_spline.dat'
 bases = cosmo_bases(rmin, rmax, projfn)
-assert False
 ncomponents = 4*(bases.shape[1]-1)
 
 # computing projection vectors with DDsmu

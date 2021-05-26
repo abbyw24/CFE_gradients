@@ -10,6 +10,7 @@ globals.initialize_vals()  # brings in all the default parameters
 grad_dim = globals.grad_dim
 path_to_data_dir = globals.path_to_data_dir
 mock_name_list = globals.mock_name_list
+lognormal_density = globals.lognormal_density
 
 grad_type = globals.grad_type
 
@@ -27,10 +28,12 @@ def label_p(k):
     else:
         return None
 
-def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir):
+def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
+    lognormal_density = lognormal_density):
+    
     # create the needed subdirectories
     sub_dirs = [
-        f"plots/patches_vs_suave/scatter/{grad_type}"
+        f"plots/patches_vs_suave/scatter/{lognormal_density}/{grad_type}"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
@@ -46,7 +49,7 @@ def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad
         fig, ax = plt.subplots()
         ax.set_xlabel("Expected Gradient")
         ax.set_ylabel("Recovered Gradient")
-        ax.set_title(f"Expected vs. Recovered Gradient, {dim[i]}, {grad_type}")
+        ax.set_title(f"Expected vs. Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}")
 
         for j in range(len(grads_exp[:,i])):
             plt.plot(grads_exp[j,i], grads_rec_patches[j,i], marker=".", color="C0", alpha=0.5, label=label_p(k))
@@ -58,13 +61,15 @@ def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad
         plt.plot(x, x, color="black", alpha=0.5)
         plt.legend()
         
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/scatter/{grad_type}/scatter_patches_vs_suave_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/scatter/{lognormal_density}/{grad_type}/scatter_patches_vs_suave_{dim[i]}.png"))
         plt.cla()
     
         print(f"scatter plot for patches vs. suave, dim {dim[i]}, done")
 
-def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir, label1="patches", label2="suave", nbins=10):
-   # create the needed subdirectories
+def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
+    lognormal_density=lognormal_density, label1="patches", label2="suave", nbins=10):
+
+    # create the needed subdirectories
     sub_dirs = [
         f"plots/patches_vs_suave/histogram/{grad_type}"
     ]
@@ -80,7 +85,7 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
     for i in dim:
         # create plot
         fig = plt.figure()
-        plt.title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}")
+        plt.title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}")
         plt.xlabel("Recovered Gradient")
 
         # line at x = 0
@@ -93,7 +98,7 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
 
         plt.legend()
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{grad_type}/hist_patches_vs_suave_{nbins}bins_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{lognormal_density}/{grad_type}/hist_patches_vs_suave_{nbins}bins_{dim[i]}.png"))
         plt.cla()
 
         print(f"scatter plot for patches vs. suave, dim {dim[i]}, done")
@@ -128,11 +133,13 @@ def extract_grads_patches_suave():
 
     return grads
 
-def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir):
+def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
+    lognormal_density=lognormal_density):
+
     n_mocks = len(grads_exp)
     # create the needed subdirectories
     sub_dirs = [
-        f"patches_vs_suave_data/{grad_type}/{n_mocks}mocks"
+        f"patches_vs_suave_data/{lognormal_density}/{grad_type}/{n_mocks}mocks"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
@@ -170,7 +177,7 @@ def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type
             "std_suave" : std_suave,
         }
 
-        np.save(os.path.join(path_to_data_dir, f"patches_vs_suave_data/{grad_type}/{n_mocks}mocks/stats_{dim[i]}"), stats)
+        np.save(os.path.join(path_to_data_dir, f"patches_vs_suave_data/{lognormal_density}/{grad_type}/{n_mocks}mocks/stats_{dim[i]}"), stats)
 
 
 grads = extract_grads_patches_suave()

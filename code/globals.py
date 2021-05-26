@@ -11,8 +11,11 @@ def initialize_vals():
     global grad_dim
     grad_dim = 1        # dimension of w_hat in gradient mock
 
+    global lognormal_density
+    lognormal_density = "2e-4"
+
     global path_to_lognorm_source
-    path_to_lognorm_source = "/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy"
+    path_to_lognorm_source = f"/scratch/ksf293/mocks/lognormal/cat_L750_n{lognormal_density}_z057_patchy"
 
     global path_to_data_dir
     path_to_data_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D"
@@ -35,7 +38,7 @@ def initialize_vals():
     if grad_type == "1rlz":
         m_arr_perL = np.linspace(-1.0, 1.0, n_mocks)
         b_arr = 0.5 * np.ones([n_mocks])
-        lognorm_file_list = ["cat_L750_n2e-4_z057_patchy_lognormal_rlz1"]
+        lognorm_file_list = [f"cat_L750_n{lognormal_density}_z057_patchy_lognormal_rlz1"]
         for m in m_arr_perL:
             for b in b_arr:
                 mock_name = "{}_m-{:.2f}-L_b-{:.2f}".format(lognorm_file_list[0], m, b)
@@ -48,7 +51,7 @@ def initialize_vals():
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = []
         for i in range(n_mocks):
-            lognorm_file_list.append(f"cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
+            lognorm_file_list.append(f"cat_L750_n{lognormal_density}_z057_patchy_lognormal_rlz{i}")
 
         for lognorm_file in lognorm_file_list:
             mock_name = "{}_m-{:.2f}-L_b-{:.2f}".format(lognorm_file, m, b)
@@ -60,7 +63,7 @@ def initialize_vals():
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = []
         for i in range(n_mocks):
-            lognorm_file_list.append(f"cat_L750_n2e-4_z057_patchy_lognormal_rlz{i}")
+            lognorm_file_list.append(f"cat_L750_n{lognormal_density}_z057_patchy_lognormal_rlz{i}")
 
         # make sure each m value corresponds to its own lognorm rlz
         assert len(m_arr_perL) == len(lognorm_file_list)

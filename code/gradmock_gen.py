@@ -11,6 +11,7 @@ globals.initialize_vals()
 path_to_data_dir = globals.path_to_data_dir
 grad_dim = globals.grad_dim
 grad_type = globals.grad_type
+lognormal_density = globals.lognormal_density
 path_to_lognorm_source = globals.path_to_lognorm_source
 mock_name_list = globals.mock_name_list
 lognorm_file_list = globals.lognorm_file_list
@@ -55,7 +56,8 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
             "mock_name" : mock_name_list[i],
             "lognorm_rlz" : lognorm_file_list[i],
             "m" : m_arr_perL[i],
-            "b" : b_arr[i]
+            "b" : b_arr[i],
+            "lognorm_density" : lognormal_density
         }
         path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/{mock_name_list[i]}")
 

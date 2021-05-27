@@ -42,12 +42,15 @@ nr = randmult*nd
 rand_set = np.random.uniform(0, L, (nr,3))
 x_rand, y_rand, z_rand = rand_set[:,0], rand_set[:,1], rand_set[:,2]
 
+print(data.shape)
+print(rand_set.shape)
 
 # CORRFUNC
 # results
 results_xi = xi_ls(data, rand_set, periodic, nthreads, rmin, rmax, nbins)
 r_avg = results_xi[0]
 xi_standard = np.array(results_xi[1])
+print(xi_standard)
 
 # plot results
 fig1, ax1 = plt.subplots()

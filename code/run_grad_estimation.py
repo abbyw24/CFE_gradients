@@ -28,8 +28,6 @@ L = Lx  # boxsize
 x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = ln_data.T
 data_set = (np.array([x_lognorm, y_lognorm, z_lognorm]))
 x, y, z = data_set
-print(data_set)
-print(len(x))
 
 # create necessary subdirectories
 create_subdirs("/scratch/aew492/research-summer2020_output/", ["lognormal"])
@@ -43,9 +41,7 @@ else:
 # random set
 nr = randmult*nd
 rand_set = np.random.uniform(0, L, (3, nr))
-print(rand_set)
 x_rand, y_rand, z_rand = rand_set
-print(len(x_rand))
 
 # take transpose of matrices for xi_ls function
 data_set = data_set.T
@@ -77,6 +73,9 @@ projfn = 'cubic_spline.dat'
 ncomponents = 14    # what should this be?
 # bases = bases.spline_bases(rmin, rmax, projfn, ncomponents, ncont=2000, **kwargs)
 bases = cosmo_bases(rmin, rmax, projfn)
+ncomponents = 4*(bases.shape[1]-1)
+r = bases[:,0]
+base_vals = bases[:,1]
 print("bases done")
 # computing projection vectors with DDsmu
 rmin = rmin

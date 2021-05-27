@@ -23,30 +23,34 @@ nthreads = globals.nthreads
 
 clust_val = 2
 
-Lx, Ly, Lz, nd, data = read_lognormal.read(f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As{clust_val}x/cat_L750_n2e-4_z057_patchy_As{clust_val}x_lognormal_rlz0.bin")
-data = data.T   # transpose to fit requirements for xi function
-print(data)
-x, y, z = data[:,0], data[:,1], data[:,2]
+Lx, Ly, Lz, nd, ln_data = read_lognormal.read(f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As{clust_val}x/cat_L750_n2e-4_z057_patchy_As{clust_val}x_lognormal_rlz0.bin")
+ln_data = ln_data.T   # transpose to fit requirements for xi function
 L = Lx  # boxsize
+x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = ln_data.T
+data_set = (np.array([x_lognorm, y_lognorm, z_lognorm]))
+x, y, z = data_set
+print(data_set)
+print(len(x))
 
 # create necessary subdirectories
 create_subdirs("/scratch/aew492/research-summer2020_output/", ["lognormal"])
 
 # if there are negative values, shift by L/2, to 0 to L
-if np.any(data <= 0):
-    data += L/2
+if np.any(data_set <= 0):
+    data_set += L/2
 else:
-    assert np.all(data >= 0 and data <= L)
+    assert np.all(data_set >= 0 and data_set <= L)
 
 # random set
 nr = randmult*nd
-rand_set = np.random.uniform(0, L, (nr,3))
+rand_set = np.random.uniform(0, L, (3, nr))
 print(rand_set)
-x_rand, y_rand, z_rand = rand_set[:,0], rand_set[:,1], rand_set[:,2]
+x_rand, y_rand, z_rand = rand_set
+print(len(x_rand))
 
 # CORRFUNC
 # results
-results_xi = xi_ls(data, rand_set, periodic, nthreads, rmin, rmax, nbins)
+results_xi = xi_ls(data_set, rand_set, periodic, nthreads, rmin, rmax, nbins)
 r_avg = results_xi[0]
 xi_standard = np.array(results_xi[1])
 print(xi_standard)

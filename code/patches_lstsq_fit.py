@@ -82,9 +82,6 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
                 # X gives best fit: [b, m_x, m_y, m_z]
             fits.append(X)
         fit_vals = np.array(fits).T
-        print(fit_vals[1])
-        print(fit_vals[2])
-        print(fit_vals[3])
 
         # plot recovered values
         plt.plot(r_avg, fit_vals[0], color="gray", marker=".", label="b_fit")

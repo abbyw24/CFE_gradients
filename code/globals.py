@@ -28,6 +28,9 @@ def initialize_vals():
 
     global mocks_info
 
+    global mock_file_name_list
+    mock_file_name_list = []
+
     global mock_name_list
     mock_name_list = []
 
@@ -41,7 +44,9 @@ def initialize_vals():
         lognorm_file_list = [f"cat_L750_n{lognormal_density}_z057_patchy_lognormal_rlz1"]
         for m in m_arr_perL:
             for b in b_arr:
-                mock_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m, b)
+                mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m, b)
+                mock_file_name_list.append(mock_file_name)
+                mock_name = f"n{lognormal_density}, "+"m={:.3f}, b={:.3f}".format(m, b)
                 mock_name_list.append(mock_name)
 
     elif grad_type == "1m":
@@ -54,7 +59,9 @@ def initialize_vals():
             lognorm_file_list.append(f"cat_L750_n{lognormal_density}_z057_patchy_lognormal_rlz{i}")
 
         for lognorm_file in lognorm_file_list:
-            mock_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file, m, b)
+            mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file, m, b)
+            mock_file_name_list.append(mock_file_name)
+            mock_name = f"n{lognormal_density}, "+"m={:.3f}, b={:.3f}".format(m, b)
             mock_name_list.append(mock_name)
     
     elif grad_type == "1rlz_per_m":
@@ -69,7 +76,9 @@ def initialize_vals():
         assert len(m_arr_perL) == len(lognorm_file_list)
 
         for i in range(len(m_arr_perL)):
-            mock_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[i], m_arr_perL[i], b)
+            mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[i], m_arr_perL[i], b)
+            mock_file_name_list.append(mock_file_name)
+            mock_name = f"n{lognormal_density}, "+"m={:.3f}, b={:.3f}".format(m, b)
             mock_name_list.append(mock_name)
     
     else:

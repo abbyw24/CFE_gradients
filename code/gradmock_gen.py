@@ -15,6 +15,7 @@ grad_dim = globals.grad_dim
 grad_type = globals.grad_type
 lognormal_density = globals.lognormal_density
 path_to_lognorm_source = globals.path_to_lognorm_source
+mock_file_name_list = globals.mock_file_name_list
 mock_name_list = globals.mock_name_list
 lognorm_file_list = globals.lognorm_file_list
 m_arr_perL = globals.m_arr_perL
@@ -26,7 +27,7 @@ b_arr = globals.b_arr
 # lognorm file used so far = "lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin"
 
 # function to generate gradient mock
-def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source, mock_name_list=mock_name_list, z_max=-50):
+def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source, mock_file_name_list=mock_file_name_list, z_max=-50):
 
     # create desired path to mocks directory if it doesn't already exist
     sub_dirs = [
@@ -52,18 +53,20 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
     # normalize w_hat
     w_hat /= np.linalg.norm(w_hat)
 
-    for i in range(len(mock_name_list)):
+    for i in range(len(mock_file_name_list)):
         # create dictionary with mock info– to start, mock name, lognorm rlz, m, and b
         mock_info = {
-            "mock_name" : mock_name_list[i],
+            "mock_file_name" : mock_file_name_list[i],
+            'mock_name' : mock_name_list[i],
             "lognorm_rlz" : lognorm_file_list[i],
             "m" : m_arr_perL[i],
             "b" : b_arr[i],
             "lognorm_density" : lognormal_density
         }
-        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_name_list[i]}")
+        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}")
 
         # redefine dictionary values for simplicity
+        mock_file_name = str(mock_info["mock_file_name"])
         mock_name = str(mock_info["mock_name"])
         lognorm_file = str(mock_info["lognorm_rlz"])
         m = float(mock_info["m"])
@@ -140,7 +143,7 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         ax1.set_ylabel("y (Mpc/h)")
         ax1.set_title(mock_name)
         ax1.legend()
-        fig1.savefig(os.path.join(path_to_data_dir, f"plots/samecolor_mocks/{lognormal_density}/{mock_name}.png"))
+        fig1.savefig(os.path.join(path_to_data_dir, f"plots/samecolor_mocks/{lognormal_density}/{mock_file_name}.png"))
         plt.cla()
 
         # plot different colors for clust and uncl
@@ -158,7 +161,7 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         ax2.set_ylabel("y (Mpc/h)")
         ax2.set_title(mock_name)
         ax2.legend()
-        fig2.savefig(os.path.join(path_to_data_dir, f"plots/color_mocks/{lognormal_density}/color_{mock_name}.png"))
+        fig2.savefig(os.path.join(path_to_data_dir, f"plots/color_mocks/{lognormal_density}/color_{mock_file_name}.png"))
         plt.cla()
 
         plt.close("all") 
@@ -166,4 +169,4 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         # save dictionary
         np.save(path_to_mock_dict, mock_info)
 
-        print(f"gradient generated --> {mock_name}")
+        print(f"gradient generated --> {mock_file_name}")

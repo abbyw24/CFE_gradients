@@ -9,7 +9,7 @@ globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
 path_to_data_dir = globals.path_to_data_dir
-mock_name_list = globals.mock_name_list
+mock_file_name_list = globals.mock_file_name_list
 lognormal_density = globals.lognormal_density
 n_mocks = globals.n_mocks
 
@@ -95,15 +95,15 @@ def extract_grads_patches_suave():
     grads_rec_suave = []
 
     # load in mock, patches, and suave info
-    for i in range(len(mock_name_list)):
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_name_list[i]}.npy"), allow_pickle=True).item()
-        mock_name = mock_info["mock_name"]
+    for i in range(len(mock_file_name_list)):
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_file_name = mock_info["mock_file_name"]
         grad_expected = mock_info["grad_expected"]
         
-        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         grad_rec_patches = patch_info["grad_recovered"]
 
-        suave_info = np.load(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        suave_info = np.load(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         grad_rec_suave = suave_info["grad_recovered"]
 
         # append values to list of all mocks

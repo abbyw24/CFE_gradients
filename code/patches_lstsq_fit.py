@@ -10,6 +10,7 @@ globals.initialize_vals()  # brings in all the default parameters
 grad_dim = globals.grad_dim
 lognormal_density = globals.lognormal_density
 path_to_data_dir = globals.path_to_data_dir
+mock_file_name_list = globals.mock_file_name_list
 mock_name_list = globals.mock_name_list
 
 nbins = globals.nbins
@@ -124,10 +125,10 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         # patch_info["ratio_rec_exp"] = ratio_rec_exp
 
         # resave patch info dictionary
-        np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_name}"), patch_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
 
         plt.legend()
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/{lognormal_density}/{n_patches}patches/lst_sq_fit/allbins/{mock_name}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/{lognormal_density}/{n_patches}patches/lst_sq_fit/allbins/{mock_file_name}.png"))
         ax.cla()
 
         plt.close("all")
@@ -148,16 +149,17 @@ def patches_lstsq_fit_1bin(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir,
 
     dim = ["x", "y", "z"]
 
-    for i in range(len(mock_name_list)):
+    for i in range(len(mock_file_name_list)):
         # load in mock and patch info
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_file_name = mock_info["mock_file_name"]
         mock_name = mock_info["mock_name"]
         L = mock_info["boxsize"]
         m = mock_info["m"]
         b = mock_info["b"]
         grad_expected = mock_info["grad_expected"]
 
-        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
         patch_centers -= L/2
             # this centers the fiducial point in the box
@@ -219,11 +221,11 @@ def patches_lstsq_fit_1bin(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir,
         plt.legend()
 
         # resave patch info dictionary
-        np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_name}"), patch_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
 
         # save figure
-        fig2.savefig(os.path.join(path_to_data_dir, f"plots/patches/{lognormal_density}/{n_patches}patches/lst_sq_fit/bin{r_bin}/{mock_name}.png"))
+        fig2.savefig(os.path.join(path_to_data_dir, f"plots/patches/{lognormal_density}/{n_patches}patches/lst_sq_fit/bin{r_bin}/{mock_file_name}.png"))
         ax2.cla()
         plt.close("all")
 
-        print(f"least square fit in bin {r_bin}, {mock_name}, {n_patches} patches")
+        print(f"least square fit in bin {r_bin}, {mock_file_name}, {n_patches} patches")

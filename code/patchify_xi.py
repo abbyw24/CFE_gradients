@@ -15,6 +15,7 @@ globals.initialize_vals()  # brings in all the default parameters
 grad_dim = globals.grad_dim
 lognormal_density = globals.lognormal_density
 path_to_data_dir = globals.path_to_data_dir
+mock_file_name_list = globals.mock_file_name_list
 mock_name_list = globals.mock_name_list
 
 randmult = globals.randmult
@@ -50,7 +51,7 @@ def patchify(data, boxsize, n_patches=n_patches):
     return patch_ids, idx_patches
 
 # define function to find xi in each patch
-def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_name_list = mock_name_list, n_patches=n_patches):
+def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_file_name_list = mock_file_name_list, n_patches=n_patches):
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)
     assert isinstance(path_to_data_dir, str)
@@ -63,9 +64,10 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
     ]
     create_subdirs(f"{path_to_data_dir}", sub_dirs)
 
-    for i in range(len(mock_name_list)):
+    for i in range(len(mock_file_name_list)):
         # retrieve mock info dictionary
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_file_name = mock_info["mock_file_name"]
         mock_name = mock_info["mock_name"]
         mock_data = mock_info["grad_set"]
         L = mock_info["boxsize"]
@@ -146,7 +148,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
             "xi_patch_avg" : xi_patch_avg,
             "xi_full" : xi_full
             }
-        np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_name}"), patch_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
 
         # plot results
         plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")
@@ -157,9 +159,9 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
         plt.rcParams["axes.titlesize"] = 10
         ax.set_title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name}")
         plt.legend(prop={'size': 8})
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/{lognormal_density}/{n_patches}patches/xi/{mock_name}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/{lognormal_density}/{n_patches}patches/xi/{mock_file_name}.png"))
         ax.cla()
 
         plt.close("all")
 
-        print(f"xi in patches --> {mock_name}")
+        print(f"xi in patches --> {mock_file_name}")

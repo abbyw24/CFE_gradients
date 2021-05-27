@@ -9,6 +9,7 @@ globals.initialize_vals()  # brings in all the default parameters
 grad_dim = globals.grad_dim
 lognormal_density = globals.lognormal_density
 path_to_data_dir = globals.path_to_data_dir
+mock_file_name_list = globals.mock_file_name_list
 mock_name_list = globals.mock_name_list
 
 n_patches = globals.n_patches
@@ -28,14 +29,15 @@ def patches_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_p
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
     
-    for i in range(len(mock_name_list)):
+    for i in range(len(mock_file_name_list)):
         # load in mock and patch info
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_file_name = mock_info["mock_file_name"]
         mock_name = mock_info["mock_name"]
         grad_expected = mock_info["grad_expected"]
         L = mock_info["boxsize"]
 
-        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         grad_recovered = patch_info["grad_recovered"]
         ratio_rec_exp = patch_info["ratio_rec_exp"]
 
@@ -92,11 +94,11 @@ def patches_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_p
         plt.xlim((-400,400))
         plt.legend()
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/{lognormal_density}/{n_patches}patches/exp_vs_rec/{mock_name}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/{lognormal_density}/{n_patches}patches/exp_vs_rec/{mock_file_name}.png"))
         plt.cla()
         plt.close("all")
 
         # resave patch info dictionary
-        np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_name}"), patch_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
     
     patches_exp_vs_rec()

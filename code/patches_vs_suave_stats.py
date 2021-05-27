@@ -79,7 +79,7 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
         plt.vlines(0, 0, 20, color="black", alpha=0.4)
 
         # define bins
-        bins = np.linspace(1.5*min(grads_rec_patches[:,i]), 1.5*max(grads_rec_patches[:,i]), nbins)
+        bins = np.linspace(1.5*min(min(grads_rec_patches[:,i]), min(grads_rec_suave[:,i])), 1.5*max(max(grads_rec_patches[:,i]), max(grads_rec_suave[:,i])), nbins)
         plt.hist(grads_rec_suave[:,i], bins=bins, color="black", alpha=0.5, label="CFE")
         plt.hist(grads_rec_patches[:,i], bins=bins, color="gray", alpha=0.5, label="Standard")
 
@@ -88,7 +88,7 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
         fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{lognormal_density}/{grad_type}/hist_patches_vs_suave_{nbins}bins_{dim[i]}.png"))
         plt.cla()
 
-        print(f"scatter plot for patches vs. suave, dim {dim[i]}, done")
+        print(f"histogram for patches vs. suave, dim {dim[i]}, done")
 
 def extract_grads_patches_suave():
     grads_exp = []
@@ -139,6 +139,7 @@ def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type
             1 : "y",
             2 : "z"
             }
+
     print(f"for grad type {grad_type}, {len(grads_exp)} mocks:")
     for i in dim:
         print(f"{dim[i]}:")

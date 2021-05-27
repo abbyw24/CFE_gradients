@@ -93,6 +93,24 @@ def gen_single_gradmock(grad_dim, m, b, lognorm_file, output_dir, mock_file_name
     fig1.savefig(os.path.join(output_dir, f"{mock_file_name}.png"))
     plt.cla()
 
+    # plot different colors for clust and uncl
+    xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
+    xy_slice_unclust = xs_unclust_grad[np.where(xs_unclust_grad[:,2] < z_max)]
+
+    fig2, ax2 = plt.subplots()
+    plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], ',', c="C0", label="clustered")
+    plt.plot(xy_slice_unclust[:,0], xy_slice_unclust[:,1], ',', c="orange", label="unclustered")
+    plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], c="green", label=w_hat)   # plot vector w_hat (no z)
+    ax2.set_aspect("equal")      # square aspect ratio
+    # plt.ylim((-400,400))
+    # plt.xlim((-400,400))
+    ax2.set_xlabel("x (Mpc/h)")
+    ax2.set_ylabel("y (Mpc/h)")
+    ax2.set_title(mock_name)
+    ax2.legend()
+    fig2.savefig(os.path.join(output_dir, f"{mock_file_name}_color.png"))
+    plt.cla()
+
     # save mock info
     np.save(os.path.join(output_dir, mock_file_name), mock_info, allow_pickle=True)
     print(f"single grad mock: {mock_name}, done")

@@ -70,10 +70,9 @@ print("Corrfunc done")
 proj_type = 'generalr'
 # kwargs = {'order': 3}
 projfn = 'cosmo_basis.dat'
-ncomponents = 14    # what should this be?
 # bases = bases.spline_bases(rmin, rmax, projfn, ncomponents, ncont=2000, **kwargs)
 bases = cosmo_bases(rmin, rmax, projfn)
-ncomponents = 4*(bases.shape[1]-1)
+ncomponents = bases.shape[1]-1
 r = bases[:,0]
 base_vals = bases[:,1]
 print("bases done")

@@ -105,7 +105,7 @@ lognormal_density = "2e-4"
 lognorm_name = "cat_L750_n2e-4_z057_patchy_lognormal_rlz1"
 lognorm_file = f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy/{lognorm_name}.bin"
 
-create_subdirs("/scratch/aew492/research-summer2020_outputs", [f"other_outputs/{lognorm_name}"])
+create_subdirs("/scratch/aew492/research-summer2020_output", [f"other_outputs/{lognorm_name}"])
 output_dir = f"/scratch/aew492/other_outputs/{lognorm_name}"
 mock_file_name = "{}_m-{}-L_b-{}".format(lognorm_name, m, b)
 mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m, b)

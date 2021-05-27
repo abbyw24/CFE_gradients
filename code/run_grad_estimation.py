@@ -47,6 +47,10 @@ print(rand_set)
 x_rand, y_rand, z_rand = rand_set
 print(len(x_rand))
 
+# take transpose of matrices for xi_ls function
+data_set = data_set.T
+rand_set = rand_set.T
+
 # CORRFUNC
 # results
 results_xi = xi_ls(data_set, rand_set, periodic, nthreads, rmin, rmax, nbins)

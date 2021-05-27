@@ -118,10 +118,10 @@ def gen_single_gradmock(grad_dim, m, b, lognorm_file, output_dir, mock_file_name
 grad_dim = 1
 m_arr = [1.0]
 b = 0.5
-lognormal_density = "2e-4"
+lognormal_density = "4e-4"
 
-lognorm_name = "cat_L750_n2e-4_z057_patchy_As2x_lognormal_rlz0"
-lognorm_file = f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As2x/{lognorm_name}.bin"
+lognorm_name = f"cat_L750_n{lognormal_density}_z057_patchy_As2x_lognormal_rlz0"
+lognorm_file = f"/scratch/ksf293/mocks/lognormal/cat_L750_n{lognormal_density}_z057_patchy_As2x/{lognorm_name}.bin"
 
 create_subdirs("/scratch/aew492/research-summer2020_output", [f"other_outputs/{lognorm_name}"])
 output_dir = f"/scratch/aew492/research-summer2020_output/other_outputs/{lognorm_name}"

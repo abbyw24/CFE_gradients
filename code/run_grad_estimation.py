@@ -94,9 +94,11 @@ amps = utils.compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj
 print("compute amps done")
 r_fine = np.linspace(rmin, rmax, 2000)
 xi_proj = utils.evaluate_xi(amps, r_fine, proj_type, projfn=projfn)
+print("xi_proj done")
 
 # plotting results with matplotlib
 xi_res = theory.xi(L, nthreads, r_edges, x, y, z, output_ravg=True)
+print("xi_res done")
 r_avg, xi_standard = xi_res['ravg'], xi_res['xi']
 
 plt.figure(figsize=(10,7))
@@ -109,6 +111,7 @@ for i in range(base_vals.shape[1]):
     if i==0:
         label = 'Cubic spline basis functions'
     plt.plot(r, amps[i]*base_vals[:,i], color='darkred', lw=0.5, label=label)
+    print(f"loop plot {i} done")
 
 plt.plot(r_avg, xi_standard, marker='o', ls='None', color='grey', label='Standard binned estimator')
 

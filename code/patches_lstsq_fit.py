@@ -58,18 +58,16 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
 
         C_inv = np.linalg.inv(C)
     
-        # plot xi_patches
+        # plot recovered values in each bin
         fig, ax = plt.subplots()
 
-        # plot xi in each patch across all bins
-        cmap = plt.cm.get_cmap("cool")
-        ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
-        for patch in xi_patches:
-            plt.plot(r_avg, patch, alpha=0.5, marker=".")
+        # # plot xi in each patch across all bins
+        # cmap = plt.cm.get_cmap("cool")
+        # ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
 
-        ax.set_title(f"Clustering amps in patches, {mock_name}")
+        ax.set_title(f"Recovered values in each bin, {mock_name}")
         ax.set_xlabel(r"r ($h^{-1}$Mpc)")
-        ax.set_ylabel(r"$\xi$(r)")
+        ax.set_ylabel(r"Value (Mpc$^{-1}$)")
 
         # expected "strength of gradient"
         # figure this out for grad_dim > 1
@@ -85,6 +83,12 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
             fits.append(X)
         fit_vals = np.array(fits).T
 
+        # plot recovered values
+        plt.plot(r_avg, fit_vals[0], color="gray", marker=".", label="b_fit")
+        plt.plot(r_avg, fit_vals[1], color="purple", marker=".", label="m_fit_x")
+        plt.plot(r_avg, fit_vals[2], color="blue", marker=".", label="m_fit_y")
+        plt.plot(r_avg, fit_vals[2], color="green", marker=".", label="m_fit_z")
+
         # plot m_fit/b_fit in each bin
         #       m_fit_x/b_fit should match grad_expected, and y and z should be zero
         plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="black", marker=".", label="x fit")
@@ -94,7 +98,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/bin_cutoff_val)
         # plot bin cutoff
-        ax.vlines(r_avg[bin_cutoff], -0.05, 0.05, alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
+        ax.vlines(r_avg[bin_cutoff], np.amin(fit_vals), np.amax(fit_vals), alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
 
         recovered_vals = []
         for value in fit_vals:

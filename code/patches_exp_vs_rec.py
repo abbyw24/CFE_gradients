@@ -51,8 +51,11 @@ def patches_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_p
 
         # projection of recovered onto expected
         grad_exp_norm = np.linalg.norm(grad_expected)
+        print(grad_exp_norm)
+        print(grad_exp_norm**2)
+        assert False
 
-        proj_rec_onto_exp = (np.dot(grad_recovered,grad_expected)/grad_exp_norm**2)*grad_expected
+        # proj_rec_onto_exp = (np.dot(grad_recovered,grad_expected)/grad_exp_norm**2)*grad_expected
 
         # residual
         residual = grad_recovered - grad_expected

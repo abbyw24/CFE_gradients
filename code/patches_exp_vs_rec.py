@@ -53,8 +53,9 @@ def patches_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_p
         grad_exp_norm = np.linalg.norm(grad_expected)
         print(np.dot(grad_recovered,grad_expected))
         print(grad_exp_norm)
-        
-        proj_rec_onto_exp = (np.dot(grad_recovered,grad_expected)/grad_exp_norm**2)*grad_expected
+
+        # proj_rec_onto_exp = (np.dot(grad_recovered,grad_expected)/grad_exp_norm**2)*grad_expected
+        assert False
 
         # residual
         residual = grad_recovered - grad_expected
@@ -93,6 +94,7 @@ def patches_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_p
 
         fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/{lognormal_density}/{n_patches}patches/exp_vs_rec/{mock_name}.png"))
         plt.cla()
+        plt.close("all")
 
         # resave patch info dictionary
         np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_name}"), patch_info, allow_pickle=True)

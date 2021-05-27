@@ -96,7 +96,8 @@ def extract_grads_patches_suave():
     grads_rec_suave = []
 
     # load in mock, patches, and suave info
-    for i in range(len(mock_file_name_list)):
+    # for i in range(len(mock_file_name_list)):
+    for i in range(len(mock_name_list)):
         # mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_name_list[i]}.npy"), allow_pickle=True).item()
         # mock_file_name = mock_info["mock_file_name"]

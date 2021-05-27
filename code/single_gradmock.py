@@ -95,6 +95,7 @@ def gen_single_gradmock(grad_dim, m, b, lognorm_file, output_dir, mock_file_name
 
     # save mock info
     np.save(os.path.join(output_dir, mock_file_name), mock_info, allow_pickle=True)
+    print("single grad mock, done")
 
 grad_dim = 1
 m = 1.0
@@ -104,8 +105,8 @@ lognormal_density = "2e-4"
 lognorm_name = "cat_L750_n2e-4_z057_patchy_lognormal_rlz1"
 lognorm_file = f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy/{lognorm_name}.bin"
 
-create_subdirs("/scratch/aew492", [f"other_outputs/{lognorm_name}"])
-output_dir = "/scratch/aew492/other_outputs"
+create_subdirs("/scratch/aew492/research-summer2020_outputs", [f"other_outputs/{lognorm_name}"])
+output_dir = f"/scratch/aew492/other_outputs/{lognorm_name}"
 mock_file_name = "{}_m-{}-L_b-{}".format(lognorm_name, m, b)
 mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m, b)
 

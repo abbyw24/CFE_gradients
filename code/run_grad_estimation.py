@@ -24,7 +24,6 @@ nthreads = globals.nthreads
 clust_val = 2
 
 Lx, Ly, Lz, nd, ln_data = read_lognormal.read(f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As{clust_val}x/cat_L750_n2e-4_z057_patchy_As{clust_val}x_lognormal_rlz0.bin")
-ln_data = ln_data.T   # transpose to fit requirements for xi function
 L = Lx  # boxsize
 x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = ln_data.T
 data_set = (np.array([x_lognorm, y_lognorm, z_lognorm]))

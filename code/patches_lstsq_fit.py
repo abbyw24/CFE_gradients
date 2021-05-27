@@ -33,13 +33,13 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
 
     for i in range(len(mock_name_list)):
         # load in mock and patch info
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         mock_file_name = mock_info["mock_file_name"]
         mock_name = mock_info["mock_name"]
         L = mock_info["boxsize"]
         grad_expected = mock_info["grad_expected"]
 
-        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_name_list[i]}.npy"), allow_pickle=True).item()
+        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
         patch_centers -= L/2
             # this centers the fiducial point in the box

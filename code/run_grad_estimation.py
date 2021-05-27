@@ -25,6 +25,7 @@ clust_val = 2
 
 Lx, Ly, Lz, nd, data = read_lognormal.read(f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy_As{clust_val}x/cat_L750_n2e-4_z057_patchy_As{clust_val}x_lognormal_rlz0.bin")
 data = data.T   # transpose to fit requirements for xi function
+print(data)
 x, y, z = data[:,0], data[:,1], data[:,2]
 L = Lx  # boxsize
 
@@ -40,10 +41,8 @@ else:
 # random set
 nr = randmult*nd
 rand_set = np.random.uniform(0, L, (nr,3))
+print(rand_set)
 x_rand, y_rand, z_rand = rand_set[:,0], rand_set[:,1], rand_set[:,2]
-
-print(data.shape)
-print(rand_set.shape)
 
 # CORRFUNC
 # results

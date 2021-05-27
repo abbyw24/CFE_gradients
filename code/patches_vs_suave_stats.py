@@ -143,6 +143,16 @@ def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type
         print(f"mean rec. grad., patches = {mean_patches}")
         mean_suave = np.mean(grads_rec_suave[:,i])
         print(f"mean rec. grad., suave = {mean_suave}")
+        # min
+        min_patches = min(grads_rec_patches[:,i])
+        print(f"min rec. grad., patches = {min_patches}")
+        min_suave = min(grads_rec_suave[:,i])
+        print(f"min rec. grad., suave = {min_suave}")
+        # max
+        max_patches = max(grads_rec_patches[:,i])
+        print(f"max rec. grad., patches = {max_patches}")
+        max_suave = max(grads_rec_suave[:,i])
+        print(f"max rec. grad., suave = {max_suave}")
         # median
         median_patches = np.median(grads_rec_patches[:,i])
         print(f"median rec. grad., patches = {median_patches}")

@@ -82,12 +82,15 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
                 # X gives best fit: [b, m_x, m_y, m_z]
             fits.append(X)
         fit_vals = np.array(fits).T
+        print(fit_vals[1])
+        print(fit_vals[2])
+        print(fit_vals[3])
 
         # plot recovered values
         plt.plot(r_avg, fit_vals[0], color="gray", marker=".", label="b_fit")
-        plt.plot(r_avg, fit_vals[1], color="purple", marker=".", label="m_fit_x")
-        plt.plot(r_avg, fit_vals[2], color="blue", marker=".", label="m_fit_y")
-        plt.plot(r_avg, fit_vals[2], color="green", marker=".", label="m_fit_z")
+        plt.plot(r_avg, fit_vals[1], color="purple", marker=".", alpha=0.5, label="m_fit_x")
+        plt.plot(r_avg, fit_vals[2], color="blue", marker=".", alpha=0.5, label="m_fit_y")
+        plt.plot(r_avg, fit_vals[2], color="green", marker=".", alpha=0.5, label="m_fit_z")
 
         # # plot m_fit/b_fit in each bin
         # #       m_fit_x/b_fit should match grad_expected, and y and z should be zero

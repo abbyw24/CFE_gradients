@@ -47,11 +47,11 @@ x_rand, y_rand, z_rand = rand_set[:,0], rand_set[:,1], rand_set[:,2]
 # results
 results_xi = xi(data, rand_set, periodic, nthreads, rmin, rmax, nbins)
 r_avg = results_xi[0]
-xi = np.array(results_xi[1])
+xi_standard = np.array(results_xi[1])
 
 # plot results
 fig1, ax1 = plt.subplots()
-plt.plot(r_avg, xi, color="black", marker=".", label="Full Mock")
+plt.plot(r_avg, xi_standard, color="black", marker=".", label="Full Mock")
 ax1.set_xlabel(r'r ($h^{-1}$Mpc)')
 ax1.set_ylabel(r'$\xi$(r)')
 ax1.set_title(f"Standard Estimator, {clust_val}x Lognormal Mock")
@@ -64,7 +64,7 @@ fig1.savefig(f"/scratch/aew492/research-summer2020_output/lognormal/Corrfunc_{cl
 proj_type = 'generalr'
 kwargs = {'order': 3}
 projfn = 'cubic_spline.dat'
-rmin, rmax, ncomponents = 40.0, 152.0, 14
+ncomponents = 14
 bases = bases.spline_bases(rmin, rmax, projfn, ncomponents, ncont=2000, **kwargs)
 
 # computing projection vectors with DDsmu

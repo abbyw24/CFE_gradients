@@ -90,8 +90,11 @@ def gen_single_gradmock(grad_dim, m, b, lognorm_file, output_dir, mock_file_name
     ax1.set_ylabel("y (Mpc/h)")
     ax1.set_title(mock_name)
     ax1.legend()
-    fig1.savefig(os.path.join(output_dir, mock_file_name))
+    fig1.savefig(os.path.join(output_dir, f"{mock_file_name}.png"))
     plt.cla()
+
+    # save mock info
+    np.save(os.path.join(output_dir, mock_file_name), allow_pickle=True)
 
 grad_dim = 1
 m = 1.0

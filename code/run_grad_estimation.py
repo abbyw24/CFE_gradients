@@ -86,6 +86,8 @@ r_fine = np.linspace(rmin, rmax, 2000)
 nmubins = 1
 mumax = 1.0
 
+print(nthreads, r_edges, mumax, nmubins, x, y, z, proj_type, ncomponents, projfn, periodic)
+
 # run the pair counts
 dd_res, dd_proj, _ = theory.DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z,
                         proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, periodic=periodic)

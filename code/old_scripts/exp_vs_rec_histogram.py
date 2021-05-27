@@ -7,11 +7,6 @@ import globals
 
 globals.initialize_vals()
 
-m_arr_perL = globals.m_arr_perL
-b_arr = globals.b_arr
-
-n_patches = globals.n_patches
-
 grad_type = globals.grad_type
 
 def histogram_exp_vs_rec(patches_data, suave_data, path_to_hist_dir, label1="patches", label2="suave", nbins=10):

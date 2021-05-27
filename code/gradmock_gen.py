@@ -18,7 +18,7 @@ path_to_lognorm_source = globals.path_to_lognorm_source
 mock_file_name_list = globals.mock_file_name_list
 mock_name_list = globals.mock_name_list
 lognorm_file_list = globals.lognorm_file_list
-m_arr_perL = globals.m_arr_perL
+m_arr = globals.m_arr
 b_arr = globals.b_arr
 
 # # pick a seed number so that random set stays the same every time (for now)
@@ -59,7 +59,7 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
             "mock_file_name" : mock_file_name_list[i],
             'mock_name' : mock_name_list[i],
             "lognorm_rlz" : lognorm_file_list[i],
-            "m" : m_arr_perL[i],
+            "m" : m_arr[i],
             "b" : b_arr[i],
             "lognorm_density" : lognormal_density
         }

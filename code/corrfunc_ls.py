@@ -2,7 +2,7 @@ import numpy as np
 import Corrfunc
 
 # define Corrfunc Landy-Szalay
-def xi(data, rand_set, periodic, nthreads, rmin, rmax, nbins):
+def xi_ls(data, rand_set, periodic, nthreads, rmin, rmax, nbins):
     # parameters
     r_edges = np.linspace(rmin, rmax, nbins+1)
     r_avg = 0.5*(r_edges[1:]+r_edges[:-1])

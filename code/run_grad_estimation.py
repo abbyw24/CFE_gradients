@@ -8,7 +8,7 @@ from Corrfunc import bases, theory, utils, io
 from suave import cosmo_bases
 from create_subdirs import create_subdirs
 import read_lognormal
-from corrfunc_ls import xi
+from corrfunc_ls import xi_ls
 
 import globals
 
@@ -45,7 +45,7 @@ x_rand, y_rand, z_rand = rand_set[:,0], rand_set[:,1], rand_set[:,2]
 
 # CORRFUNC
 # results
-results_xi = xi(data, rand_set, periodic, nthreads, rmin, rmax, nbins)
+results_xi = xi_ls(data, rand_set, periodic, nthreads, rmin, rmax, nbins)
 r_avg = results_xi[0]
 xi_standard = np.array(results_xi[1])
 

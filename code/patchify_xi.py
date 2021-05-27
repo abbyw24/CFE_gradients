@@ -6,7 +6,7 @@ import Corrfunc
 import itertools as it
 import os
 from create_subdirs import create_subdirs
-from corrfunc_ls import xi
+from corrfunc_ls import xi_ls
 
 import globals
 
@@ -109,7 +109,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
         patch_centers = np.array(patch_centers)
 
         # results for full mock
-        results_xi_full = xi(mock_data, rand_set, periodic, nthreads, rmin, rmax, nbins)
+        results_xi_full = xi_ls(mock_data, rand_set, periodic, nthreads, rmin, rmax, nbins)
         xi_full = np.array(results_xi_full[1])
 
         # define r_avg (this is the same for all xi)
@@ -126,7 +126,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_nam
         for patch_id in patch_id_list:
             patch_data = mock_data[patch_ids_mock == patch_id]
             patch_rand = rand_set[patch_ids_rand == patch_id]
-            results_xi_patch = xi(patch_data, patch_rand, periodic, nthreads, rmin, rmax, nbins)
+            results_xi_patch = xi_ls(patch_data, patch_rand, periodic, nthreads, rmin, rmax, nbins)
             xi_patch = results_xi_patch[1]
 
             plt.plot(r_avg, xi_patch, alpha=0.5, marker=".", label=patches_idx[k])

@@ -78,7 +78,7 @@ def initialize_vals():
         for i in range(len(m_arr_perL)):
             mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[i], m_arr_perL[i], b)
             mock_file_name_list.append(mock_file_name)
-            mock_name = f"n{lognormal_density}, "+"m={:.3f}, b={:.3f}".format(m, b)
+            mock_name = f"n{lognormal_density}, "+"m={:.3f}, b={:.3f}".format(m_arr_perL[i], b)
             mock_name_list.append(mock_name)
     
     else:

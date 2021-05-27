@@ -38,7 +38,7 @@ create_subdirs("/scratch/aew492/research-summer2020_output/", ["lognormal"])
 if np.any(data_set <= 0):
     data_set += L/2
 else:
-    assert np.all(data_set >= 0 and data_set <= L)
+    assert data_set.all >= 0 and data_set.all <= L
 
 # random set
 nr = randmult*nd

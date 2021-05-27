@@ -94,7 +94,7 @@ def gen_single_gradmock(grad_dim, m, b, lognorm_file, output_dir, mock_file_name
     plt.cla()
 
     # save mock info
-    np.save(os.path.join(output_dir, mock_file_name), allow_pickle=True)
+    np.save(os.path.join(output_dir, mock_file_name), mock_info, allow_pickle=True)
 
 grad_dim = 1
 m = 1.0

@@ -46,7 +46,7 @@ def initialize_vals():
             for b in b_arr:
                 mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m, b)
                 mock_file_name_list.append(mock_file_name)
-                mock_name = f"n{lognormal_density}, "+"m={:.3f}, b={:.3f}".format(m, b)
+                mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m, b)
                 mock_name_list.append(mock_name)
 
     elif grad_type == "1m":
@@ -61,7 +61,7 @@ def initialize_vals():
         for lognorm_file in lognorm_file_list:
             mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file, m, b)
             mock_file_name_list.append(mock_file_name)
-            mock_name = f"n{lognormal_density}, "+"m={:.3f}, b={:.3f}".format(m, b)
+            mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m, b)
             mock_name_list.append(mock_name)
     
     elif grad_type == "1rlz_per_m":
@@ -78,7 +78,7 @@ def initialize_vals():
         for i in range(len(m_arr)):
             mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[i], m_arr[i], b)
             mock_file_name_list.append(mock_file_name)
-            mock_name = f"n{lognormal_density}, "+"m={:.3f}, b={:.3f}".format(m_arr[i], b)
+            mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[i], b)
             mock_name_list.append(mock_name)
     
     else:

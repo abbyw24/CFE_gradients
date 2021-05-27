@@ -75,7 +75,8 @@ proj_type = 'generalr'
 kwargs = {'order': 3}
 projfn = 'cubic_spline.dat'
 ncomponents = 14    # what should this be?
-bases = bases.spline_bases(rmin, rmax, projfn, ncomponents, ncont=2000, **kwargs)
+# bases = bases.spline_bases(rmin, rmax, projfn, ncomponents, ncont=2000, **kwargs)
+bases = cosmo_bases(rmin, rmax, projfn)
 print("bases done")
 # computing projection vectors with DDsmu
 rmin = rmin
@@ -120,7 +121,6 @@ for i in range(base_vals.shape[1]):
     if i==0:
         label = 'Cubic spline basis functions'
     plt.plot(r, amps[i]*base_vals[:,i], color='darkred', lw=0.5, label=label)
-    print(f"loop plot {i} done")
 
 plt.plot(r_avg, xi_standard, marker='o', ls='None', color='grey', label='Standard binned estimator')
 

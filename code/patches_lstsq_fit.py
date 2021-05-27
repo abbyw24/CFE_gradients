@@ -89,11 +89,11 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         plt.plot(r_avg, fit_vals[2], color="blue", marker=".", label="m_fit_y")
         plt.plot(r_avg, fit_vals[2], color="green", marker=".", label="m_fit_z")
 
-        # plot m_fit/b_fit in each bin
-        #       m_fit_x/b_fit should match grad_expected, and y and z should be zero
-        plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="black", marker=".", label="x fit")
-        plt.plot(r_avg, fit_vals[2]/fit_vals[0], color="black", marker=".", alpha=0.6, label="y fit")
-        plt.plot(r_avg, fit_vals[3]/fit_vals[0], color="black", marker=".", alpha=0.4, label="z fit")
+        # # plot m_fit/b_fit in each bin
+        # #       m_fit_x/b_fit should match grad_expected, and y and z should be zero
+        # plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="black", marker=".", label="x fit")
+        # plt.plot(r_avg, fit_vals[2]/fit_vals[0], color="black", marker=".", alpha=0.6, label="y fit")
+        # plt.plot(r_avg, fit_vals[3]/fit_vals[0], color="black", marker=".", alpha=0.4, label="z fit")
 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/bin_cutoff_val)

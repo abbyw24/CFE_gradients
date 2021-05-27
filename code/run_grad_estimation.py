@@ -60,39 +60,39 @@ fig1.savefig(f"/scratch/aew492/research-summer2020_output/lognormal/Corrfunc_{cl
 print("Corrfunc done")
 
 # SUAVE
-
+# parameters:
 # spline basis
 proj_type = 'generalr'
 kwargs = {'order': 3}
 projfn = 'cubic_spline.dat'
-ncomponents = 14
+ncomponents = 14    # what should this be?
 bases = bases.spline_bases(rmin, rmax, projfn, ncomponents, ncont=2000, **kwargs)
 print("bases done")
-
 # computing projection vectors with DDsmu
+rmin = rmin
+rmax = rmax
 r_edges = np.linspace(rmin, rmax, ncomponents+1)
+r_fine = np.linspace(rmin, rmax, 2000)
 nmubins = 1
 mumax = 1.0
 
+# run the pair counts
 dd_res, dd_proj, _ = theory.DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z,
-                                  boxsize=L, periodic=periodic, proj_type=proj_type,
-                                  ncomponents=ncomponents, projfn=projfn)
-print("dd done")
-dr_res, dr_proj, _ = theory.DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z,
-                                  X2=x_rand, Y2=y_rand, Z2=z_rand,
-                                  boxsize=L, periodic=periodic, proj_type=proj_type,
-                                  ncomponents=ncomponents, projfn=projfn)
-print("dr done")
-rr_res, rr_proj, trr_proj = theory.DDsmu(1, nthreads, r_edges, mumax, nmubins,
-                                         x_rand, y_rand, z_rand, boxsize=L,
-                                         periodic=periodic, proj_type=proj_type,
-                                         ncomponents=ncomponents, projfn=projfn)
-print("rr done")
+                        proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, periodic=periodic)
+print("DD:", np.array(dd_proj))
+
+dr_res, dr_proj, _ = theory.DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z, X2=x_rand, Y2=y_rand, Z2=z_rand,
+                        proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, periodic=periodic)
+print("DR:", np.array(dr_proj))
+
+rr_res, rr_proj, qq_proj = theory.DDsmu(1, nthreads, r_edges, mumax, nmubins, x_rand, y_rand, z_rand, 
+                                proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, periodic=periodic)
+print("RR:", np.array(rr_proj))
 
 # computing amplitudes
-amps = utils.compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj, rr_proj, trr_proj)
+amps = utils.compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj, rr_proj, qq_proj)
 print("compute amps done")
-r_fine = np.linspace(rmin, rmax, 2000)
+
 xi_proj = utils.evaluate_xi(amps, r_fine, proj_type, projfn=projfn)
 print("xi_proj done")
 

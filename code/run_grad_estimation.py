@@ -57,6 +57,7 @@ ax1.set_ylabel(r'$\xi$(r)')
 ax1.set_title(f"Standard Estimator, {clust_val}x Lognormal Mock")
 
 fig1.savefig(f"/scratch/aew492/research-summer2020_output/lognormal/Corrfunc_{clust_val}x")
+print("Corrfunc done")
 
 # SUAVE
 
@@ -66,6 +67,7 @@ kwargs = {'order': 3}
 projfn = 'cubic_spline.dat'
 ncomponents = 14
 bases = bases.spline_bases(rmin, rmax, projfn, ncomponents, ncont=2000, **kwargs)
+print("bases done")
 
 # computing projection vectors with DDsmu
 r_edges = np.linspace(rmin, rmax, ncomponents+1)
@@ -75,17 +77,21 @@ mumax = 1.0
 dd_res, dd_proj, _ = theory.DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z,
                                   boxsize=L, periodic=periodic, proj_type=proj_type,
                                   ncomponents=ncomponents, projfn=projfn)
+print("dd done")
 dr_res, dr_proj, _ = theory.DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z,
                                   X2=x_rand, Y2=y_rand, Z2=z_rand,
                                   boxsize=L, periodic=periodic, proj_type=proj_type,
                                   ncomponents=ncomponents, projfn=projfn)
+print("dr done")
 rr_res, rr_proj, trr_proj = theory.DDsmu(1, nthreads, r_edges, mumax, nmubins,
                                          x_rand, y_rand, z_rand, boxsize=L,
                                          periodic=periodic, proj_type=proj_type,
                                          ncomponents=ncomponents, projfn=projfn)
+print("rr done")
 
 # computing amplitudes
 amps = utils.compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj, rr_proj, trr_proj)
+print("compute amps done")
 r_fine = np.linspace(rmin, rmax, 2000)
 xi_proj = utils.evaluate_xi(amps, r_fine, proj_type, projfn=projfn)
 

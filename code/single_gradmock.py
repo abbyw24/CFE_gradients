@@ -95,10 +95,10 @@ def gen_single_gradmock(grad_dim, m, b, lognorm_file, output_dir, mock_file_name
 
     # save mock info
     np.save(os.path.join(output_dir, mock_file_name), mock_info, allow_pickle=True)
-    print("single grad mock, done")
+    print(f"single grad mock: {mock_name}, done")
 
 grad_dim = 1
-m = 1.0
+m_arr = [1.0, 2.0, 5.0, 10.0]
 b = 0.5
 lognormal_density = "2e-4"
 
@@ -107,7 +107,8 @@ lognorm_file = f"/scratch/ksf293/mocks/lognormal/cat_L750_n2e-4_z057_patchy/{log
 
 create_subdirs("/scratch/aew492/research-summer2020_output", [f"other_outputs/{lognorm_name}"])
 output_dir = f"/scratch/aew492/research-summer2020_output/other_outputs/{lognorm_name}"
-mock_file_name = "{}_m-{}-L_b-{}".format(lognorm_name, m, b)
-mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m, b)
 
-gen_single_gradmock(grad_dim, m, b, lognorm_file, output_dir, mock_file_name, mock_name)
+for m in m_arr:
+    mock_file_name = "{}_m-{}-L_b-{}".format(lognorm_name, m, b)
+    mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m, b)
+    gen_single_gradmock(grad_dim, m, b, lognorm_file, output_dir, mock_file_name, mock_name)

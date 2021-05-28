@@ -18,7 +18,7 @@ grad_type = globals.grad_type
 n_patches = globals.n_patches
 
 def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
-    lognormal_density = lognormal_density):
+    lognormal_density = lognormal_density, n_patches=n_patches):
 
     # create the needed subdirectories
     sub_dirs = [
@@ -47,13 +47,13 @@ def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad
         plt.plot(x, x, color="black", alpha=0.5)
         plt.legend()
         
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/scatter/{lognormal_density}/{grad_type}/scatter_patches_vs_suave_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/scatter/{lognormal_density}/{grad_type}/{n_mocks}mocks/scatter_{n_patches}patches_vs_suave_{dim[i]}.png"))
         plt.cla()
     
         print(f"scatter plot for patches vs. suave, dim {dim[i]}, done")
 
 def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
-    lognormal_density=lognormal_density, nbins=10):
+    lognormal_density=lognormal_density, n_patches=n_patches, nbins=10):
 
     # create the needed subdirectories
     sub_dirs = [
@@ -84,7 +84,7 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
 
         plt.legend()
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{lognormal_density}/{grad_type}/hist_patches_vs_suave_{nbins}bins_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{lognormal_density}/{grad_type}/{n_mocks}mocks/hist_{n_patches}patches_vs_suave_{nbins}bins_{dim[i]}.png"))
         plt.cla()
 
         print(f"histogram for patches vs. suave, dim {dim[i]}, done")

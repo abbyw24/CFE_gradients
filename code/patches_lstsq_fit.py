@@ -93,20 +93,17 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         # plt.plot(r_avg, L*fit_vals[2], color="green", marker=".", alpha=0.5, label="L*m_fit_z")
 
         expected_vals = fit_vals[:1]/fit_vals[0]
-        print(fit_vals)
-        print(fit_vals[1:])
-        assert False
 
         # plot m_fit/b_fit in each bin
         #       m_fit_x/b_fit should match grad_expected, and y and z should be zero
-        plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="purple", marker=".", label="x fit")
-        plt.plot(r_avg, fit_vals[2]/fit_vals[0], color="blue", marker=".", alpha=0.4, label="y fit")
-        plt.plot(r_avg, fit_vals[3]/fit_vals[0], color="green", marker=".", alpha=0.4, label="z fit")
+        plt.plot(r_avg, expected_vals[0], color="purple", marker=".", label="x fit")
+        plt.plot(r_avg, expected_vals[1], color="blue", marker=".", alpha=0.4, label="y fit")
+        plt.plot(r_avg, expected_vals[2], color="green", marker=".", alpha=0.4, label="z fit")
 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/bin_cutoff_val)
         # plot bin cutoff
-        ax.vlines(r_avg[bin_cutoff], np.amin(fit_vals), np.amax(fit_vals), alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
+        ax.vlines(r_avg[bin_cutoff], np.amin(expected_vals), np.amax(expected_vals), alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
 
         recovered_vals = []
         for value in fit_vals:

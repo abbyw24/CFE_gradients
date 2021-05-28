@@ -129,4 +129,4 @@ output_dir = f"/scratch/aew492/research-summer2020_output/other_outputs/{lognorm
 for m in m_arr:
     mock_file_name = "{}_m-{}-L_b-{}".format(lognorm_name, m, b)
     mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m, b)
-    gen_single_gradmock(grad_dim, m, b, lognorm_file, output_dir, mock_file_name, mock_name)
+    gen_single_gradmock(grad_dim, m, b, lognorm_file, output_dir, mock_file_name, mock_name, z_max=-100.0)

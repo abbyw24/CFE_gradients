@@ -92,6 +92,11 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         # plt.plot(r_avg, L*fit_vals[2], color="blue", marker=".", alpha=0.5, label="L*m_fit_y")
         # plt.plot(r_avg, L*fit_vals[2], color="green", marker=".", alpha=0.5, label="L*m_fit_z")
 
+        expected_vals = fit_vals[:1]/fit_vals[0]
+        print(fit_vals)
+        print(fit_vals[:1])
+        assert False
+
         # plot m_fit/b_fit in each bin
         #       m_fit_x/b_fit should match grad_expected, and y and z should be zero
         plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="purple", marker=".", label="x fit")

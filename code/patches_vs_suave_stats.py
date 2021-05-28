@@ -22,7 +22,7 @@ def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad
 
     # create the needed subdirectories
     sub_dirs = [
-        f"plots/patches_vs_suave/scatter/{lognormal_density}/{grad_type}"
+        f"plots/patches_vs_suave/scatter/{lognormal_density}/{grad_type}/{n_mocks}mocks"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
@@ -57,7 +57,7 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
 
     # create the needed subdirectories
     sub_dirs = [
-        f"plots/patches_vs_suave/histogram/{lognormal_density}/{grad_type}"
+        f"plots/patches_vs_suave/histogram/{lognormal_density}/{grad_type}/{n_mocks}mocks"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
     

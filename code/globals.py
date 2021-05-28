@@ -94,7 +94,7 @@ def initialize_vals():
     global rmin
     rmin = 20.0
     global rmax
-    rmax = 100.0
+    rmax = 140.0
     global nbins
     nbins = 22
     global nthreads

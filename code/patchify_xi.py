@@ -113,6 +113,12 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
         # results for full mock
         results_xi_full = xi_ls(mock_data, rand_set, periodic, nthreads, rmin, rmax, nbins)
         xi_full = np.array(results_xi_full[1])
+        # save values used to calculate xi
+        patch_data["periodic"] = periodic
+        patch_data["nthreads"] = nthreads
+        patch_data["rmin"] = rmin
+        patch_data["rmax"] = rmax
+        patch_data["nbins"] = nbins
 
         # define r_avg (this is the same for all xi)
         r_avg = results_xi_full[0]

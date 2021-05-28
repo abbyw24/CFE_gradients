@@ -1,3 +1,6 @@
+import globals
+globals.initialize_vals()
+
 # # generate gradient mocks based on the specified grad_type in globals
 # import gradmock_gen
 # gradmock_gen.generate_gradmocks()

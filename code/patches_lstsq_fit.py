@@ -73,6 +73,9 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         # figure this out for grad_dim > 1
         ax.axhline(grad_expected[0], color="red", alpha=0.5)
 
+        # also plot line at y = 0 (expected y and z fit)
+        ax.axhline(0, color="gray")
+
         fits = []
         for r_bin in range(nbins):
             # clustering amplitudes
@@ -83,17 +86,17 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
             fits.append(X)
         fit_vals = np.array(fits).T
 
-        # plot recovered values
-        plt.plot(r_avg, fit_vals[0], color="gray", marker=".", label="b_fit")
-        plt.plot(r_avg, L*fit_vals[1], color="purple", marker=".", alpha=0.5, label="L*m_fit_x")
-        plt.plot(r_avg, L*fit_vals[2], color="blue", marker=".", alpha=0.5, label="L*m_fit_y")
-        plt.plot(r_avg, L*fit_vals[2], color="green", marker=".", alpha=0.5, label="L*m_fit_z")
+        # # plot recovered values
+        # plt.plot(r_avg, fit_vals[0], color="gray", marker=".", label="b_fit")
+        # plt.plot(r_avg, L*fit_vals[1], color="purple", marker=".", alpha=0.5, label="L*m_fit_x")
+        # plt.plot(r_avg, L*fit_vals[2], color="blue", marker=".", alpha=0.5, label="L*m_fit_y")
+        # plt.plot(r_avg, L*fit_vals[2], color="green", marker=".", alpha=0.5, label="L*m_fit_z")
 
-        # # plot m_fit/b_fit in each bin
-        # #       m_fit_x/b_fit should match grad_expected, and y and z should be zero
-        # plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="black", marker=".", label="x fit")
-        # plt.plot(r_avg, fit_vals[2]/fit_vals[0], color="black", marker=".", alpha=0.6, label="y fit")
-        # plt.plot(r_avg, fit_vals[3]/fit_vals[0], color="black", marker=".", alpha=0.4, label="z fit")
+        # plot m_fit/b_fit in each bin
+        #       m_fit_x/b_fit should match grad_expected, and y and z should be zero
+        plt.plot(r_avg, fit_vals[1]/fit_vals[0], color="purple", marker=".", label="x fit")
+        plt.plot(r_avg, fit_vals[2]/fit_vals[0], color="blue", marker=".", alpha=0.4, label="y fit")
+        plt.plot(r_avg, fit_vals[3]/fit_vals[0], color="green", marker=".", alpha=0.4, label="z fit")
 
         # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
         bin_cutoff = int(nbins/bin_cutoff_val)
@@ -215,7 +218,7 @@ def patches_lstsq_fit_1bin(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir,
         for i in range(len(dim)):
             plt.plot(x, X[i+1]*x + b_fit, color=bestfit_colors[i], label=dim[i]+" best fit: y = "+str("%.8f" %X[i+1])+"x + "+str("%.6f" %b_fit))
         plt.plot(patch_centers[0,0], Y[0], alpha=0.0, label="{:.8f}".format(m/(b*L)))
-        ax2.set_title(f"Linear least square fit, Clustering amps in patches (bin {r_bin}); \n Expected: {grad_expected[0]}, Recovered: {grad_recovered[0]}, Ratio: {ratio_rec_exp}")
+        ax2.set_title(f"Linear least square fit, Clustering amps in patches (bin {r_bin})")
         plt.legend()
 
         # resave patch info dictionary

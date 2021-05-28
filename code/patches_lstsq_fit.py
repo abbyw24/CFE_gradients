@@ -94,7 +94,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
 
         expected_vals = fit_vals[:1]/fit_vals[0]
         print(fit_vals)
-        print(fit_vals[:1])
+        print(fit_vals[1:])
         assert False
 
         # plot m_fit/b_fit in each bin

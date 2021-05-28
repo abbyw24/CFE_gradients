@@ -111,23 +111,20 @@ print("xi_proj done")
 xi_res = theory.xi(L, nthreads, r_edges, x, y, z, output_ravg=True)
 print("xi_res done")
 r_avg, xi_standard = xi_res['ravg'], xi_res['xi']
+print(r_avg, xi_standard)
 
 plt.figure(figsize=(10,7))
 plt.plot(r_fine, xi_proj, color='red', lw=1.5, label='Continuous-Function Estimator with spline basis')
 
-r = bases[:,0]
-base_vals = bases[:,1:]
 for i in range(base_vals.shape[1]):
     label = None
     if i==0:
-        label = 'Cubic spline basis functions'
+        label = 'Cosmo basis functions'
     plt.plot(r, amps[i]*base_vals[:,i], color='darkred', lw=0.5, label=label)
 
 plt.plot(r_avg, xi_standard, marker='o', ls='None', color='grey', label='Standard binned estimator')
 
 plt.axhline(0.0, color='k', lw=1)
-# plt.xlim(min(r), max(r))
-# plt.ylim(-0.005, 0.025)
 plt.xlabel(r'separation r ($h^{-1}$Mpc)')
 plt.ylabel(r'$\xi$(r)')
 plt.legend()

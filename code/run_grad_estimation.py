@@ -126,8 +126,8 @@ for i in range(base_vals.shape[1]):
 plt.plot(r_avg, xi_standard, marker='o', ls='None', color='grey', label='Standard binned estimator')
 
 plt.axhline(0.0, color='k', lw=1)
-plt.xlim(min(r), max(r))
-plt.ylim(-0.005, 0.025)
+# plt.xlim(min(r), max(r))
+# plt.ylim(-0.005, 0.025)
 plt.xlabel(r'separation r ($h^{-1}$Mpc)')
 plt.ylabel(r'$\xi$(r)')
 plt.legend()

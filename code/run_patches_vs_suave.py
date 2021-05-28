@@ -13,9 +13,9 @@ patches_lstsq_fit.patches_lstsq_fit_1bin(r_bin=2)
 # import patches_exp_vs_rec
 # patches_exp_vs_rec.patches_exp_vs_rec()
 
-# # run suave
-# import suave
-# suave.suave_exp_vs_rec()
+# run suave
+import suave
+suave.suave_exp_vs_rec()
 
 # compare performance of patches and suave
 import patches_vs_suave_stats

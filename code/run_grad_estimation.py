@@ -75,6 +75,7 @@ bases = cosmo_bases(rmin, rmax, projfn)
 ncomponents = bases.shape[1]-1
 r = bases[:,0]
 base_vals = bases[:,1]
+print(bases, bases.shape, ncomponents, r, base_vals)
 print("bases done")
 
 # computing projection vectors with DDsmu

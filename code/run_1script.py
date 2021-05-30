@@ -1,0 +1,2 @@
+import patches_lstsq_fit
+patches_lstsq_fit.patches_lstsq_allbins()

@@ -43,8 +43,11 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         patch_centers = patch_info["patch_centers"]
         patch_centers -= L/2
             # this centers the fiducial point in the box
+        print("patch_centers: ", patch_centers)
         r_avg = patch_info["r_avg"]
         xi_patches = patch_info["xi_patches"]
+        print("r_avg: ", r_avg)
+        print("xi_patches: ", xi_patches)
         assert len(xi_patches) == n_patches
 
         # create A matrix

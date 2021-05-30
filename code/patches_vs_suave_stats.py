@@ -39,8 +39,8 @@ def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad
         ax.set_ylabel("Recovered Gradient")
         ax.set_title(f"Expected vs. Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}, {n_mocks} mocks")
 
-        plt.scatter(grads_exp[:,i], grads_rec_suave[:,i], marker=".", color="black", alpha=0.5, label="CFE")
-        plt.scatter(grads_exp[:,i], grads_rec_patches[:,i], marker=".", color="gray", alpha=0.5, label="Standard")
+        plt.scatter(grads_exp[:,i], grads_rec_suave[:,i], marker=".", color="indigo", alpha=0.6, label="CFE")
+        plt.scatter(grads_exp[:,i], grads_rec_patches[:,i], marker=".", color="gray", alpha=0.6, label="Standard")
         
         # plot line y = x (the data points would fall on this line if the expected and recovered gradients matched up perfectly)
         x = np.linspace(min(grads_exp[:,i]), max(grads_exp[:,i]), 10)

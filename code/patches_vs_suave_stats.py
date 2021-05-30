@@ -74,13 +74,13 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
         plt.title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}, {n_mocks} mocks")
         plt.xlabel("Recovered Gradient")
 
-        # line at x = 0
-        plt.vlines(0, 0, 20, color="black", alpha=0.4)
-
         # define bins
         bins = np.linspace(1.5*min(min(grads_rec_patches[:,i]), min(grads_rec_suave[:,i])), 1.5*max(max(grads_rec_patches[:,i]), max(grads_rec_suave[:,i])), nbins)
-        plt.hist(grads_rec_suave[:,i], bins=bins, color="black", alpha=0.5, label="CFE")
-        plt.hist(grads_rec_patches[:,i], bins=bins, color="gray", alpha=0.5, label="Standard")
+        n_s, _, _ = plt.hist(grads_rec_suave[:,i], bins=bins, color="indigo", alpha=0.6, label="CFE")
+        n_p, _, _ = plt.hist(grads_rec_patches[:,i], bins=bins, color="gray", alpha=0.6, label="Standard", zorder=100)
+
+        # line at x = 0
+        plt.vlines(0, 0, max(max(n_s), max(n_p)), color="black", alpha=1, zorder=101, linewidth=1)
 
         plt.legend()
 

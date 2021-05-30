@@ -43,11 +43,11 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         patch_centers = patch_info["patch_centers"]
         patch_centers -= L/2
             # this centers the fiducial point in the box
-        print("patch_centers: ", patch_centers)
+        # print("patch_centers: ", patch_centers)
         r_avg = patch_info["r_avg"]
         xi_patches = patch_info["xi_patches"]
-        print("r_avg: ", r_avg)
-        print("xi_patches: ", xi_patches)
+        # print("r_avg: ", r_avg)
+        # print("xi_patches: ", xi_patches)
         assert len(xi_patches) == n_patches
 
         # create A matrix
@@ -117,7 +117,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         b_fit = recovered_vals[0]
         m_fit = recovered_vals[1:]
 
-        print(f"recovered_vals for {mock_name} = {recovered_vals}")
+        # print(f"recovered_vals for {mock_name} = {recovered_vals}")
     
         # add recovered values to patch info dictionary
         patch_info["b_fit"] = b_fit
@@ -132,6 +132,8 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         # # again, need to figure this out for grad_dim > 1 !
         # patch_info["ratio_rec_exp"] = ratio_rec_exp
 
+        # change back patch_center values for dictionary saving
+        patch_centers += L/2
         # resave patch info dictionary
         np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
 
@@ -208,7 +210,7 @@ def patches_lstsq_fit_1bin(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir,
         b_fit = X[0]
         m_fit = X[1:]
 
-        print(f"b_fit, m_fit for bin {r_bin} = {X}")
+        # print(f"b_fit, m_fit for bin {r_bin} = {X}")
     
         # add recovered values to patch info dictionary
         patch_info[f"b_fit_bin{r_bin}"] = b_fit

@@ -102,6 +102,6 @@ def initialize_vals():
 
     # patch values
     global n_patches
-    n_patches = 27          # should be n_sides**3
+    n_patches = 8          # should be n_sides**3
 
 #initialize_vals()

@@ -117,7 +117,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         b_fit = recovered_vals[0]
         m_fit = recovered_vals[1:]
 
-        print(f"recovered_vals for {mock_name} = {recovered_vals}")
+        # print(f"recovered_vals for {mock_name} = {recovered_vals}")
     
         # add recovered values to patch info dictionary
         patch_info["b_fit"] = b_fit

@@ -100,7 +100,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         plt.plot(r_avg, expected_vals[1], color="blue", marker=".", alpha=0.4, label="y fit")
         plt.plot(r_avg, expected_vals[2], color="green", marker=".", alpha=0.4, label="z fit")
 
-        # create our recovered gradient array (as of now with a set n_bin cutoff to avoid too much noise)
+        # cutoff for grad calculation
         bin_cutoff = int(nbins/bin_cutoff_val)
         # plot bin cutoff
         ax.vlines(r_avg[bin_cutoff], np.amin(expected_vals), np.amax(expected_vals), alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
@@ -113,6 +113,8 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
             recovered_vals.append(val_rec)
         b_fit = recovered_vals[0]
         m_fit = recovered_vals[1:]
+
+        print(f"recovered_vals for {mock_name} = {recovered_vals}")
     
         # add recovered values to patch info dictionary
         patch_info["b_fit"] = b_fit
@@ -202,6 +204,8 @@ def patches_lstsq_fit_1bin(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir,
         X = np.linalg.inv(A.T @ C_inv @ A) @ (A.T @ C_inv @ Y)
         b_fit = X[0]
         m_fit = X[1:]
+
+        print(f"b_fit, m_fit for bin {r_bin} = {X}")
     
         # add recovered values to patch info dictionary
         patch_info[f"b_fit_bin{r_bin}"] = b_fit

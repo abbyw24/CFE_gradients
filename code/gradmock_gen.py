@@ -72,6 +72,8 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         m = float(mock_info["m"])
         b = float(mock_info["b"])
 
+        print("mock name: ", mock_name)
+
         # LOGNORMAL SET
         Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f"{lognorm_file}.bin"))
             # define boxsize based on mock; and N = number of data points

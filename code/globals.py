@@ -24,7 +24,8 @@ def initialize_vals():
     grad_type = "1rlz_per_m"
 
     global n_mocks
-    n_mocks = 401
+    # n_mocks = 401
+    n_mocks = 3
 
     global mocks_info
 

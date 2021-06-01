@@ -1,10 +1,10 @@
-# run patches
-import patchify_xi
-patchify_xi.xi_in_patches()
+# # run patches
+# import patchify_xi
+# patchify_xi.xi_in_patches()
 
-import patches_lstsq_fit
-patches_lstsq_fit.patches_lstsq_allbins()
-patches_lstsq_fit.patches_lstsq_fit_1bin(r_bin=2)
+# import patches_lstsq_fit
+# patches_lstsq_fit.patches_lstsq_allbins()
+# patches_lstsq_fit.patches_lstsq_fit_1bin(r_bin=2)
 
 # import patches_stats
 # n_patches_list = [8, 27]

@@ -34,6 +34,7 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
 
     # get recovered gradients
     grads_rec = {}
+    grads_rec["all"] = []       # to combine grads_rec from all patches; for bin edges
 
     for n_patches in n_patches_list:
         grads_rec[str(n_patches)] = []

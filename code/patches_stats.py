@@ -51,16 +51,22 @@ def histogram_patches_vs_suave(n_patches_list, grad_type=grad_type, lognormal_de
 
         # define bins
         bins = np.linspace(1.5*min(grads_rec), 1.5*max(grads_rec), nbins)
-        assert False
-        n_s, _, _ = plt.hist(grads_rec_suave[:,i], bins=bins, color="indigo", alpha=0.6, label="CFE")
-        n_p, _, _ = plt.hist(grads_rec_patches[:,i], bins=bins, color="gray", alpha=0.6, label="Standard", zorder=100)
+        a = 0.8
+        bin_vals = []
+        for n_patches in n_patches_list:
+            grads_rec = grads_rec[str(n_patches)]
+            n, _, _ = plt.hist(grads_rec[:,i], bins=bins, color="indigo", alpha=a, label=f"{n_patches} patches")
+            a /= 2
+            bin_vals.append(n)
+
+        bin_vals = np.array(bin_vals)
 
         # line at x = 0
-        plt.vlines(0, 0, max(max(n_s), max(n_p)), color="black", alpha=1, zorder=101, linewidth=1)
+        plt.vlines(0, 0, np.amax(bin_vals), color="black", alpha=1, zorder=100, linewidth=1)
 
         plt.legend()
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{lognormal_density}/{grad_type}/{n_mocks}mocks/hist_{n_patches}patches_vs_suave_{nbins}bins_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/n_patches/histogram/{grad_type}/{n_mocks}mocks/hist_n_patches_{nbins}bins_{dim[i]}.png"))
         plt.cla()
 
-        print(f"histogram for patches vs. suave, dim {dim[i]}, done")
+        print(f"histogram for n_patches, dim {dim[i]}, done")

@@ -1,5 +1,7 @@
-# import patches_lstsq_fit
-# patches_lstsq_fit.patches_lstsq_allbins()
+import patches_stats
+n_patches_list = [8, 27]
+lognormal_density = "2e-4"
+histogram_patches(n_patches_list, lognormal_density=lognormal_density, nbins=20)
 
 # compare performance of patches and suave
 import patches_vs_suave_stats

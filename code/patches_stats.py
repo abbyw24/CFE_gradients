@@ -16,7 +16,7 @@ grad_type = globals.grad_type
 
 lognormal_density = globals.lognormal_density
 
-def histogram_patches_vs_suave(n_patches_list, grad_type=grad_type, lognormal_density=lognormal_density, path_to_data_dir=path_to_data_dir, nbins=10):
+def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=lognormal_density, path_to_data_dir=path_to_data_dir, nbins=20):
     # make sure inputs have correct form
     assert isinstance(n_patches_list, list)
 

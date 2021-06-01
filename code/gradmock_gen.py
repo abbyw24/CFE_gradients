@@ -136,9 +136,10 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
 
         fig1, ax1 = plt.subplots()
         plt.plot(xy_slice[:,0], xy_slice[:,1],',')   # plot scatter xy-slice
-        plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], color="green", label=w_hat)   # plot vector w_hat (no z)
+        # plot vector w_hat (no z)
+        a = 0.35*L     # controls width of w_hat vector in plot
+        plt.arrow(-a, 0, 2*a, 0, color="black", lw=2, head_width = .1*a, head_length=.2*a, length_includes_head=True, zorder=100, label=w_hat)
         ax1.set_aspect("equal")      # square aspect ratio
-        # plt.ylim((-400,400))
         ax1.set_xlabel("x (Mpc/h)")
         ax1.set_ylabel("y (Mpc/h)")
         ax1.set_title(mock_name)

@@ -39,7 +39,7 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
     for n_patches in n_patches_list:
         grads_rec[str(n_patches)] = []
         for j in range(len(mock_file_name_list)):
-            info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[j]}.npy"), all_gradsow_pickle=True).item()
+            info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[j]}.npy"), allow_pickle=True).item()
             grad_rec = info["grad_recovered"]
             grads_rec[str(n_patches)].append(grad_rec)
             all_grads.append(grad_rec)

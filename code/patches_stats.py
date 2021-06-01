@@ -58,8 +58,7 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
         a = 0.8
         bin_vals = []
         for n_patches in n_patches_list:
-            grads_rec_n = grads_rec[str(n_patches)]
-            grads_rec_n = np.array(grads_rec)
+            grads_rec_n = np.array(grads_rec[str(n_patches)])
             n, _, _ = plt.hist(grads_rec_n[:,i], bins=bins, color="indigo", alpha=a, label=f"{n_patches} patches")
             a /= 2
             bin_vals.append(n)

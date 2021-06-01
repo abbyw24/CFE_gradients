@@ -4,3 +4,5 @@
 *.dat
 *.pyc
 omp_test.c
+local_data/
+code/local/

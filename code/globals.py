@@ -12,7 +12,7 @@ def initialize_vals():
     grad_dim = 1        # dimension of w_hat in gradient mock
 
     global lognormal_density
-    lognormal_density = "1e-4"
+    lognormal_density = "4e-4"
 
     global path_to_lognorm_source
     path_to_lognorm_source = f"/scratch/ksf293/mocks/lognormal/cat_L750_n{lognormal_density}_z057_patchy"

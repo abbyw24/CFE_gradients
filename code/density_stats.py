@@ -50,18 +50,18 @@ def histogram_densities(densities_list, method, grad_type=grad_type, path_to_dat
             grad_exp = mock_info["grad_expected"]
             grads_exp[str(density)].append(grad_exp)
 
-            if method == "patches":
+            if method == "Standard":
                 info = np.load(os.path.join(path_to_data_dir, f"patch_data/{density}/{n_patches}patches/{mock_file_name}.npy"), allow_pickle=True).item()
                 grad_rec = info["grad_recovered"]
                 grads_rec[str(density)].append(grad_rec)
             
-            elif method == "suave":
+            elif method == "CFE":
                 info = np.load(os.path.join(path_to_data_dir, f"suave_data/{density}/{mock_file_name}.npy"), allow_pickle=True).item()
                 grad_rec = info["grad_recovered"]
                 grads_rec[str(density)].append(grad_rec)
             
             else:
-                print("method must be either 'patches' or 'suave'")
+                print("method must be either 'Standard' or 'CFE'")
                 assert False
 
             all_grads.append(grad_rec-grad_exp)
@@ -74,7 +74,7 @@ def histogram_densities(densities_list, method, grad_type=grad_type, path_to_dat
         print(f"{dim[i]}:")
         # create plot
         fig = plt.figure()
-        plt.title(f"Histogram of Recovered Grad., {dim[i]}, {grad_type}, {n_mocks} mocks")
+        plt.title(f"Histogram of Recovered Grad., {method}, {dim[i]}, {grad_type}, {n_mocks} mocks")
         plt.xlabel("Recovered Grad. - Expected Grad.")
         plt.ylabel("Counts")
 

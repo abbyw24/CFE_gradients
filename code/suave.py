@@ -201,7 +201,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         cbar = plt.colorbar(sm)
         cbar.set_label(r'$v \,\, (\mathbf{x} = v\hat{e}_\mathrm{gradient} + \mathbf{x}_\mathrm{pivot})$', rotation=270, labelpad=12)
         ax.axhline(0, color='grey', lw=0.5)
-        ax.set_ylim((0, 0.1))
+        ax.set_ylim((0.01, 0.12))
         ax.set_xlabel(r'Separation $r$ ($h^{-1}\,$Mpc)')
         ax.set_ylabel(r'$\xi(r)$')
         ax.set_title(f"Recovered Gradient, {mock_name}")

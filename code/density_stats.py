@@ -10,6 +10,8 @@ globals.initialize_vals()  # brings in all the default parameters
 grad_dim = globals.grad_dim
 path_to_data_dir = globals.path_to_data_dir
 mock_file_name_list = globals.mock_file_name_list
+m_arr = globals.m_arr
+b_arr = globals.b_arr
 n_mocks = globals.n_mocks
 
 grad_type = globals.grad_type
@@ -39,20 +41,23 @@ def histogram_densities(densities_list, method, grad_type=grad_type, path_to_dat
     all_grads = []       # to combine grads_rec from all patches; for bin edges
 
     for density in densities_list:
+        # we have to subvert globals a bit here in order to loop through different lognormal mock densities
         grads_exp[str(density)] = []
         grads_rec[str(density)] = []
         for i in range(len(mock_file_name_list)):
-            mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+            lognorm_file = f"cat_L750_n{density}_z057_patchy_lognormal_rlz{i}"
+            mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file, m_arr[i], b_arr[i])
+            mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{density}/{mock_file_name}.npy"), allow_pickle=True).item()
             grad_exp = mock_info["grad_expected"]
             grads_exp[str(density)].append(grad_exp)
 
             if method == "patches":
-                info = np.load(os.path.join(path_to_data_dir, f"patch_data/{density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+                info = np.load(os.path.join(path_to_data_dir, f"patch_data/{density}/{n_patches}patches/{mock_file_name}.npy"), allow_pickle=True).item()
                 grad_rec = info["grad_recovered"]
                 grads_rec[str(density)].append(grad_rec)
             
             elif method == "suave":
-                info = np.load(os.path.join(path_to_data_dir, f"suave_data/{density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+                info = np.load(os.path.join(path_to_data_dir, f"suave_data/{density}/{mock_file_name}.npy"), allow_pickle=True).item()
                 grad_rec = info["grad_recovered"]
                 grads_rec[str(density)].append(grad_rec)
             

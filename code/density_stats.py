@@ -68,6 +68,7 @@ def histogram_densities(densities_list, method, grad_type=grad_type, path_to_dat
             all_grads.append(grad_rec-grad_exp)
     
     all_grads = np.array(all_grads)
+    print(all_grads.shape)
 
     # loop through desired dimensions
     for i in dim:

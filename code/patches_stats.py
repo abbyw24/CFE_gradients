@@ -37,14 +37,13 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
     grads_exp = []
     all_grads = []       # to combine grads_rec from all patches; for bin edges
 
-    for n_patches in n_patches_list:
-        grads_rec[str(n_patches)] = []
-        for j in range(len(mock_file_name_list)):
-            mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[j]}.npy"), allow_pickle=True).item()
-            grad_exp = mock_info["grad_expected"]
-            grads_exp.append(grad_exp)
-
-            patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[j]}.npy"), allow_pickle=True).item()
+    for i in range(len(mock_file_name_list)):
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        grad_exp = mock_info["grad_expected"]
+        grads_exp.append(grad_exp)
+        for n_patches in n_patches_list:
+            grads_rec[str(n_patches)] = []
+            patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
             grad_rec = patch_info["grad_recovered"]
             grads_rec[str(n_patches)].append(grad_rec)
             all_grads.append(grad_rec)

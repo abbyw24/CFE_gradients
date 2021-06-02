@@ -43,7 +43,7 @@ def histogram_densities(densities_list, method, grad_type=grad_type, path_to_dat
         # we have to subvert globals a bit here in order to loop through different lognormal mock densities
         grads_exp[str(density)] = []
         grads_rec[str(density)] = []
-        for i in range(len(n_mocks)):
+        for i in range(n_mocks):
             lognorm_file = f"cat_L750_n{density}_z057_patchy_lognormal_rlz{i}"
             mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file, m_arr[i], b_arr[i])
             mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{density}/{mock_file_name}.npy"), allow_pickle=True).item()

@@ -87,7 +87,7 @@ def histogram_densities(densities_list, method, grad_type=grad_type, path_to_dat
             grads_rec_n = np.array(grads_rec[str(density)])
             grads_exp_n = np.array(grads_exp[str(density)])
             vals = grads_rec_n[:,i] - grads_exp_n[:,i]
-            n, _, _ = plt.hist(vals, bins=bins, histtype="step", color="indigo", alpha=a, label=f"{density}")
+            n, _, _ = plt.hist(vals, bins=bins, color="indigo", alpha=a, label=f"{density}")
             a /= 2.5
             bin_vals.append(n)
             print(f"for density {density}:")

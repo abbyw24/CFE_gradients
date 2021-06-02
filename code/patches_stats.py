@@ -49,6 +49,7 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
             grads_rec[str(n_patches)].append(grad_rec)
             all_grads.append(grad_rec)
     
+    grads_exp = np.array(grads_exp)
     all_grads = np.array(all_grads)
 
     # loop through desired dimensions with patches and suave

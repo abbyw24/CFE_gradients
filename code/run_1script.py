@@ -5,5 +5,5 @@
 
 import density_stats
 densities_list = ["4e-4", "2e-4", "1e-4"]
-method = "patches"
+method = "Standard"
 density_stats.histogram_densities(densities_list, method, nbins=30)

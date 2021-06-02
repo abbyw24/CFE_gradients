@@ -98,7 +98,7 @@ def histogram_densities(densities_list, method, grad_type=grad_type, path_to_dat
 
         plt.legend()
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/densities/histogram/{grad_type}/{n_mocks}mocks/hist_densities_{nbins}bins_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/densities/histogram/{grad_type}/{n_mocks}mocks/{method}/hist_densities_{nbins}bins_{dim[i]}.png"))
         plt.cla()
 
         print(f"histogram for densities, dim {dim[i]}, done")

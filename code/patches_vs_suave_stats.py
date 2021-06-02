@@ -71,7 +71,10 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
     for i in dim:
         # create plot
         fig = plt.figure()
-        plt.title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}, {n_mocks} mocks")
+        if grad_type == "1mock":
+            plt.title("")
+        else:
+            plt.title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}, {n_mocks} mocks")
         plt.xlabel("Recovered Grad. - Expected Grad.")
         plt.ylabel("Counts")
 

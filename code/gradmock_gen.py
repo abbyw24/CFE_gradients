@@ -142,7 +142,10 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         ax1.set_aspect("equal")      # square aspect ratio
         ax1.set_xlabel("x (Mpc/h)")
         ax1.set_ylabel("y (Mpc/h)")
-        ax1.set_title(mock_name)
+        if grad_type == "1mock":
+            ax1.set_title("")
+        else:
+            ax1.set_title(mock_name)
         ax1.legend()
         fig1.savefig(os.path.join(path_to_data_dir, f"plots/samecolor_mocks/{lognormal_density}/{mock_file_name}.png"))
         plt.cla()

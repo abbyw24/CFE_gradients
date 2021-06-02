@@ -26,6 +26,7 @@ lognormal_density = globals.lognormal_density
 path_to_data_dir = globals.path_to_data_dir
 mock_file_name_list = globals.mock_file_name_list
 mock_name_list = globals.mock_name_list
+grad_type = globals.grad_type
 
 randmult = globals.randmult
 periodic = globals.periodic
@@ -204,7 +205,10 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         ax.set_ylim((-0.01, 0.12))
         ax.set_xlabel(r'Separation $r$ ($h^{-1}\,$Mpc)')
         ax.set_ylabel(r'$\xi(r)$')
-        ax.set_title(f"Recovered Gradient, {mock_name}")
+        if grad_type == "1mock":
+            ax.set_title("")
+        else:
+            ax.set_title(f"Recovered Gradient, {mock_name}")
 
         fig.savefig(os.path.join(path_to_data_dir, f"plots/suave/{lognormal_density}/grad_recovered/{mock_file_name}.png"))
 

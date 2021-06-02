@@ -34,26 +34,27 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
 
     # get recovered and expected gradients
     grads_rec = {}
-    grads_exp = []
+    grads_exp = {}
     all_grads = []       # to combine grads_rec from all patches; for bin edges
 
-    for i in range(len(mock_file_name_list)):
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
-        grad_exp = mock_info["grad_expected"]
-        grads_exp.append(grad_exp)
-        for n_patches in n_patches_list:
+    for n_patches in n_patches_list:
+        for i in range(len(mock_file_name_list)):
+            grads_exp[str(n_patches)] = []
+            mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+            grad_exp = mock_info["grad_expected"]
+            grads_exp[str(n_patches)].append(grad_exp)
+
             grads_rec[str(n_patches)] = []
             patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
             grad_rec = patch_info["grad_recovered"]
             grads_rec[str(n_patches)].append(grad_rec)
-            all_grads.append(grad_rec)
+
+            all_grads.append(grad_rec-grad_exp)
     
-    grads_exp = np.array(grads_exp)
     all_grads = np.array(all_grads)
 
     print("grads_rec:", grads_rec)
     print("grads_exp:", grads_exp)
-    print(grads_exp.shape)
 
     # loop through desired dimensions with patches and suave
     for i in dim:
@@ -64,7 +65,9 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
         plt.xlabel("Recovered Grad. - Expected Grad.")
 
         # define bins
+        mins = []
         bins = np.linspace(1.5*min(all_grads[:,i]), 1.5*max(all_grads[:,i]), nbins)
+
         a = 0.6
         bin_vals = []
         for n_patches in n_patches_list:

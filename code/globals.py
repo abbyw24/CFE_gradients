@@ -21,10 +21,10 @@ def initialize_vals():
     path_to_data_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D"
 
     global grad_type
-    grad_type = "1rlz_per_m"
+    grad_type = "1mock"
 
     global n_mocks
-    n_mocks = 401
+    n_mocks = 1
 
     global mocks_info
 
@@ -77,7 +77,7 @@ def initialize_vals():
             mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[i], b)
             mock_name_list.append(mock_name)
     
-    elif grad_type == "1_mock":     # (i.e. plots for poster)
+    elif grad_type == "1mock":     # (i.e. plots for poster)
         m = 0.5
         b = 0.5
         m_arr = m * np.ones([n_mocks])

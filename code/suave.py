@@ -119,7 +119,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         v_max = L/2.
         vs_norm = matplotlib.colors.Normalize(vmin=v_min, vmax=v_max)
         cmap = matplotlib.cm.get_cmap('cool')
-        nvs = 10
+        nvs = 20
         vs = np.linspace(v_min, v_max, nvs)
 
         # random set
@@ -201,6 +201,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         cbar = plt.colorbar(sm)
         cbar.set_label(r'$v \,\, (\mathbf{x} = v\hat{e}_\mathrm{gradient} + \mathbf{x}_\mathrm{pivot})$', rotation=270, labelpad=12)
         ax.axhline(0, color='grey', lw=0.5)
+        ax.set_ylim((0, 0.1))
         ax.set_xlabel(r'Separation $r$ ($h^{-1}\,$Mpc)')
         ax.set_ylabel(r'$\xi(r)$')
         ax.set_title(f"Recovered Gradient, {mock_name}")

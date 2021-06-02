@@ -37,31 +37,21 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
     grads_exp = {}
     all_grads = []       # to combine grads_rec from all patches; for bin edges
 
-    print(len(mock_file_name_list))
-
     for n_patches in n_patches_list:
+        grads_exp[str(n_patches)] = []
+        grads_rec[str(n_patches)] = []
         for i in range(len(mock_file_name_list)):
-            grads_exp[str(n_patches)] = []
             mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
             grad_exp = mock_info["grad_expected"]
-            print(grad_exp)
             grads_exp[str(n_patches)].append(grad_exp)
 
-            grads_rec[str(n_patches)] = []
             patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
             grad_rec = patch_info["grad_recovered"]
-            print(grad_rec)
             grads_rec[str(n_patches)].append(grad_rec)
 
             all_grads.append(grad_rec-grad_exp)
-
-            print(len(grads_exp[str(n_patches)]))
-            print(len(grads_rec[str(n_patches)]))
     
     all_grads = np.array(all_grads)
-
-    print("grads_rec:", grads_rec)
-    print("grads_exp:", grads_exp)
 
     # loop through desired dimensions with patches and suave
     for i in dim:

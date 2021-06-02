@@ -80,8 +80,8 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
 
         # define bins
         bins = np.linspace(1.5*min(min(patches_vals), min(suave_vals)), 1.5*max(max(patches_vals), max(suave_vals)), nbins)
-        n_s, _, _ = plt.hist(suave_vals, bins=bins, color="indigo", alpha=0.6, label="CFE")
-        n_p, _, _ = plt.hist(patches_vals, bins=bins, color="gray", alpha=0.6, label="Standard", zorder=100)
+        n_s, _, _ = plt.hist(suave_vals, bins=bins, histtype="step", color="indigo", alpha=0.6, label="CFE")
+        n_p, _, _ = plt.hist(patches_vals, bins=bins, histtype="step", color="gray", alpha=0.6, label="Standard", zorder=100)
 
         # line at x = 0
         plt.vlines(0, 0, max(max(n_s), max(n_p)), color="black", alpha=1, zorder=101, linewidth=1)

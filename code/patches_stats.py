@@ -56,7 +56,7 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
 
         # define bins
         bins = np.linspace(1.5*min(all_grads[:,i]), 1.5*max(all_grads[:,i]), nbins)
-        a = 0.8
+        a = 0.6
         bin_vals = []
         for n_patches in n_patches_list:
             grads_rec_n = np.array(grads_rec[str(n_patches)])

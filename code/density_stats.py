@@ -18,13 +18,9 @@ grad_type = globals.grad_type
 n_patches = globals.n_patches
 
 def histogram_densities(densities_list, method, grad_type=grad_type, path_to_data_dir=path_to_data_dir, n_patches=n_patches, nbins=10):
-    # make sure inputs have correct form
-    assert method == "patches" or "suave"
-    assert isinstance(densities_list, list)
-
     # create the needed subdirectories
     sub_dirs = [
-        f"plots/densities/histogram/{grad_type}/{n_mocks}mocks"
+        f"plots/densities/histogram/{grad_type}/{n_mocks}mocks/{method}"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
     

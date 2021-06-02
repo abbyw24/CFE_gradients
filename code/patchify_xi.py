@@ -161,7 +161,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
         plt.plot(r_avg, xi_patch_avg, color="black", alpha=0.5, marker=".", label="Avg. of Patches")
         # plot parameters
         ax.set_ylim((-0.01, 0.12))
-        ax.set_xlabel(r'r ($h^{-1}$Mpc)')
+        ax.set_xlabel(r'Separation $r$ ($h^{-1}\,$Mpc)')
         ax.set_ylabel(r'$\xi$(r)')
         plt.rcParams["axes.titlesize"] = 10
         ax.set_title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name}")

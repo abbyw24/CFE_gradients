@@ -66,6 +66,9 @@ def histogram_densities(densities_list, method, grad_type=grad_type, path_to_dat
                 assert False
 
             all_grads.append(grad_rec-grad_exp)
+
+            print(len(grads_exp[str(density)]))
+            print(len(grads_rec[str(density)]))
     
     all_grads = np.array(all_grads)
     print(all_grads.shape)

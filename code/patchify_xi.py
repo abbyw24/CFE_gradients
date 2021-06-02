@@ -160,6 +160,8 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
         plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")
         plt.plot(r_avg, xi_patch_avg, color="black", alpha=0.5, marker=".", label="Avg. of Patches")
         # plot parameters
+        ax.axhline(0, color='grey', lw=0.5)
+        ax.set_aspect("equal")      # square aspect ratio
         ax.set_ylim((-0.01, 0.12))
         ax.set_xlabel(r'Separation $r$ ($h^{-1}\,$Mpc)')
         ax.set_ylabel(r'$\xi$(r)')

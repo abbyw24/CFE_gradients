@@ -73,12 +73,13 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
             grads_exp_n = np.array(grads_exp[str(n_patches)])
             vals = grads_rec_n[:,i] - grads_exp_n[:,i]
             n, _, _ = plt.hist(vals, bins=bins, histtype="step", color="indigo", alpha=a, label=f"{n_patches} patches")
-            a /= 3
+            a /= 2.5
             bin_vals.append(n)
             print(f"for {n_patches} patches:")
             print("mean = ", np.mean(grads_rec_n[:,i]))
             print("min = ", np.min(grads_rec_n[:,i]))
             print("max = ", np.max(grads_rec_n[:,i]))
+            print("std = ", np.std(grads_rec_n[:,i]))
 
         bin_vals = np.array(bin_vals)
 

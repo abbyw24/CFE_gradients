@@ -81,14 +81,14 @@ def histogram_densities(densities_list, method, grad_type=grad_type, path_to_dat
         # define bins
         bins = np.linspace(1.5*min(all_grads[:,i]), 1.5*max(all_grads[:,i]), nbins)
 
-        a = 0.8
+        a = 0.6
         bin_vals = []
         for density in densities_list:
             grads_rec_n = np.array(grads_rec[str(density)])
             grads_exp_n = np.array(grads_exp[str(density)])
             vals = grads_rec_n[:,i] - grads_exp_n[:,i]
             n, _, _ = plt.hist(vals, bins=bins, color="indigo", alpha=a, label=f"{density}")
-            a /= 2.5
+            a /= 2
             bin_vals.append(n)
             print(f"for density {density}:")
             print("mean = ", np.mean(grads_rec_n[:,i]))

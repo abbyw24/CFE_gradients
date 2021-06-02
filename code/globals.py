@@ -78,11 +78,11 @@ def initialize_vals():
             mock_name_list.append(mock_name)
     
     elif grad_type == "1mock":     # (i.e. plots for poster)
-        m = 0.5
+        m = 1.0
         b = 0.5
         m_arr = m * np.ones([n_mocks])
         b_arr = b * np.ones([n_mocks])
-        lognorm_file_list = [f"cat_L750_n{lognormal_density}_z057_patchy_lognormal_rlz1"]
+        lognorm_file_list = [f"cat_L750_n{lognormal_density}_z057_patchy_lognormal_rlz0"]
         mock_file_name_list = ["{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m_arr[0], b)]
         mock_name_list = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[0], b)
 

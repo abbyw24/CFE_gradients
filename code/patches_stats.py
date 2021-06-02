@@ -54,6 +54,9 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
             grads_rec[str(n_patches)].append(grad_rec)
 
             all_grads.append(grad_rec-grad_exp)
+
+            print(len(grads_exp[str(n_patches)]))
+            print(len(grads_rec[str(n_patches)]))
     
     all_grads = np.array(all_grads)
 

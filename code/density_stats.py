@@ -9,7 +9,6 @@ globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
 path_to_data_dir = globals.path_to_data_dir
-mock_file_name_list = globals.mock_file_name_list
 m_arr = globals.m_arr
 b_arr = globals.b_arr
 n_mocks = globals.n_mocks
@@ -66,9 +65,6 @@ def histogram_densities(densities_list, method, grad_type=grad_type, path_to_dat
                 assert False
 
             all_grads.append(grad_rec-grad_exp)
-
-            print(len(grads_exp[str(density)]))
-            print(len(grads_rec[str(density)]))
     
     all_grads = np.array(all_grads)
     print(all_grads.shape)

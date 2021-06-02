@@ -5,5 +5,5 @@
 
 import density_stats
 densities_list = ["4e-4", "2e-4", "1e-4"]
-method = "Standard"
+method = "CFE"
 density_stats.histogram_densities(densities_list, method, nbins=30)

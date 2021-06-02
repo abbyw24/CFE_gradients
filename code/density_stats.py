@@ -74,7 +74,7 @@ def histogram_densities(densities_list, method, grad_type=grad_type, path_to_dat
         print(f"{dim[i]}:")
         # create plot
         fig = plt.figure()
-        plt.title(f"Histogram of Recovered Gradient, {densities_list}, {dim[i]}, {grad_type}, {n_mocks} mocks")
+        plt.title(f"Histogram of Recovered Grad., {dim[i]}, {grad_type}, {n_mocks} mocks")
         plt.xlabel("Recovered Grad. - Expected Grad.")
         plt.ylabel("Counts")
 

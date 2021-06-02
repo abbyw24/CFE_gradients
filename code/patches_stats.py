@@ -32,16 +32,20 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
             2 : "z"
             }
 
-    # get recovered gradients
+    # get recovered and expected gradients
     grads_rec = {}
+    grads_exp = []
     all_grads = []       # to combine grads_rec from all patches; for bin edges
 
     for n_patches in n_patches_list:
         grads_rec[str(n_patches)] = []
         for j in range(len(mock_file_name_list)):
-            info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[j]}.npy"), allow_pickle=True).item()
-            grad_rec = info["grad_recovered"]
-            grad_exp = info["grad_expected"]
+            mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[j]}.npy"), allow_pickle=True).item()
+            grad_exp = mock_info["grad_expected"]
+            grads_exp.append(grad_exp)
+
+            patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[j]}.npy"), allow_pickle=True).item()
+            grad_rec = patch_info["grad_recovered"]
             grads_rec[str(n_patches)].append(grad_rec)
             all_grads.append(grad_rec)
     
@@ -53,7 +57,7 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
         # create plot
         fig = plt.figure()
         plt.title(f"Histogram of Recovered Gradient, {n_patches_list}, {dim[i]}, {grad_type}, {n_mocks} mocks")
-        plt.xlabel("Recovered Gradient")
+        plt.xlabel("Recovered Grad. - Expected Grad.")
 
         # define bins
         bins = np.linspace(1.5*min(all_grads[:,i]), 1.5*max(all_grads[:,i]), nbins)
@@ -61,7 +65,8 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
         bin_vals = []
         for n_patches in n_patches_list:
             grads_rec_n = np.array(grads_rec[str(n_patches)])
-            n, _, _ = plt.hist(grads_rec_n[:,i], bins=bins, color="indigo", alpha=a, label=f"{n_patches} patches")
+            vals = grads_rec_n[:,i] - grads_exp[:,i]
+            n, _, _ = plt.hist(vals, bins=bins, color="indigo", alpha=a, label=f"{n_patches} patches")
             a /= 2
             bin_vals.append(n)
             print(f"for {n_patches} patches:")

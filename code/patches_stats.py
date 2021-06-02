@@ -53,7 +53,7 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
     
     all_grads = np.array(all_grads)
 
-    # loop through desired dimensions with patches and suave
+    # loop through desired dimensions
     for i in dim:
         print(f"{dim[i]}:")
         # create plot
@@ -63,7 +63,6 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
         plt.ylabel("Counts")
 
         # define bins
-        mins = []
         bins = np.linspace(1.5*min(all_grads[:,i]), 1.5*max(all_grads[:,i]), nbins)
 
         a = 0.8

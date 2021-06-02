@@ -16,10 +16,10 @@ grad_type = globals.grad_type
 
 n_patches = globals.n_patches
 
-def histogram_patches_vs_suave(densities, method, grad_type=grad_type, path_to_data_dir=path_to_data_dir, n_patches=n_patches, nbins=10):
+def histogram_densities(densities_list, method, grad_type=grad_type, path_to_data_dir=path_to_data_dir, n_patches=n_patches, nbins=10):
     # make sure inputs have correct form
     assert method == "patches" or "suave"
-    assert isinstance(densities, list)
+    assert isinstance(densities_list, list)
 
     # create the needed subdirectories
     sub_dirs = [
@@ -32,47 +32,68 @@ def histogram_patches_vs_suave(densities, method, grad_type=grad_type, path_to_d
             1 : "y",
             2 : "z"
             }
-
-    # get recovered gradients
+    
+    # get recovered and expected gradients
     grads_rec = {}
+    grads_exp = {}
+    all_grads = []       # to combine grads_rec from all patches; for bin edges
 
-    if method == "patches":
-        for n in densities:
-            grads_rec[n] = []
-            for j in range(len(mock_file_name_list)):
-                info = np.load(os.path.join(path_to_data_dir, f"patch_data/{n}/{n_patches}patches/{mock_file_name_list[j]}.npy"), allow_pickle=True).item()
-                grad_rec = info["grad_recovered"]
-                grads_rec[n].append(grad_rec)
-    elif method == "suave":
-        for n in densities:
-            grads_rec[n] = []
-            for j in range(len(mock_file_name_list)):
-                info = np.load(os.path.join(path_to_data_dir, f"suave_data/{n}/{mock_file_name_list[j]}.npy"), allow_pickle=True).item()
-                grad_rec = info["grad_recovered"]
-                grads_rec[n].append(grad_rec)
-    else:
-        print("method must be either 'patches' or 'suave'")
-        assert False
+    for density in densities_list:
+        grads_exp[str(density)] = []
+        grads_rec[str(density)] = []
+        for i in range(len(mock_file_name_list)):
+            mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+            grad_exp = mock_info["grad_expected"]
+            grads_exp[str(density)].append(grad_exp)
 
-    # loop through desired dimensions with patches and suave
+            if method == "patches":
+                info = np.load(os.path.join(path_to_data_dir, f"patch_data/{density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+                grad_rec = info["grad_recovered"]
+                grads_rec[str(density)].append(grad_rec)
+            
+            elif method == "suave":
+                info = np.load(os.path.join(path_to_data_dir, f"suave_data/{density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+                grad_rec = info["grad_recovered"]
+                grads_rec[str(density)].append(grad_rec)
+            
+            else:
+                print("method must be either 'patches' or 'suave'")
+                assert False
+
+            all_grads.append(grad_rec-grad_exp)
+    
+    all_grads = np.array(all_grads)
+
+    # loop through desired dimensions
     for i in dim:
+        print(f"{dim[i]}:")
         # create plot
         fig = plt.figure()
-        plt.title(f"Histogram of Recovered Gradient, {densities}, {dim[i]}, {grad_type}, {n_mocks} mocks")
-        plt.xlabel("Recovered Gradient")
+        plt.title(f"Histogram of Recovered Gradient, {densities_list}, {dim[i]}, {grad_type}, {n_mocks} mocks")
+        plt.xlabel("Recovered Grad. - Expected Grad.")
+        plt.ylabel("Counts")
 
         # define bins
-        bins = np.linspace(1.5*min(grads_rec), 1.5*max(grads_rec), nbins)
-        assert False
-        n_s, _, _ = plt.hist(grads_rec_suave[:,i], bins=bins, color="indigo", alpha=0.6, label="CFE")
-        n_p, _, _ = plt.hist(grads_rec_patches[:,i], bins=bins, color="gray", alpha=0.6, label="Standard", zorder=100)
+        bins = np.linspace(1.5*min(all_grads[:,i]), 1.5*max(all_grads[:,i]), nbins)
 
-        # line at x = 0
-        plt.vlines(0, 0, max(max(n_s), max(n_p)), color="black", alpha=1, zorder=101, linewidth=1)
+        a = 0.8
+        bin_vals = []
+        for density in densities_list:
+            grads_rec_n = np.array(grads_rec[str(density)])
+            grads_exp_n = np.array(grads_exp[str(density)])
+            vals = grads_rec_n[:,i] - grads_exp_n[:,i]
+            n, _, _ = plt.hist(vals, bins=bins, histtype="step", color="indigo", alpha=a, label=f"{density}")
+            a /= 2.5
+            bin_vals.append(n)
+            print(f"for density {density}:")
+            print("mean = ", np.mean(grads_rec_n[:,i]))
+            print("min = ", np.min(grads_rec_n[:,i]))
+            print("max = ", np.max(grads_rec_n[:,i]))
+            print("std = ", np.std(grads_rec_n[:,i]))
 
         plt.legend()
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{lognormal_density}/{grad_type}/{n_mocks}mocks/hist_{n_patches}patches_vs_suave_{nbins}bins_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/densities/histogram/{grad_type}/{n_mocks}mocks/hist_densities_{nbins}bins_{dim[i]}.png"))
         plt.cla()
 
-        print(f"histogram for patches vs. suave, dim {dim[i]}, done")
+        print(f"histogram for densities, dim {dim[i]}, done")

@@ -60,6 +60,7 @@ def histogram_patches(n_patches_list, grad_type=grad_type, lognormal_density=log
         fig = plt.figure()
         plt.title(f"Histogram of Recovered Gradient, {n_patches_list}, {dim[i]}, {grad_type}, {n_mocks} mocks")
         plt.xlabel("Recovered Grad. - Expected Grad.")
+        plt.ylabel("Counts")
 
         # define bins
         mins = []

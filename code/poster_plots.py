@@ -10,7 +10,7 @@ path_to_data_dir = globals.path_to_data_dir
 m = 1.0
 b = 0.5
 lognormal_density = "2e-4"
-lognorm_file = f"cat_L750_n{lognormal_density}_z057_patchy_lognormal_rlz0"
+lognorm_file = f"cat_L750_n{lognormal_density}_z057_patchy_lognormal_rlz400"
 mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file, m, b)
 
 # mock_info

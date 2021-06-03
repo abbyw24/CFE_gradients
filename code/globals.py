@@ -21,10 +21,10 @@ def initialize_vals():
     path_to_data_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D"
 
     global grad_type
-    grad_type = "1mock"
+    grad_type = "1rlz_per_m"
 
     global n_mocks
-    n_mocks = 1
+    n_mocks = 401
 
     global mocks_info
 

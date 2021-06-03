@@ -15,16 +15,16 @@ def initialize_vals():
     lognormal_density = "2e-4"
 
     global path_to_lognorm_source
-    path_to_lognorm_source = f"/scratch/ksf293/mocks/lognormal/cat_L750_n{lognormal_density}_z057_patchy"
+    path_to_lognorm_source = f"/scratch/ksf293/mocks/lognormal/cat_L750_n{lognormal_density}_z057_patchy_As2x"
 
     global path_to_data_dir
     path_to_data_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D"
 
     global grad_type
-    grad_type = "1mock"
+    grad_type = "1rlz_per_m"
 
     global n_mocks
-    n_mocks = 1
+    n_mocks = 401
 
     global mocks_info
 

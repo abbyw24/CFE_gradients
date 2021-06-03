@@ -220,6 +220,9 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         suave_info["amps"] = amps
         suave_info["r_fine"] = r_fine
         suave_info["xi_locs"] = xi_locs
+        suave_info["proj_type"] = proj_type
+        suave_info["projfn"] = projfn
+        suave_info["weight_type"] = weight_type
 
         # save suave info dictionary
         np.save(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_file_name}"), suave_info, allow_pickle=True)

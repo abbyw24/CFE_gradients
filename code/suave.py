@@ -120,7 +120,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         v_max = L/2.
         vs_norm = matplotlib.colors.Normalize(vmin=v_min, vmax=v_max)
         cmap = matplotlib.cm.get_cmap('cool')
-        nvs = 20
+        nvs = 50
         vs = np.linspace(v_min, v_max, nvs)
 
         # random set

@@ -212,6 +212,12 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
 
         fig.savefig(os.path.join(path_to_data_dir, f"plots/suave/{lognormal_density}/grad_recovered/{mock_file_name}.png"))
 
+        # save other plot parameters
+        suave_info["r_avg"] = r_avg
+        suave_info["amps"] = amps
+        suave_info["xi_loc"] = xi_loc
+        suave_info["r_fine"] = r_fine
+
         # save suave info dictionary
         np.save(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_file_name}"), suave_info, allow_pickle=True)
 

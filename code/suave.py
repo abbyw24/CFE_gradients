@@ -185,6 +185,8 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
 
         fig, ax = plt.subplots()
 
+        ps = []
+
         # plot correlation functions along the gradient axis
         for i, v in enumerate(vs):
             loc = loc_pivot + v*w_cont_hat
@@ -197,6 +199,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
                             weights1=weights1, weights2=weights2, weight_type=weight_type)    
             
             p = plt.plot(r_fine, xi_loc, color=cmap(vs_norm(v)), lw=0.5)
+            ps.append(p)
         
         sm = plt.cm.ScalarMappable(cmap=cmap, norm=vs_norm)
         cbar = plt.colorbar(sm)
@@ -217,6 +220,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         suave_info["amps"] = amps
         suave_info["xi_loc"] = xi_loc
         suave_info["r_fine"] = r_fine
+        suave_info["ps"] = [ps]
 
         # save suave info dictionary
         np.save(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_file_name}"), suave_info, allow_pickle=True)

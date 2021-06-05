@@ -5,9 +5,9 @@
 # import gradmock_gen
 # gradmock_gen.generate_gradmocks()
 
-# # run patches
-# import patchify_xi
-# patchify_xi.xi_in_patches()
+# run patches
+import patchify_xi
+patchify_xi.xi_in_patches()
 
 import patches_lstsq_fit
 patches_lstsq_fit.patches_lstsq_allbins()

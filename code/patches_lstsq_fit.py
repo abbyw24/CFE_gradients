@@ -111,7 +111,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         recovered_vals = []
         for value in fit_vals:
             fits_rec = value[:bin_cutoff]
-            val_rec = np.mean(fits_rec)
+            val_rec = np.median(fits_rec)
                 # average of the fit value in each bin up to cutoff
             recovered_vals.append(val_rec)
         b_fit = recovered_vals[0]

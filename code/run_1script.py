@@ -1,3 +1,6 @@
+import patches_lstsq_fit
+patches_lstsq_fit.patches_lstsq_allbins()
+
 # import patches_stats
 # n_patches_list = [27, 8]
 # lognormal_density = "2e-4"
@@ -7,9 +10,6 @@
 # densities_list = ["4e-4", "2e-4", "1e-4"]
 # method = "CFE"
 # density_stats.histogram_densities(densities_list, method, nbins=30)
-
-import suave
-suave.suave_exp_vs_rec()
 
 # import patches_vs_suave_stats
 # grads = patches_vs_suave_stats.extract_grads_patches_suave()

@@ -95,18 +95,19 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         # plt.plot(r_avg, L*fit_vals[2], color="blue", marker=".", alpha=0.5, label="L*m_fit_y")
         # plt.plot(r_avg, L*fit_vals[2], color="green", marker=".", alpha=0.5, label="L*m_fit_z")
 
-        expected_vals = fit_vals[1:]/fit_vals[0]
+        bestfit_vals = fit_vals[1:]/fit_vals[0]
+        patch_info["bestfit_vals"] = bestfit_vals
 
         # plot m_fit/b_fit in each bin
         #       m_fit_x/b_fit should match grad_expected, and y and z should be zero
-        plt.plot(r_avg, expected_vals[0], color="purple", marker=".", label="x fit")
-        plt.plot(r_avg, expected_vals[1], color="blue", marker=".", alpha=0.4, label="y fit")
-        plt.plot(r_avg, expected_vals[2], color="green", marker=".", alpha=0.4, label="z fit")
+        plt.plot(r_avg, bestfit_vals[0], color="purple", marker=".", label="x fit")
+        plt.plot(r_avg, bestfit_vals[1], color="blue", marker=".", alpha=0.4, label="y fit")
+        plt.plot(r_avg, bestfit_vals[2], color="green", marker=".", alpha=0.4, label="z fit")
 
         # cutoff for grad calculation
         bin_cutoff = int(nbins/bin_cutoff_val)
         # plot bin cutoff
-        ax.vlines(r_avg[bin_cutoff], np.amin(expected_vals), np.amax(expected_vals), alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
+        ax.vlines(r_avg[bin_cutoff], np.amin(bestfit_vals), np.amax(bestfit_vals), alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
 
         recovered_vals = []
         for value in fit_vals:

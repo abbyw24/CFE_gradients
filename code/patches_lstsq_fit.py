@@ -41,10 +41,9 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
 
         patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
-        patch_centers += L/2
-        # patch_centers -= L/2
-            # this centers the fiducial point in the box
         print("patch_centers: ", patch_centers)
+        patch_centers -= L/2
+            # this centers the fiducial point in the box
         r_avg = patch_info["r_avg"]
         xi_patches = patch_info["xi_patches"]
         # print("r_avg: ", r_avg)

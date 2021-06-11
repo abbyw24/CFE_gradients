@@ -106,6 +106,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
 
         # cutoff for grad calculation
         bin_cutoff = int(nbins/bin_cutoff_val)
+        patch_info["bin_cutoff"] = bin_cutoff
         # plot bin cutoff
         ax.vlines(r_avg[bin_cutoff], np.amin(bestfit_vals), np.amax(bestfit_vals), alpha=0.2, linestyle="dashed", label="Cutoff for grad calculation")
 

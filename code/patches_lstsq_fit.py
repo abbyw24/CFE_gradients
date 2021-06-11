@@ -41,7 +41,8 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
 
         patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
-        patch_centers -= L/2
+        patch_centers += L/2
+        # patch_centers -= L/2
             # this centers the fiducial point in the box
         print("patch_centers: ", patch_centers)
         r_avg = patch_info["r_avg"]
@@ -128,11 +129,6 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         # add recovered gradient value to patch info dictionary
         grad_recovered = m_fit/b_fit
         patch_info[f"grad_recovered"] = grad_recovered
-
-        # # ratio of recovered to expected
-        # ratio_rec_exp = grad_recovered[0]/grad_expected[0]
-        # # again, need to figure this out for grad_dim > 1 !
-        # patch_info["ratio_rec_exp"] = ratio_rec_exp
 
         # change back patch_center values for dictionary saving
         patch_centers += L/2

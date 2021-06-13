@@ -12,6 +12,7 @@ globals.initialize_vals()
 
 path_to_data_dir = globals.path_to_data_dir
 grad_dim = globals.grad_dim
+boxsize = globals.boxsize
 grad_type = globals.grad_type
 lognormal_density = globals.lognormal_density
 path_to_lognorm_source = globals.path_to_lognorm_source
@@ -75,6 +76,9 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         # LOGNORMAL SET
         Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f"{lognorm_file}.bin"))
             # define boxsize based on mock; and N = number of data points
+        # make sure the boxsize from data equals the boxsize we specified in the file name
+        assert float(Lx) == float(boxsize)
+
         L = Lx
             # L = boxsize
         # save boxsize then load in this boxsize for all uses of gradient mock

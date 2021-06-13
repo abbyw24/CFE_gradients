@@ -53,7 +53,7 @@ def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad
         print(f"scatter plot for patches vs. suave, dim {dim[i]}, done")
 
 def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
-    lognormal_density=lognormal_density, n_patches=n_patches, nbins=10):
+    lognormal_density=lognormal_density, n_patches=n_patches, nbins=30):
 
     # create the needed subdirectories
     sub_dirs = [
@@ -70,23 +70,22 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
     # loop through desired dimensions with patches and suave
     for i in dim:
         # create plot
-        fig = plt.figure()
+        fig, ax = plt.subplots()
         if grad_type == "1mock":
-            plt.title("")
+            ax.set_title("")
         else:
-            plt.title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}, {n_mocks} mocks")
-        plt.xlabel("Recovered Grad. - Expected Grad.")
-        plt.ylabel("Counts")
+            ax.set_title(f"Histogram of Recovered Gradient, {dim[i]}, {grad_type}, {lognormal_density}, {n_mocks} mocks")
+        ax.set_xlabel("Recovered Gradient - True Gradient ($h\,$Mpc$^{-1}$)")
+        ax.set_ylabel("Counts")
 
         suave_vals = grads_rec_suave[:,i]-grads_exp[:,i]
         patches_vals = grads_rec_patches[:,i]-grads_exp[:,i]
 
         # define bins
-        bins = np.linspace(1.5*min(min(patches_vals), min(suave_vals)), 1.5*max(max(patches_vals), max(suave_vals)), nbins)
-        n_s, _, _ = plt.hist(suave_vals, bins=bins, histtype="step", color="indigo", alpha=0.5, label="CFE")
-        n_p, _, _ = plt.hist(patches_vals, bins=bins, histtype="step", color="dimgray", alpha=0.5, label="Standard", zorder=100)
+        bins = np.linspace(min(min(patches_vals), min(suave_vals)), max(max(patches_vals), max(suave_vals)), nbins)
+        n_s, _, _ = plt.hist(suave_vals, bins=bins, color="forestgreen", alpha=0.8, label="CFE")
+        n_p, _, _ = plt.hist(patches_vals, bins=bins, color="black", alpha=0.2, label="Standard", zorder=100)
 
-        # line at x = 0
         plt.vlines(0, 0, max(max(n_s), max(n_p)), color="black", alpha=1, zorder=101, linewidth=1)
 
         plt.legend()

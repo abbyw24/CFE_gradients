@@ -175,6 +175,10 @@ def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type
         stats = {
             "mean_patches" : mean_patches,
             "mean_suave" : mean_suave,
+            "min_patches" : min_patches,
+            "min_suave" : min_suave,
+            "max_patches" : max_patches,
+            "max_suave" : max_suave,
             "median_patches" : median_patches,
             "median_suave" : median_suave,
             "std_patches" : std_patches,

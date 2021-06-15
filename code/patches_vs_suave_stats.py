@@ -90,7 +90,7 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
 
         plt.legend()
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{lognormal_density}/{grad_type}/{n_mocks}mocks/hist_{n_patches}patches_vs_suave_{n_mocks}mocks_n{lognormal_density}_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{grad_type}/hist_{n_patches}patches_vs_suave_{n_mocks}mocks_n{lognormal_density}_{dim[i]}.png"))
         plt.cla()
 
         print(f"histogram for patches vs. suave, dim {dim[i]}, done")
@@ -131,7 +131,7 @@ def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type
     n_mocks = len(grads_exp)
     # create the needed subdirectories
     sub_dirs = [
-        f"patches_vs_suave_data/{lognormal_density}/{grad_type}/{n_mocks}mocks"
+        f"patches_vs_suave_data/{grad_type}"
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
@@ -180,4 +180,4 @@ def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type
             "std_suave" : std_suave,
         }
 
-        np.save(os.path.join(path_to_data_dir, f"patches_vs_suave_data/{lognormal_density}/{grad_type}/{n_mocks}mocks/stats_{dim[i]}"), stats)
+        np.save(os.path.join(path_to_data_dir, f"patches_vs_suave_data/{grad_type}/stats_{n_patches}patches_vs_suave_{n_mocks}mocks_n{lognormal_density}_{dim[i]}"), stats)

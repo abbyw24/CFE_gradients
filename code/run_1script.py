@@ -1,5 +1,6 @@
-# import patches_lstsq_fit
-# patches_lstsq_fit.patches_lstsq_allbins()
+import patches_lstsq_fit
+patches_lstsq_fit.patches_lstsq_allbins()
+patches_lstsq_fit.patches_lstsq_fit_1bin(r_bin=2)
 
 # import patches_stats
 # n_patches_list = [27, 8]

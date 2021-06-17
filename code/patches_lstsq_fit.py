@@ -41,8 +41,13 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
 
         patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
-        patch_centers -= L/2
+        if np.all(patch_centers >= 0):
+            print(patch_centers)
+            patch_centers -= L/2
             # this centers the fiducial point in the box
+        else:
+            print(patch_centers)
+            print("unexpected values for patch centers")
         r_avg = patch_info["r_avg"]
         xi_patches = patch_info["xi_patches"]
         # print("r_avg: ", r_avg)
@@ -228,6 +233,8 @@ def patches_lstsq_fit_1bin(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir,
         ax2.set_title(f"Linear least square fit, Clustering amps in patches (bin {r_bin})")
         plt.legend()
 
+        # change back patch_center values for dictionary saving
+        patch_centers += L/2
         # resave patch info dictionary
         np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
 

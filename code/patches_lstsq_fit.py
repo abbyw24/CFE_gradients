@@ -47,7 +47,9 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
             # this centers the fiducial point in the box
         else:
             print(patch_centers)
-            print("unexpected values for patch centers")
+            print("unexpected values for patch centers; shifting to range 0-L")
+            patch_centers += L/2
+            assert np.all(patch_centers >= 0)
         r_avg = patch_info["r_avg"]
         xi_patches = patch_info["xi_patches"]
         # print("r_avg: ", r_avg)

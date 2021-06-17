@@ -221,11 +221,6 @@ def patches_lstsq_fit_1bin(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir,
         grad_recovered = m_fit/b_fit
         patch_info[f"grad_recovered_bin{r_bin}"] = grad_recovered
 
-        # ratio of recovered to expected
-        ratio_rec_exp = grad_recovered[0]/grad_expected[0]
-        # again, need to figure this out for grad_dim > 1 !
-        patch_info[f"ratio_rec_exp_bin{r_bin}"] = ratio_rec_exp
-
         # plot results
         for i in range(len(dim)):
             plt.plot(x, X[i+1]*x + b_fit, color=bestfit_colors[i], label=dim[i]+" best fit: y = "+str("%.8f" %X[i+1])+"x + "+str("%.6f" %b_fit))

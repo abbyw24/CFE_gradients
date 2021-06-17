@@ -47,7 +47,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         else:
             print("unexpected values for patch centers; shifting to range 0-L")
             patch_centers += L/2
-            assert np.all((patch_centers >= 0) & (patch_centers <= L))
+        assert np.all((patch_centers >= 0) & (patch_centers <= L))
         print(patch_centers)
         r_avg = patch_info["r_avg"]
         xi_patches = patch_info["xi_patches"]

@@ -42,11 +42,9 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
         patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
         if np.all(patch_centers >= 0):
-            print(patch_centers)
             patch_centers -= L/2
             # this centers the fiducial point in the box
         else:
-            print(patch_centers)
             print("unexpected values for patch centers; shifting to range 0-L")
             patch_centers += L/2
             assert np.all(patch_centers >= 0)
@@ -133,7 +131,7 @@ def patches_lstsq_allbins(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, 
 
         # add recovered gradient value to patch info dictionary
         grad_recovered = m_fit/b_fit
-        patch_info[f"grad_recovered"] = grad_recovered
+        patch_info["grad_recovered"] = grad_recovered
 
         # change back patch_center values for dictionary saving
         patch_centers += L/2

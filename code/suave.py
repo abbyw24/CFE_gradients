@@ -35,6 +35,15 @@ rmax = globals.rmax
 nbins = globals.nbins
 nthreads = globals.nthreads
 
+def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
+    if cosmo_base is None:
+        print("cosmo_base not provided, defaulting to Planck 2015 cosmology ('planck15')")
+        cosmo_base = cosmology.setCosmology('planck15')
+
+    cf = cosmo_base.correlationFunction
+
+    return bias * cf(r, z=redshift)
+
 # define cosmo_bases function
 def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000, 
               redshift=0.0, bias=1.0):
@@ -42,13 +51,8 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
         print("cosmo_base not provided, defaulting to Planck 2015 cosmology ('planck15')")
         cosmo_base = cosmology.setCosmology('planck15')
 
-    cf = cosmo_base.correlationFunction
-
-    def cf_model(r):
-        return bias * cf(r, z=redshift)
-
     rcont = np.linspace(rmin, rmax, ncont)
-    bs = cf_model(rcont)
+    bs = cf_model(rcont, cosmo_base=cosmo_base, redshift=redshift, bias=bias)
 
     nbases = 1
     bases = np.empty((ncont, nbases+1))
@@ -86,7 +90,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
     projfn = 'cosmo_basis.dat'
 
     # set basis
-    bases = cosmo_bases(rmin, rmax, projfn)
+    bases = cosmo_bases(rmin, rmax, projfn)     # change! should include redshift and bias: redshift 0.57, bias 2.0
     ncomponents = 4*(bases.shape[1]-1)
     r = bases[:,0]
     base_vals = bases[:,1]

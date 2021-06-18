@@ -1,5 +1,5 @@
 import new_patches_lstsq_fit
-patches_lstsq_fit()
+new_patches_lstsq_fit.patches_lstsq_fit()
 
 # import patches_lstsq_fit
 # patches_lstsq_fit.patches_lstsq_allbins()

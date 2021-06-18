@@ -111,7 +111,6 @@ def extract_grads_patches_suave(patches_key="grad_recovered", suave_key="grad_re
         
         patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         grad_rec_patches = patch_info[patches_key]
-        print(grad_rec_patches.shape)
 
         suave_info = np.load(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         grad_rec_suave = suave_info[suave_key]

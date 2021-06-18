@@ -80,8 +80,8 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
         ax.set_ylabel("Counts")
 
         suave_vals = grads_rec_suave[:,i]-grads_exp[:,i]
-        print(grads_rec_patches[:,i])
-        print(grads_exp[:,i])
+        print(grads_rec_patches)
+        print(grads_exp)
         patches_vals = grads_rec_patches[:,i]-grads_exp[:,i]
 
         # define bins

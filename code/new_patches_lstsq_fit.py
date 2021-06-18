@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from create_subdirs import create_subdirs
+from patchify_xi import center_mock
 from suave import cf_model
 import globals
 
@@ -41,20 +42,7 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
         patch_centers = patch_info["patch_centers"]
 
         # make sure patch centers are between 0 and L as expected
-        a = np.all((patch_centers >= 0) & (patch_centers <= L))
-        while a == False:
-            i = 0
-            print(f"correction {i}: min patch_center = {patch_centers.min()}, max patch_center = {patch_centers.max()}")
-            if np.any(patch_centers <= 0):
-                print("too low, shifting up by L/2")
-                patch_centers += L/2
-            elif np.any(patch_centers >= L):
-                print("too high, shifting down by L/2")
-                patch_centers -= L/2
-            else:
-                assert np.all((patch_centers >= 0) & (patch_centers <= L))
-                break
-            i += 1
+        center_mock(patch_centers, 0, L)
         patch_centers -= L/2
             # this centers the fiducial point in the box
         r = patch_info["r_avg"]

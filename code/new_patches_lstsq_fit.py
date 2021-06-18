@@ -52,7 +52,8 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
                 print("too high, shifting down by L/2")
                 patch_centers -= L/2
             else:
-                assert np.all((patch_centers >= 0) & (patch_centers <= L))
+                assert a
+                break
             i += 1
         patch_centers -= L/2
             # this centers the fiducial point in the box

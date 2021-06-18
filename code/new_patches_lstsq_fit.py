@@ -66,13 +66,13 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
         # transpose to fit expected grad_recovered shape (for histograms etc.)
         theta = theta.T
         theta.tolist()
-    
-        # add recovered values to patch info dictionary
-        patch_info["b_fit"] = theta[0]
-        patch_info["m_fit"] = theta[1:]
 
         b_fit = theta[0]
         m_fit = theta[1:]
+    
+        # add recovered values to patch info dictionary
+        patch_info["b_fit"] = b_fit
+        patch_info["m_fit"] = m_fit
 
         # add recovered gradient value to patch info dictionary
         grad_recovered = m_fit/b_fit

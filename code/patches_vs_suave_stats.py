@@ -84,6 +84,7 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
         print("suave_vals.shape = ", suave_vals.shape)
         patches_vals = grads_rec_patches[:,i]-grads_exp[:,i]
         print("grads_rec_patches.shape = ", grads_rec_patches.shape)
+        print("grads_rec_patches[:,0].shape = ", grads_rec_patches[:,i].shape)
         print("patches_vals.shape = ", patches_vals.shape)
 
         # define bins

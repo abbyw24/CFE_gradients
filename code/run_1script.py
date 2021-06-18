@@ -2,7 +2,7 @@
 # new_patches_lstsq_fit.patches_lstsq_fit()
 
 import patches_vs_suave_stats
-grads = patches_vs_suave_stats.extract_grads_patches_suave(extract_key="new_grad_recovered")
+grads = patches_vs_suave_stats.extract_grads_patches_suave(patches_key="new_grad_recovered")
 grads_exp = grads["grads_exp"]
 grads_rec_patches = grads["grads_rec_patches"]
 grads_rec_suave = grads["grads_rec_suave"]

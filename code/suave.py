@@ -89,7 +89,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
     projfn = 'cosmo_basis.dat'
 
     # set basis
-    bases = cosmo_bases(rmin, rmax, projfn)     # change! should include redshift and bias: redshift 0.57, bias 2.0
+    bases = cosmo_bases(rmin, rmax, projfn, redshift=0.57, bias=2.0)
     ncomponents = 4*(bases.shape[1]-1)
     r = bases[:,0]
     base_vals = bases[:,1]

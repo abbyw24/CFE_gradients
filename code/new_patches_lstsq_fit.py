@@ -63,10 +63,6 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
             # xi = X @ theta
         theta = np.linalg.inv(X.T @ C_inv @ X) @ (X.T @ C_inv @ xi)
 
-        # transpose to fit expected grad_recovered shape (for histograms etc.)
-        theta = theta.T
-        theta.tolist()
-
         b_fit = theta[0]
         m_fit = theta[1:]
     

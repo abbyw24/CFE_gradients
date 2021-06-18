@@ -6,8 +6,8 @@ grads = patches_vs_suave_stats.extract_grads_patches_suave(patches_key="new_grad
 grads_exp = grads["grads_exp"]
 grads_rec_patches = grads["grads_rec_patches"]
 grads_rec_suave = grads["grads_rec_suave"]
-patches_vs_suave_stats.histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, nbins=30)
-patches_vs_suave_stats.stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave)
+patches_vs_suave_stats.histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, nbins=30, hist_name="new_hist")
+patches_vs_suave_stats.stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, stats_name="new_stats")
 
 # import patches_lstsq_fit
 # patches_lstsq_fit.patches_lstsq_allbins()

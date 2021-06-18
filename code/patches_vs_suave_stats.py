@@ -113,10 +113,12 @@ def extract_grads_patches_suave(patches_key="grad_recovered", suave_key="grad_re
         grad_expected = mock_info["grad_expected"]
         
         patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
-        grad_rec_patches = patch_info[patches_key]
+        grad_rec_patches = patch_info[patches_key].flatten()
 
         suave_info = np.load(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
-        grad_rec_suave = suave_info[suave_key]
+        grad_rec_suave = suave_info[suave_key].flatten()
+
+        assert grad_rec_patches.shape == grad_rec_suave.shape == (3,)
 
         # append values to list of all mocks
         grads_exp.append(grad_expected)

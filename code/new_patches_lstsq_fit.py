@@ -39,7 +39,21 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
 
         patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
-        assert np.all((patch_centers >= 0) & (patch_centers <= L))
+
+        # make sure patch centers are between 0 and L as expected
+        a = np.all((patch_centers >= 0) & (patch_centers <= L))
+        while a == False:
+            i = 0
+            print(f"correction {i}: min patch_center = {patch_centers.min()}, max patch_center = {patch_centers.max()}")
+            if np.any(patch_centers <= 0):
+                print("too low, shifting up by L/2")
+                patch_centers += L/2
+            elif np.any(patch_centers >= L):
+                print("too high, shifting down by L/2")
+                patch_centers -= L/2
+            else:
+                assert np.all((patch_centers >= 0) & (patch_centers <= L))
+            i += 1
         patch_centers -= L/2
             # this centers the fiducial point in the box
         r = patch_info["r_avg"]

@@ -96,7 +96,7 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
 
         print(f"histogram for patches vs. suave, dim {dim[i]}, done")
 
-def extract_grads_patches_suave():
+def extract_grads_patches_suave(extract_key="grad_recovered"):
     grads_exp = []
     grads_rec_patches = []
     grads_rec_suave = []
@@ -108,10 +108,10 @@ def extract_grads_patches_suave():
         grad_expected = mock_info["grad_expected"]
         
         patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
-        grad_rec_patches = patch_info["grad_recovered"]
+        grad_rec_patches = patch_info[extract_key]
 
         suave_info = np.load(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
-        grad_rec_suave = suave_info["grad_recovered"]
+        grad_rec_suave = suave_info[extract_key]
 
         # append values to list of all mocks
         grads_exp.append(grad_expected)

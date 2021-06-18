@@ -37,7 +37,6 @@ nthreads = globals.nthreads
 
 def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
     if cosmo_base is None:
-        print("cosmo_base not provided, defaulting to Planck 2015 cosmology ('planck15')")
         cosmo_base = cosmology.setCosmology('planck15')
 
     cf = cosmo_base.correlationFunction

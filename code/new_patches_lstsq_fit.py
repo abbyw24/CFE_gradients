@@ -75,7 +75,7 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
 
         # add recovered gradient value to patch info dictionary
         grad_recovered = m_fit/b_fit
-        patch_info["new_grad_recovered"] = grad_recovered
+        patch_info["grad_recovered"] = grad_recovered
 
         # change back patch_center values for dictionary saving
         patch_centers += L/2

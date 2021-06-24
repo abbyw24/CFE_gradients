@@ -45,7 +45,7 @@ def initialize_vals():
         b = 0.5
         m_arr = np.linspace(-1.0, 1.0, n_mocks)
         b_arr = b * np.ones([n_mocks])
-        lognorm_file_list = [f"cat_L{boxsize}_n{lognormal_density}_z057_patchy_lognormal_rlz1"]
+        lognorm_file_list = [f"cat_L{boxsize}_n{lognormal_density}_z057_patchy_As2x_lognormal_rlz1"]
         for m in m_arr:
             for b in b_arr:
                 mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m, b)
@@ -60,7 +60,7 @@ def initialize_vals():
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = []
         for i in range(n_mocks):
-            lognorm_file_list.append(f"cat_L{boxsize}_n{lognormal_density}_z057_patchy_lognormal_rlz{i}")
+            lognorm_file_list.append(f"cat_L{boxsize}_n{lognormal_density}_z057_patchy_As2x_lognormal_rlz{i}")
 
         for lognorm_file in lognorm_file_list:
             mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file, m, b)

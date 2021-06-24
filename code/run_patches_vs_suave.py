@@ -1,3 +1,6 @@
+from datetime import datetime
+start = datetime.now()
+
 # generate gradient mocks based on the specified grad_type in globals
 import gradmock_gen
 gradmock_gen.generate_gradmocks()
@@ -22,3 +25,6 @@ grads_rec_suave = grads["grads_rec_suave"]
 patches_vs_suave_stats.scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave)
 patches_vs_suave_stats.histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, nbins=30)
 patches_vs_suave_stats.stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave)
+
+runtime = datetime.now() - start
+print(f"total run time = {a.minute}:{a.second}.{a.microsecond:.2f}")

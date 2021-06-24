@@ -27,4 +27,8 @@ patches_vs_suave_stats.histogram_patches_vs_suave(grads_exp, grads_rec_patches, 
 patches_vs_suave_stats.stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave)
 
 runtime = datetime.now() - start
-print(f"total run time = {runtime.minute}:{runtime.second}.{runtime.microsecond:.2f}")
+days, seconds = runtime.days, runtime.seconds
+hours = days * 24 + seconds // 3600
+minutes = (seconds % 3600) // 60
+seconds = seconds % 60
+print(f"total run time = {hours}:{minutes}.{seconds}")

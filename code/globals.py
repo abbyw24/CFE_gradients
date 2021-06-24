@@ -24,7 +24,7 @@ def initialize_vals():
     path_to_data_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D"
 
     global grad_type
-    grad_type = "1rlz_per_m"
+    grad_type = "1m"
 
     global n_mocks
     n_mocks = 41
@@ -54,7 +54,7 @@ def initialize_vals():
                 mock_name_list.append(mock_name)
 
     elif grad_type == "1m":
-        m = 0.5
+        m = 0.0
         b = 0.5
         m_arr = m * np.ones([n_mocks])
         b_arr = b * np.ones([n_mocks])

@@ -70,6 +70,7 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
         m_fit = theta[1:]
     
         # add recovered values to patch info dictionary
+        patch_info["theta"] = theta
         patch_info["b_fit"] = b_fit
         patch_info["m_fit"] = m_fit
 

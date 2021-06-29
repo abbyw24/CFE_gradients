@@ -1,7 +1,7 @@
 import numpy as np
 import os
 
-def recover_amps(mock_file_name_list, num_den, n_patches, method="suave"):
+def recover_amps(mock_file_name_list, num_den, n_patches=8, method="suave"):
     amps_rec = np.empty((len(mock_file_name_list), 4))
     abs_path = "/scratch/aew492/research-summer2020_output/1D/"
     if method == "suave":

@@ -12,7 +12,7 @@ def initialize_vals():
     grad_dim = 1        # dimension of w_hat in gradient mock
 
     global boxsize
-    boxsize = 500
+    boxsize = 1500
 
     global lognormal_density
     lognormal_density = "1e-5"

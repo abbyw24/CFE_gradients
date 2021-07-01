@@ -53,7 +53,7 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
 
     rcont = np.linspace(rmin, rmax, ncont)
     bs = cf_model(rcont, cosmo_base=cosmo_base, redshift=redshift, bias=bias)
-    print(bs)
+    print('cf model results, bs: ', bs)
 
     nbases = 1
     bases = np.empty((ncont, nbases+1))

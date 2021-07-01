@@ -12,10 +12,10 @@ def initialize_vals():
     grad_dim = 1        # dimension of w_hat in gradient mock
 
     global boxsize
-    boxsize = 1500
+    boxsize = 750
 
     global lognormal_density
-    lognormal_density = "1e-5"
+    lognormal_density = "2e-4"
 
     global path_to_lognorm_source
     path_to_lognorm_source = f"/scratch/ksf293/mocks/lognormal/cat_L{boxsize}_n{lognormal_density}_z057_patchy_As2x"
@@ -27,7 +27,7 @@ def initialize_vals():
     grad_type = "1rlz_per_m"
 
     global n_mocks
-    n_mocks = 41
+    n_mocks = 401
 
     global mocks_info
 

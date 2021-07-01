@@ -40,6 +40,7 @@ def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
         cosmo_base = cosmology.setCosmology('planck15')
 
     cf = cosmo_base.correlationFunction
+    print(f'cf_model: using redshift = {redshift}, bias = {bias}')
 
     return bias * cf(r, z=redshift)
 

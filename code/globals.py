@@ -15,7 +15,7 @@ def initialize_vals():
     boxsize = 750
 
     global lognormal_density
-    lognormal_density = "2e-4"
+    lognormal_density = "1e-4"
 
     global path_to_lognorm_source
     path_to_lognorm_source = f"/scratch/ksf293/mocks/lognormal/cat_L{boxsize}_n{lognormal_density}_z057_patchy_As2x"

@@ -12,7 +12,7 @@ def initialize_vals():
     grad_dim = 1        # dimension of w_hat in gradient mock
 
     global boxsize
-    boxsize = 750
+    boxsize = 500
 
     global lognormal_density
     lognormal_density = "1e-4"
@@ -24,7 +24,7 @@ def initialize_vals():
     path_to_data_dir = f"/scratch/aew492/research-summer2020_output/{grad_dim}D"
 
     global grad_type
-    grad_type = "1rlz_per_m"
+    grad_type = "1m"
 
     global n_mocks
     n_mocks = 401

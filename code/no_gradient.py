@@ -25,9 +25,9 @@ Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_mocks_dir, lognor
 L = Lx      # boxsize
 x, y, z, vx, vy, vz = data.T
     # i believe (?) the raw data is centered at L/2 (0-L)
-mock_data = np.array(x, y, z)
+mock_data = np.array([x, y, z])
 print(mock_data.shape)
-center_mock([x, y, z], 0, L)
+center_mock(mock_data, 0, L)
 assert False
 
 # standard Corrfunc

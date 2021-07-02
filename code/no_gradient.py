@@ -25,13 +25,16 @@ Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_mocks_dir, lognor
 L = Lx      # boxsize
 x, y, z, vx, vy, vz = data.T
     # i believe (?) the raw data is centered at L/2 (0-L)
-mock_data = np.array([x, y, z])
+mock_data = np.array([x, y, z]).T
 print(mock_data.shape)
 center_mock(mock_data, 0, L)
-assert False
 
 # standard Corrfunc
-
+# random set
+nd = len(x)
+nr = 2*nd
+rand_set = np.random.uniform(0, L, (nr,3))
 
 # compute landy-szalay!
 results_xi = xi_ls(mock_data, rand_set, globals.periodic, globals.nthreads, globals.rmin, globals.rmax, globals.nbins)
+print(results_xi)

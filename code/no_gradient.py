@@ -31,4 +31,5 @@ def xi_lognormal(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult
 
     return r_avg, results_xi
 
-xi_lognormal('cat_L750_n2e-4_z057_patchy', 0)
+r_avg, results_xi = xi_lognormal('cat_L750_n2e-4_z057_patchy', 0)
+print(results_xi)

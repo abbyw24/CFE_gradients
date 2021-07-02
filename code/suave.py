@@ -40,7 +40,6 @@ def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
         cosmo_base = cosmology.setCosmology('planck15')
 
     cf = cosmo_base.correlationFunction
-    print(f'cf_model: using redshift = {redshift}, bias = {bias}')
 
     return bias * cf(r, z=redshift)
 
@@ -53,7 +52,6 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
 
     rcont = np.linspace(rmin, rmax, ncont)
     bs = cf_model(rcont, cosmo_base=cosmo_base, redshift=redshift, bias=bias)
-    print('cf model results, bs: ', bs)
 
     nbases = 1
     bases = np.empty((ncont, nbases+1))

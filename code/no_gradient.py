@@ -36,5 +36,5 @@ nr = 2*nd
 rand_set = np.random.uniform(0, L, (nr,3))
 
 # compute landy-szalay!
-results_xi = xi_ls(mock_data, rand_set, globals.periodic, globals.nthreads, globals.rmin, globals.rmax, globals.nbins)
+r_avg, results_xi = xi_ls(mock_data, rand_set, globals.periodic, globals.nthreads, globals.rmin, globals.rmax, globals.nbins)
 print(results_xi)

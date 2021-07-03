@@ -4,6 +4,7 @@ import os
 import read_lognormal
 from center_mock import center_mock
 from corrfunc_ls import xi_ls
+from create_subdirs import create_subdirs
 import globals
 globals.initialize_vals()
 
@@ -31,5 +32,18 @@ def xi_lognormal(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult
 
     return r_avg, results_xi
 
-r_avg, results_xi = xi_lognormal('cat_L750_n2e-4_z057_patchy', 0)
-print(results_xi)
+# results for clustered mocks, NO gradient
+
+sub_dirs = [
+    'xi'
+]
+abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
+create_subdirs(abs_path, sub_dirs)
+
+mock = f'cat_L{globals.boxsize}_n{globals.lognormal_density}_z057_patchy'
+
+for i in range(len(mock_file_name_list)):
+    r_avg, results_xi = xi_lognormal.xi_lognormal(mock, i)
+    np.save(os.path.join(abs_path, f'xi/xi_{mock_file_name_list[i]}'), results_xi)
+    print(f'mock {i} done')
+

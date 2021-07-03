@@ -43,7 +43,7 @@ create_subdirs(abs_path, sub_dirs)
 mock = f'cat_L{globals.boxsize}_n{globals.lognormal_density}_z057_patchy'
 
 for i in range(len(globals.mock_file_name_list)):
-    r_avg, results_xi = xi_lognormal.xi_lognormal(mock, i)
+    r_avg, results_xi = xi_lognormal(mock, i)
     np.save(os.path.join(abs_path, f'xi/xi_{globals.mock_file_name_list[i]}'), results_xi)
     print(f'mock {i} done')
 

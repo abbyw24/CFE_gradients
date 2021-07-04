@@ -35,7 +35,7 @@ def xi_lognormal(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult
 
 
 # results for clustered mocks, NO gradient
-mock_file_name_list, _ = generate_mock_list.generate_mock_list(As=1)
+mock_file_name_list, _ = generate_mock_list.generate_mock_list(As=2)
 
 sub_dirs = [
     'xi'
@@ -43,10 +43,8 @@ sub_dirs = [
 abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
 create_subdirs(abs_path, sub_dirs)
 
-mock = f'cat_L{globals.boxsize}_n{globals.lognormal_density}_z057_patchy'
-
 for i in range(len(mock_file_name_list)):
-    xi_results = xi_lognormal(mock, i)
+    xi_results = xi_lognormal(mock_file_name_list[i], i)
     np.save(os.path.join(abs_path, f'xi/xi_{mock_file_name_list[i]}'), xi_results)
     print(f'xi, {mock_file_name_list[i]}')
 

@@ -7,6 +7,7 @@ from corrfunc_ls import xi_ls
 from create_subdirs import create_subdirs
 import globals
 globals.initialize_vals()
+mock_file_name_list = globals.mock_file_name_list
 
 def xi_lognormal(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=2, periodic=globals.periodic, nthreads=globals.nthreads,
     rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins):
@@ -42,8 +43,8 @@ create_subdirs(abs_path, sub_dirs)
 
 mock = f'cat_L{globals.boxsize}_n{globals.lognormal_density}_z057_patchy'
 
-for i in range(len(globals.mock_file_name_list)):
+for i in range(len(mock_file_name_list)):
     xi_results = xi_lognormal(mock, i)
-    np.save(os.path.join(abs_path, f'xi/xi_{globals.mock_file_name_list[i]}'), xi_results)
-    print(f'mock {i} done')
+    np.save(os.path.join(abs_path, f'xi/xi_{mock_file_name_list[i]}'), xi_results)
+    print(f'xi, {mock_file_name_list[i]}')
 

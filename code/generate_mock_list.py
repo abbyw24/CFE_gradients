@@ -7,7 +7,8 @@ def generate_mock_list(
     lognormal_density = globals.lognormal_density,
     As = globals.As,
     grad_type = globals.grad_type,
-    n_mocks = globals.n_mocks
+    n_mocks = globals.n_mocks,
+    lognorm_mock = globals.lognorm_mock
 ):
     if As == 2:
         As_key = '_As2x'
@@ -21,7 +22,7 @@ def generate_mock_list(
         b = 0.5
         m_arr = np.linspace(-1.0, 1.0, n_mocks)
         b_arr = b * np.ones([n_mocks])
-        lognorm_file_list = [f"cat_L{boxsize}_n{lognormal_density}_z057_patchy{As_key}_lognormal_rlz1"]
+        lognorm_file_list = [f'{lognorm_mock}_lognormal_rlz1']
         for m in m_arr:
             for b in b_arr:
                 mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m, b)
@@ -36,7 +37,7 @@ def generate_mock_list(
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = []
         for i in range(n_mocks):
-            lognorm_file_list.append(f"cat_L{boxsize}_n{lognormal_density}_z057_patchy{As_key}_lognormal_rlz{i}")
+            lognorm_file_list.append(f"{lognorm_mock}_lognormal_rlz{i}")
 
         for lognorm_file in lognorm_file_list:
             mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file, m, b)
@@ -50,7 +51,7 @@ def generate_mock_list(
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = []
         for i in range(n_mocks):
-            lognorm_file_list.append(f"cat_L{boxsize}_n{lognormal_density}_z057_patchy{As_key}_lognormal_rlz{i}")
+            lognorm_file_list.append(f"{lognorm_mock}_lognormal_rlz{i}")
             mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[i], m_arr[i], b)
             mock_file_name_list.append(mock_file_name)
             mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[i], b)
@@ -61,7 +62,7 @@ def generate_mock_list(
         b = 0.5
         m_arr = m * np.ones([n_mocks])
         b_arr = b * np.ones([n_mocks])
-        lognorm_file_list = [f"cat_L{boxsize}_n{lognormal_density}_z057_patchy{As_key}_lognormal_rlz400"]
+        lognorm_file_list = [f"{lognorm_mock}_lognormal_rlz400"]
         mock_file_name_list = ["{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m_arr[0], b)]
         mock_name_list = ["n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[0], b)]
 

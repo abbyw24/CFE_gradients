@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+import generate_mock_list
 import globals
 from create_subdirs import create_subdirs
 
@@ -10,13 +11,14 @@ globals.initialize_vals()  # brings in all the default parameters
 grad_dim = globals.grad_dim
 boxsize = globals.boxsize
 path_to_data_dir = globals.path_to_data_dir
-mock_file_name_list = globals.mock_file_name_list
 lognormal_density = globals.lognormal_density
 n_mocks = globals.n_mocks
 
 grad_type = globals.grad_type
 
 n_patches = globals.n_patches
+
+mock_file_name_list, _ = generate_mock_list.generate_mock_list()
 
 def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
     lognormal_density = lognormal_density, n_patches=n_patches):

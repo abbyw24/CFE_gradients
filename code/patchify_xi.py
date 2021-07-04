@@ -8,7 +8,7 @@ import os
 from create_subdirs import create_subdirs
 from corrfunc_ls import xi_ls
 from center_mock import center_mock
-
+import generate_mock_list
 import globals
 
 globals.initialize_vals()  # brings in all the default parameters
@@ -16,8 +16,6 @@ globals.initialize_vals()  # brings in all the default parameters
 grad_dim = globals.grad_dim
 lognormal_density = globals.lognormal_density
 path_to_data_dir = globals.path_to_data_dir
-mock_file_name_list = globals.mock_file_name_list
-mock_name_list = globals.mock_name_list
 grad_type = globals.grad_type
 
 randmult = globals.randmult
@@ -28,6 +26,8 @@ nbins = globals.nbins
 nthreads = globals.nthreads
 
 n_patches = globals.n_patches
+
+mock_file_name_list, mock_name_list = generate_mock_list.generate_mock_list()
 
 # define patchify
 def patchify(data, boxsize, n_patches=n_patches):

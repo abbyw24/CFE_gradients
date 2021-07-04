@@ -16,7 +16,7 @@ from Corrfunc.utils import convert_3d_counts_to_cf
 from colossus.cosmology import cosmology
 
 from create_subdirs import create_subdirs
-
+import generate_mock_list
 import globals
 
 globals.initialize_vals()  # brings in all the default parameters
@@ -24,8 +24,6 @@ globals.initialize_vals()  # brings in all the default parameters
 grad_dim = globals.grad_dim
 lognormal_density = globals.lognormal_density
 path_to_data_dir = globals.path_to_data_dir
-mock_file_name_list = globals.mock_file_name_list
-mock_name_list = globals.mock_name_list
 grad_type = globals.grad_type
 
 randmult = globals.randmult
@@ -34,6 +32,8 @@ rmin = globals.rmin
 rmax = globals.rmax
 nbins = globals.nbins
 nthreads = globals.nthreads
+
+mock_file_name_list, mock_name_list = generate_mock_list.generate_mock_list()
 
 def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
     if cosmo_base is None:

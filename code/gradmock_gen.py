@@ -7,7 +7,7 @@ from numpy.random import lognormal
 import read_lognormal
 from create_subdirs import create_subdirs
 import globals
-
+import generate_mock_list
 globals.initialize_vals()
 
 path_to_data_dir = globals.path_to_data_dir
@@ -16,11 +16,11 @@ boxsize = globals.boxsize
 grad_type = globals.grad_type
 lognormal_density = globals.lognormal_density
 path_to_lognorm_source = globals.path_to_lognorm_source
-mock_file_name_list = globals.mock_file_name_list
-mock_name_list = globals.mock_name_list
 lognorm_file_list = globals.lognorm_file_list
 m_arr = globals.m_arr
 b_arr = globals.b_arr
+
+mock_file_name_list, mock_name_list = generate_mock_list.generate_mock_list()
 
 # # pick a seed number so that random set stays the same every time (for now)
 # np.random.seed(123456)

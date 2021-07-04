@@ -5,9 +5,9 @@ import read_lognormal
 from center_mock import center_mock
 from corrfunc_ls import xi_ls
 from create_subdirs import create_subdirs
+import generate_mock_list
 import globals
 globals.initialize_vals()
-mock_file_name_list = globals.mock_file_name_list
 
 def xi_lognormal(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=2, periodic=globals.periodic, nthreads=globals.nthreads,
     rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins):
@@ -33,7 +33,9 @@ def xi_lognormal(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult
 
     return r_avg, results_xi
 
+
 # results for clustered mocks, NO gradient
+mock_file_name_list, _ = generate_mock_list.generate_mock_list(As=1)
 
 sub_dirs = [
     'xi'

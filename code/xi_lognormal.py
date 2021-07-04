@@ -35,7 +35,7 @@ def xi_lognormal(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult
 
 
 # results for clustered mocks, NO gradient
-mock_file_name_list, _ = generate_mock_list.generate_mock_list(As=1)
+mock_file_name_list, _ = generate_mock_list.generate_mock_list(As=2)
 
 sub_dirs = [
     'xi'

@@ -44,7 +44,8 @@ abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
 create_subdirs(abs_path, sub_dirs)
 
 for i in range(len(mock_file_name_list)):
-    xi_results = xi_lognormal(mock_file_name_list[i], i)
-    np.save(os.path.join(abs_path, f'xi/xi_{mock_file_name_list[i]}'), xi_results)
-    print(f'xi, {mock_file_name_list[i]}')
+    mock = mock_file_name_list[i]
+    xi_results = xi_lognormal(mock, i)
+    np.save(os.path.join(abs_path, f'xi/xi_{mock}'), xi_results)
+    print(f'xi, {mock}')
 

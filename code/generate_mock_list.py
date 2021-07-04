@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import globals
 globals.initialize_vals()
 
@@ -7,13 +8,15 @@ def generate_mock_list(
     lognormal_density = globals.lognormal_density,
     As = globals.As,
     grad_type = globals.grad_type,
-    n_mocks = globals.n_mocks,
-    lognorm_mock = globals.lognorm_mock
+    n_mocks = globals.n_mocks
 ):
     if As == 2:
         As_key = '_As2x'
     elif As == 1:
         As_key = ''
+
+    lognorm_mock = f'cat_L{boxsize}_n{lognormal_density}_z057_patchy{As_key}'
+    path_to_lognorm_source = os.path.join('/scratch/ksf293/mocks/lognormal', lognorm_mock)
 
     mock_file_name_list = []
     mock_name_list = []

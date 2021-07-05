@@ -8,7 +8,8 @@ def generate_mock_list(
     lognormal_density = globals.lognormal_density,
     As = globals.As,
     grad_type = globals.grad_type,
-    n_mocks = globals.n_mocks
+    n_mocks = globals.n_mocks,
+    extra = False
 ):
     if As == 2:
         As_key = '_As2x'
@@ -73,4 +74,14 @@ def generate_mock_list(
         print("'grad_type' must be '1rlz', '1m', or '1rlz_per_m'")
         assert False
     
-    return mock_file_name_list, mock_name_list
+    if extra == True:
+        vals = {
+            "mock_file_name_list" : mock_file_name_list,
+            "mock_name_list" : mock_name_list,
+            "lognorm_mock" : lognorm_mock,
+            "path_to_lognorm_source" : path_to_lognorm_source
+        }
+        return vals
+    else:
+        assert extra == False
+        return mock_file_name_list

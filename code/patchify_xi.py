@@ -27,7 +27,7 @@ nthreads = globals.nthreads
 
 n_patches = globals.n_patches
 
-mock_file_name_list, mock_name_list = generate_mock_list.generate_mock_list()
+mock_file_name_list = generate_mock_list.generate_mock_list()
 
 # define patchify
 def patchify(data, boxsize, n_patches=n_patches):

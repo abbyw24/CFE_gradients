@@ -33,7 +33,7 @@ rmax = globals.rmax
 nbins = globals.nbins
 nthreads = globals.nthreads
 
-mock_file_name_list, mock_name_list = generate_mock_list.generate_mock_list()
+mock_file_name_list = generate_mock_list.generate_mock_list()
 
 def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
     if cosmo_base is None:

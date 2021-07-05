@@ -16,7 +16,7 @@ path_to_data_dir = globals.path_to_data_dir
 nbins = globals.nbins
 n_patches = globals.n_patches
 
-mock_file_name_list, mock_name_list = generate_mock_list.generate_mock_list()
+mock_file_name_list = generate_mock_list.generate_mock_list()
 
 def f_bases(r, x):
     assert len(x) == 3
@@ -32,7 +32,7 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
-    for i in range(len(mock_name_list)):
+    for i in range(len(mock_file_name_list)):
         mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         mock_file_name = mock_info["mock_file_name"]
         mock_name = mock_info["mock_name"]

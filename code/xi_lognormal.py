@@ -39,7 +39,7 @@ mock_vals = generate_mock_list.generate_mock_list(extra=True)
 lognorm_file_list = mock_vals["lognorm_file_list"]
 
 sub_dirs = [
-    'xi'
+    f'xi/{globals.lognormal_density}'
 ]
 abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
 create_subdirs(abs_path, sub_dirs)

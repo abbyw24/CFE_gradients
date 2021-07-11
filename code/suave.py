@@ -41,7 +41,7 @@ def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
 
     cf = cosmo_base.correlationFunction
 
-    return bias * cf(r, z=redshift)
+    return bias**2 * cf(r, z=redshift)
 
 # define cosmo_bases function
 def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000, 

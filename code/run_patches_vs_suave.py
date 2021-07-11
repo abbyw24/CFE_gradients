@@ -1,6 +1,9 @@
 from datetime import datetime
 start = datetime.now()
 
+# compute correlation function on lognormal mocks (no gradient!)
+import xi_lognormal
+
 # generate gradient mocks based on the specified grad_type in globals
 import gradmock_gen
 gradmock_gen.generate_gradmocks()

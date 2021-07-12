@@ -18,7 +18,7 @@ grad_type = globals.grad_type
 
 n_patches = globals.n_patches
 
-mock_file_name_list, _ = generate_mock_list.generate_mock_list()
+mock_file_name_list = generate_mock_list.generate_mock_list()
 
 def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
     lognormal_density = lognormal_density, n_patches=n_patches):

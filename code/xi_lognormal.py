@@ -46,6 +46,6 @@ create_subdirs(abs_path, sub_dirs)
 
 for i in range(len(lognorm_file_list)):
     xi_results = xi_lognormal(mock_vals["lognorm_mock"], i)
-    np.save(os.path.join(abs_path, f'xi/xi_{lognorm_file_list[i]}'), xi_results)
+    np.save(os.path.join(abs_path, f'xi/{globals.lognormal_density}/xi_{lognorm_file_list[i]}'), xi_results)
     print(f'xi, {lognorm_file_list[i]}')
 

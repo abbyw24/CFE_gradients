@@ -15,14 +15,14 @@ grad_dim = globals.grad_dim
 boxsize = globals.boxsize
 grad_type = globals.grad_type
 lognormal_density = globals.lognormal_density
-m_arr = globals.m_arr
-b_arr = globals.b_arr
 
 mock_vals = generate_mock_list.generate_mock_list(extra=True)
 path_to_lognorm_source = mock_vals['path_to_lognorm_source']
 mock_file_name_list = mock_vals['mock_file_name_list']
 mock_name_list = mock_vals['mock_name_list']
 lognorm_file_list = mock_vals['lognorm_file_list']
+m_arr = mock_vals["m_arr"]
+b_arr = mock_vals["b_arr"]
 
 # # pick a seed number so that random set stays the same every time (for now)
 # np.random.seed(123456)

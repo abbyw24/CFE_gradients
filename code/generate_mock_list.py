@@ -80,7 +80,9 @@ def generate_mock_list(
             "mock_name_list" : mock_name_list,
             "lognorm_mock" : lognorm_mock,
             "lognorm_file_list" : lognorm_file_list,
-            "path_to_lognorm_source" : path_to_lognorm_source
+            "path_to_lognorm_source" : path_to_lognorm_source,
+            "m_arr" : m_arr,
+            "b_arr" : b_arr
         }
         return vals
     else:

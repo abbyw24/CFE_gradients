@@ -84,4 +84,4 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
         # resave patch info dictionary
         np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
 
-        print(f"least square fit, {mock_name}, {n_patches} patches")
+        print(f"lstsqfit, {mock_file_name}, {n_patches} patches")

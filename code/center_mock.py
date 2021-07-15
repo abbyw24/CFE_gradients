@@ -9,10 +9,10 @@ def center_mock(data, min_val, max_val, shift_val=None):
     while a == False:
         print(f"correction {k}: min patch_center = {data.min()}, max patch_center = {data.max()}")
         if np.any(data <= min_val):
-            print("too low, shifting up by {:.2f}".format(shift_val))
+            # print("too low, shifting up by {:.2f}".format(shift_val))
             data += shift_val
         elif np.any(data >= max_val):
-            print("too high, shifting down by {:.2f}".format(shift_val))
+            # print("too high, shifting down by {:.2f}".format(shift_val))
             data -= shift_val
         else:
             assert np.all((data >= min_val) & (data <= max_val))

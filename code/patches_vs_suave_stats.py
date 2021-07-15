@@ -131,7 +131,7 @@ def extract_grads_patches_suave(patches_key="grad_recovered", suave_key="grad_re
     return grads
 
 def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type=grad_type, path_to_data_dir=path_to_data_dir,
-    lognormal_density=lognormal_density, stats_name="stats"):
+    boxsize=boxsize, n_patches=n_patches, lognormal_density=lognormal_density, stats_name="stats"):
 
     n_mocks = len(grads_exp)
     # create the needed subdirectories
@@ -146,32 +146,32 @@ def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type
             2 : "z"
             }
 
-    print(f"for grad type {grad_type}, {len(grads_exp)} mocks:")
+    print(f"for grad type {grad_type}, n{lognormal_density}, L{boxsize}, {len(grads_exp)} mocks:")
     for i in dim:
         print(f"{dim[i]}:")
         # mean
         mean_patches = np.mean(grads_rec_patches[:,i])
-        print(f"mean rec. grad., patches = {mean_patches}")
+        print(f"mean rec. grad., {n_patches} patches = {mean_patches}")
         mean_suave = np.mean(grads_rec_suave[:,i])
         print(f"mean rec. grad., suave = {mean_suave}")
         # min
         min_patches = min(grads_rec_patches[:,i])
-        print(f"min rec. grad., patches = {min_patches}")
+        print(f"min rec. grad., {n_patches} patches = {min_patches}")
         min_suave = min(grads_rec_suave[:,i])
         print(f"min rec. grad., suave = {min_suave}")
         # max
         max_patches = max(grads_rec_patches[:,i])
-        print(f"max rec. grad., patches = {max_patches}")
+        print(f"max rec. grad., {n_patches} patches = {max_patches}")
         max_suave = max(grads_rec_suave[:,i])
         print(f"max rec. grad., suave = {max_suave}")
         # median
         median_patches = np.median(grads_rec_patches[:,i])
-        print(f"median rec. grad., patches = {median_patches}")
+        print(f"median rec. grad., {n_patches} patches = {median_patches}")
         median_suave = np.median(grads_rec_suave[:,i])
         print(f"median rec. grad., suave = {median_suave}")
         # standard deviation
         std_patches = np.std(grads_rec_patches[:,i])
-        print(f"std rec. grad., patches = {std_patches}")
+        print(f"std rec. grad., {n_patches} patches = {std_patches}")
         std_suave = np.std(grads_rec_suave[:,i])
         print(f"std rec. grad., suave = {std_suave}")
 

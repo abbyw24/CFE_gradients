@@ -81,8 +81,8 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
         ax.set_xlabel("Recovered Gradient - True Gradient ($h\,$Mpc$^{-1}$)")
         ax.set_ylabel("Counts")
 
-        suave_vals = grads_rec_suave[:,i]-grads_exp[:,i]
-        patches_vals = grads_rec_patches[:,i]-grads_exp[:,i]
+        suave_vals = grads_rec_suave[:,i] - grads_exp[:,i]
+        patches_vals = grads_rec_patches[:,i] - grads_exp[:,i]
 
         # define bins
         bins = np.linspace(min(min(patches_vals), min(suave_vals)), max(max(patches_vals), max(suave_vals)), nbins)

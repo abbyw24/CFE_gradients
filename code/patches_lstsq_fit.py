@@ -35,17 +35,14 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
     for i in range(len(mock_file_name_list)):
         mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         mock_file_name = mock_info["mock_file_name"]
-        mock_name = mock_info["mock_name"]
         L = mock_info["boxsize"]
-        grad_expected = mock_info["grad_expected"]
 
         patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
 
-        # make sure patch centers are between 0 and L as expected
-        center_mock(patch_centers, 0, L)
-        patch_centers -= L/2
-            # this centers the fiducial point in the box
+        # center mock around 0
+        center_mock(patch_centers, -L/2, L/2)
+
         r = patch_info["r_avg"]
         xi_patches = patch_info["xi_patches"]
 
@@ -80,8 +77,8 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
         patch_info["grad_recovered"] = grad_recovered
 
         # change back patch_center values for dictionary saving
-        patch_centers += L/2
+        center_mock(patch_centers, 0, L)
         # resave patch info dictionary
         np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
 
-        print(f"lstsqfit, {mock_file_name}, {n_patches} patches")
+        print(f"lstsqfit in {n_patches} patches --> {mock_file_name}")

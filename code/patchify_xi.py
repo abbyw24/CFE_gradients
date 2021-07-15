@@ -74,12 +74,8 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
         mock_data = mock_info["grad_set"]
         L = mock_info["boxsize"]
 
-        # if there are negative values, shift by L/2, to 0 to L
-        if np.any(mock_data <= 0):
-            mock_data += L/2
-        else:
-            print("input mock data must be from -L/2 to L/2 (values shifted during xi_in_patches)")
-            assert False
+        # center mock from 0 to L
+        center_mock(mock_data, 0, L)
 
         nd = len(mock_data)
 
@@ -102,8 +98,6 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
         n_patches = len(patch_id_list)
         patches_idx = patches_mock[1]
 
-        # create a dictionary for patch data
-        patch_info = {}
         # define patch centers by taking mean of the random set in each patch
         patch_centers = []
         for patch_id in patch_id_list:
@@ -115,12 +109,15 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
         # results for full mock
         results_xi_full = xi_ls(mock_data, rand_set, periodic, nthreads, rmin, rmax, nbins)
         xi_full = np.array(results_xi_full[1])
+
         # save values used to calculate xi
-        patch_info["periodic"] = periodic
-        patch_info["nthreads"] = nthreads
-        patch_info["rmin"] = rmin
-        patch_info["rmax"] = rmax
-        patch_info["nbins"] = nbins
+        patch_info = {
+            "periodic" : periodic,
+            "nthreads" : nthreads,
+            "rmin" : rmin,
+            "rmax" : rmax,
+            "nbins" : nbins
+        }
 
         # define r_avg (this is the same for all xi)
         r_avg = results_xi_full[0]

@@ -27,8 +27,6 @@ b_arr = mock_vals["b_arr"]
 # # pick a seed number so that random set stays the same every time (for now)
 # np.random.seed(123456)
 
-# lognorm file used so far = "lss_data/lognormal_mocks/cat_L750_n3e-4_lognormal_rlz0.bin"
-
 # function to generate gradient mock
 def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source, mock_file_name_list=mock_file_name_list, z_max=-50):
 
@@ -57,16 +55,16 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
     w_hat /= np.linalg.norm(w_hat)
 
     for i in range(len(mock_file_name_list)):
-        # create dictionary with mock info– to start, mock name, lognorm rlz, m, and b
+        # create dictionary with mock info
         mock_info = {
             "mock_file_name" : mock_file_name_list[i],
             'mock_name' : mock_name_list[i],
             "lognorm_rlz" : lognorm_file_list[i],
+            "w_hat" : w_hat,
             "m" : m_arr[i],
             "b" : b_arr[i],
             "lognorm_density" : lognormal_density
         }
-        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}")
 
         # redefine dictionary values for simplicity
         mock_file_name = str(mock_info["mock_file_name"])
@@ -75,34 +73,34 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         m = float(mock_info["m"])
         b = float(mock_info["b"])
 
+
         # LOGNORMAL SET
         Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f"{lognorm_file}.bin"))
             # define boxsize based on mock; and N = number of data points
         # make sure the boxsize from data equals the boxsize we specified in the file name
         assert float(Lx) == float(boxsize)
 
+        # boxsize
         L = Lx
-            # L = boxsize
-        # save boxsize then load in this boxsize for all uses of gradient mock
         mock_info["boxsize"] = L
-
-        # save w_hat to dictionary
-        mock_info["w_hat"] = w_hat
 
         # expected gradient
         mock_info["grad_expected"] = m/(b*L)*w_hat
 
         # save lognormal set to mocks directory
         x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
+            # data is initially loaded in from 0 to L; we want to shift down by L/2 to center around 0
         xs_lognorm = (np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2))
         velocities = np.array([vx_lognorm, vy_lognorm, vz_lognorm])
         mock_info["lognorm_set"] = xs_lognorm
         mock_info["velocities"] = velocities
 
+
         # RANDOM SET
         # generate a random data set (same size as mock)
         xs_rand = np.random.uniform(-L/2,L/2,(3,N))
         mock_info["rand_set"] = xs_rand
+
 
         # INJECT GRADIENT
         # for each catalog, make random uniform deviates
@@ -135,8 +133,8 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         xs_grad = np.append(xs_clust_grad, xs_unclust_grad, axis=0)
         mock_info["grad_set"] = xs_grad
 
-        # visualisation! (we define z_max cutoff in function parameters)
 
+        # VISUALIZATION
         # plot all points in same color
         xy_slice = xs_grad[np.where(xs_grad[:,2] < z_max)] # select rows where z < z_max
 
@@ -177,6 +175,7 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         plt.close("all") 
 
         # save dictionary
+        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}")
         np.save(path_to_mock_dict, mock_info)
 
         print(f"gradient generated --> {mock_file_name}")

@@ -16,6 +16,5 @@ def center_mock(data, min_val, max_val, shift_val=None):
             data -= shift_val
         else:
             assert np.all((data >= min_val) & (data <= max_val))
-            print(f"mock centered between {min_val} and {max_val}")
             break
         k += 1

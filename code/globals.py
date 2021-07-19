@@ -12,7 +12,7 @@ def initialize_vals():
     grad_dim = 1        # dimension of w_hat in gradient mock
 
     global path_to_data_dir
-    path_to_data_dir = '/scratch/aew492/research-summer2020_output/1D'
+    path_to_data_dir = f'/scratch/aew492/research-summer2020_output/{grad_dim}D'
 
     global boxsize
     boxsize = 750

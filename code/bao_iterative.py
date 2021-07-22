@@ -14,7 +14,7 @@ from Corrfunc.bases import bao_bases
 from colossus.cosmology import cosmology
 
 import read_lognormal as reader
-import bao_utils
+# import bao_utils      (hopefully) actually unused in this script, otherwise I need to copy from kate's github repo
 
 import globals
 globals.initialize_vals()
@@ -26,11 +26,9 @@ def main():
     boxsize = globals.boxsize
     density = globals.lognormal_density
     cat_tag = f'_L{boxsize}_n{density}_z057_patchy'
-    #
-    result_dir = f'../results/results_lognormal{cat_tag}'
+    result_dir = f'/scratch/aew492/research-summer2020_output/lognormal/iterative_results/lognormal{cat_tag}'
     cat_dir = f'/scratch/ksf293/mocks/lognormal/cat{cat_tag}'
-    random_fn = '/scratch/ksf293/mocks/randoms/rand_L750_n1e-4_1x.dat'  # generate my own random catalogs
-    #
+    random_fn = f'/scratch/ksf293/research-summer2020_output/catalogs/rand_L{boxsize}_n{density}_1x.dat'  # generate my own random catalogs
 
     proj = 'baoiter'
     # cosmo_name options: ['b17', 'planck', 'wmap9'] (for example)

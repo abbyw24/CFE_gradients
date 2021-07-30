@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import glob 
 import re
 
-#import nbodykit
+import nbodykit
 import Corrfunc
 from Corrfunc.theory.DDsmu import DDsmu
 from Corrfunc.utils import compute_amps

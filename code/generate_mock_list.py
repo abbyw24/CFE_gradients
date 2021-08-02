@@ -9,6 +9,9 @@ def generate_mock_list(
     As = globals.As,
     grad_type = globals.grad_type,
     n_mocks = globals.n_mocks,
+    m = globals.m,
+    b = globals.b,
+    rlz = globals.rlz,
     extra = False
 ):
     if As == 2:
@@ -23,10 +26,9 @@ def generate_mock_list(
     mock_name_list = []
 
     if grad_type == "1rlz":
-        b = 0.5
         m_arr = np.linspace(-1.0, 1.0, n_mocks)
         b_arr = b * np.ones([n_mocks])
-        lognorm_file_list = [f'{lognorm_mock}_lognormal_rlz1']
+        lognorm_file_list = [f'{lognorm_mock}_lognormal_rlz{rlz}']
         for m in m_arr:
             for b in b_arr:
                 mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m, b)
@@ -35,8 +37,6 @@ def generate_mock_list(
                 mock_name_list.append(mock_name)
 
     elif grad_type == "1m":
-        m = 0.0
-        b = 0.5
         m_arr = m * np.ones([n_mocks])
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = []
@@ -50,7 +50,6 @@ def generate_mock_list(
             mock_name_list.append(mock_name)
     
     elif grad_type == "1rlz_per_m":
-        b = 0.5
         m_arr = np.linspace(-1.0, 1.0, n_mocks)
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = []
@@ -62,11 +61,9 @@ def generate_mock_list(
             mock_name_list.append(mock_name)
     
     elif grad_type == "1mock":     # (i.e. plots for poster)
-        m = 1.0
-        b = 0.5
         m_arr = m * np.ones([n_mocks])
         b_arr = b * np.ones([n_mocks])
-        lognorm_file_list = [f"{lognorm_mock}_lognormal_rlz400"]
+        lognorm_file_list = [f"{lognorm_mock}_lognormal_rlz{rlz}"]
         mock_file_name_list = ["{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m_arr[0], b)]
         mock_name_list = ["n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[0], b)]
 

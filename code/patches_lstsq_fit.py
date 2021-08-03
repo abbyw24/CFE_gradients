@@ -46,9 +46,14 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
         r = patch_info["r_avg"]
         xi_patches = patch_info["xi_patches"]
 
+        # below we "unroll" the array with binned xi in each patch (dimensions nbins x npatches) into a 1D array with length nbins x npatches
+        #   in order to perform our least square fit
+
+        # create empty arrays
         X = np.empty((len(r)*len(patch_centers), 4))
         xi = np.empty((len(r)*len(patch_centers), 1))
 
+        # fill the arrays with the relevant data
         for patch in range(len(patch_centers)):
             for n_bin in range(len(r)):
                 X_bin = f_bases(r[n_bin], patch_centers[patch])

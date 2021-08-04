@@ -3,9 +3,6 @@ import os
 import time
 import numpy as np
 
-import nbodykit
-from nbodykit.lab import *
-
 import globals
 globals.initialize_vals()
 
@@ -31,6 +28,9 @@ def main(boxsize=globals.boxsize, nbar_str=globals.lognormal_density, nx=globals
 def generate_random(nbar, boxsize, nx, seed=41, savepos=None):
     print("Making random catalog")
     s = time.time()
+    print(f"nx = {nx} \n nbar = {nbar} \n boxsize = {boxsize}")
+    assert False
+
     random = nbodykit.source.catalog.uniform.UniformCatalog(nx*nbar, boxsize, seed=seed)
     print('time: {}'.format(time.time()-s))
     nr = random.csize

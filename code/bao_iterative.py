@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import glob 
 import re
 
-import nbodykit
 import Corrfunc
 from Corrfunc.theory.DDsmu import DDsmu
 from Corrfunc.utils import compute_amps
@@ -40,7 +39,7 @@ def main():
     realizations = [0]
 
     restart_unconverged = True # will restart any unconverged realizations - WARNING, IF FALSE WILL OVERWRITE ITERATIONS OF UNCONVERGED ONES
-    convergence_threshold = 1e-5 #when to stop (fractional change)
+    convergence_threshold = 1e-3 #when to stop (fractional change)
     niter_max = 160 # stop after this many iterations if not converged 
 
     skip_converged = True
@@ -67,7 +66,7 @@ def main():
 
         alpha_model_start = 1.0
         eta = 0.5
-        biter = BAO_iterator(boxsize, cat_tag, cat_dir, Nr=Nr, cf_tag=cf_tag, trr_analytic=trr_analytic, nthreads=nthreads, cosmo=cosmo, redshift=redshift, alpha_model_start=alpha_model_start, dalpha=dalpha, k0=k0, random_fn=random_fn)
+        biter = BAO_iterator(boxsize, cat_tag, cat_dir, cosmo, Nr=Nr, cf_tag=cf_tag, trr_analytic=trr_analytic, nthreads=nthreads, redshift=redshift, alpha_model_start=alpha_model_start, dalpha=dalpha, k0=k0, random_fn=random_fn)
 
         # initial parameters
         niter_start = 0
@@ -149,19 +148,15 @@ def main():
 class BAO_iterator:
 
     # CHANGE: might want to change some of these default parameters to globals
-    def __init__(self, boxsize, cat_tag, cat_dir, Nr=0, rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, 
-                 cf_tag='_baoiter', trr_analytic=True, nthreads=globals.nthreads, cosmo=None, 
+    def __init__(self, boxsize, cat_tag, cat_dir, cosmo, Nr=0, rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, 
+                 cf_tag='_baoiter', trr_analytic=True, nthreads=globals.nthreads, 
                  redshift=0.0, bias=2.0, alpha_model_start=1.0, dalpha=0.01, k0=0.1,
                  random_fn=None):
 
         # input params
         self.boxsize = boxsize
         self.Nr = Nr
-        if cosmo==None:
-            print("No cosmo input, defaulting to Planck")
-            self.cosmo = nbodykit.cosmology.Planck15
-        else:
-            self.cosmo = cosmo
+        self.cosmo = cosmo
 
         self.rmin = rmin
         self.rmax = rmax

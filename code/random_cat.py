@@ -25,26 +25,25 @@ def main(boxsize=globals.boxsize, nbar_str=globals.lognormal_density, nx=globals
     else:
         print("File already exists! Exiting.", rand_fn)
 
-def generate_random(nbar, boxsize, nx, seed=41, savepos=None):
+def generate_random(nbar, boxsize, nx, savepos=None):  # previously had an optional seed argument; do i need to worry about this?
     print("Making random catalog")
     s = time.time()
-    print(f"nx = {nx} \n nbar = {nbar} \n boxsize = {boxsize}")
-    assert False
-
-    random = nbodykit.source.catalog.uniform.UniformCatalog(nx*nbar, boxsize, seed=seed)
+    nr = float(nbar) * float(boxsize)**3
+    random = np.random.uniform(-boxsize/2, boxsize/2, (3,nr))
     print('time: {}'.format(time.time()-s))
-    nr = random.csize
     print("Random: {}".format(nr))
     if savepos:
-        randompos = get_positions(random)
-        np.savetxt(savepos, np.array(randompos).T)
+        np.savetxt(savepos, random)     # keeping this saved in txt format since this is what kate had / is in bao_iterative
     return random
 
-def get_positions(cat):
-    catx = np.array(cat['Position'][:,0]).astype(float)
-    caty = np.array(cat['Position'][:,1]).astype(float)
-    catz = np.array(cat['Position'][:,2]).astype(float)
-    return catx, caty, catz
+# def get_positions(cat):
+#     catx = np.array(cat['Position'][:,0]).astype(float)
+#     caty = np.array(cat['Position'][:,1]).astype(float)
+#     catz = np.array(cat['Position'][:,2]).astype(float)
+#     return catx, caty, catz
 
 if __name__=='__main__':
-    main()
+    boxsize_list = [500, 750, 1000, 1500]
+    nbar_str_list = ['1e-6', '1e-5', '1e-4', '2e-4', '4e-4']
+    for boxsize, nbar_str in boxsize_list, nbar_str_list:
+        main(boxsize=boxsize, nbar_str=nbar_str)

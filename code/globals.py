@@ -24,19 +24,19 @@ def initialize_vals():
     As = 2
 
     global grad_type
-    grad_type = "1rlz_per_m"
+    grad_type = "1mock"
 
     global m
-    m = 1.0
+    m = -0.265
 
     global b
     b = 0.5
 
     global rlz
-    rlz = 0
+    rlz = 147
 
     global n_mocks
-    n_mocks = 41
+    n_mocks = 1
 
     global mocks_info
 

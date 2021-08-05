@@ -27,7 +27,8 @@ def main():
     cat_tag = f'_L{boxsize}_n{density}_z057_patchy'
     result_dir = f'/scratch/aew492/research-summer2020_output/lognormal/iterative_results/lognormal{cat_tag}'
     cat_dir = f'/scratch/ksf293/mocks/lognormal/cat{cat_tag}'
-    random_fn = f'/scratch/ksf293/research-summer2020_output/catalogs/rand_L{boxsize}_n{density}_1x.dat'  # generate my own random catalogs
+    random_fn = f'/scratch/aew492/research-summer2020_output/catalogs/rand_L{boxsize}_n{density}_1x.dat'  # generate my own random catalogs
+    # *change file / file format
 
     proj = 'baoiter'
     # cosmo_name options: ['b17', 'planck', 'wmap9'] (for example)
@@ -147,7 +148,6 @@ def main():
 
 class BAO_iterator:
 
-    # CHANGE: might want to change some of these default parameters to globals
     def __init__(self, boxsize, cat_tag, cat_dir, cosmo, Nr=0, rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, 
                  cf_tag='_baoiter', trr_analytic=True, nthreads=globals.nthreads, 
                  redshift=0.0, bias=2.0, alpha_model_start=1.0, dalpha=0.01, k0=0.1,
@@ -226,10 +226,7 @@ class BAO_iterator:
 
 
     def load_random(self):
-        #nx = 10
-        #rand_dir = '../catalogs/randoms'
-        #rand_fn = '{}/rand{}_{}x.dat'.format(rand_dir, self.cat_tag, nx)
-        random = np.loadtxt(self.random_fn)
+        random = self.random_fn
         self.x_rand, self.y_rand, self.z_rand = random.T
         self.nr = random.shape[0]
         self.weights_rand = None

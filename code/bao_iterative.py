@@ -25,9 +25,10 @@ def main():
     boxsize = globals.boxsize
     density = globals.lognormal_density
     cat_tag = f'_L{boxsize}_n{density}_z057_patchy'
-    result_dir = f'/scratch/aew492/research-summer2020_output/lognormal/iterative_results/lognormal{cat_tag}'
+    data_dir = '/scratch/aew492/research-summer2020_output/'
+    result_dir = os.path.join(data_dir, f'lognormal/iterative_results/lognormal{cat_tag}')
     cat_dir = f'/scratch/ksf293/mocks/lognormal/cat{cat_tag}'
-    random_fn = f'/scratch/aew492/research-summer2020_output/catalogs/rand_L{boxsize}_n{density}_1x.dat'  # generate my own random catalogs
+    random_fn = os.path.join(data_dir, f'catalogs/rand_L{boxsize}_n{density}_1x.dat')  # generate my own random catalogs
     # *change file / file format
 
     proj = 'baoiter'
@@ -67,7 +68,7 @@ def main():
 
         alpha_model_start = 1.0
         eta = 0.5
-        biter = BAO_iterator(boxsize, cat_tag, cat_dir, cosmo, Nr=Nr, cf_tag=cf_tag, trr_analytic=trr_analytic, nthreads=nthreads, redshift=redshift, alpha_model_start=alpha_model_start, dalpha=dalpha, k0=k0, random_fn=random_fn)
+        biter = BAO_iterator(boxsize, cat_tag, cat_dir, cosmo, data_dir, Nr=Nr, cf_tag=cf_tag, trr_analytic=trr_analytic, nthreads=nthreads, redshift=redshift, alpha_model_start=alpha_model_start, dalpha=dalpha, k0=k0, random_fn=random_fn)
 
         # initial parameters
         niter_start = 0
@@ -148,7 +149,7 @@ def main():
 
 class BAO_iterator:
 
-    def __init__(self, boxsize, cat_tag, cat_dir, cosmo, Nr=0, rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, 
+    def __init__(self, boxsize, cat_tag, cat_dir, cosmo, data_dir, Nr=0, rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, 
                  cf_tag='_baoiter', trr_analytic=True, nthreads=globals.nthreads, 
                  redshift=0.0, bias=2.0, alpha_model_start=1.0, dalpha=0.01, k0=0.1,
                  random_fn=None):
@@ -167,7 +168,7 @@ class BAO_iterator:
         self.mumax = 1.0
         self.bias = bias
         self.k0 = k0
-        self.weight_type=None
+        self.weight_type = None
         self.periodic = True
         self.nthreads = nthreads
         self.nmubins = 1
@@ -186,18 +187,22 @@ class BAO_iterator:
         if not trr_analytic and random_fn is None:
             raise ValueError("Must choose trr_analytic or pass random_fn!")
         self.random_fn = random_fn
-        self.projfn = f"../tables/bases{self.cat_tag}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}_rlz{self.Nr}.dat"
+        # need to create tables directory; figure out organization
+        self.projfn = os.path.join(data_dir, f"tables/bases{self.cat_tag}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}_rlz{self.Nr}.dat")
+        if not os.path.exists(self.projfn):
+            os.makedirs(self.projfn)
 
         # set up result dir
-        self.result_dir = '../results/results_lognormal{}'.format(self.cat_tag)
+        self.result_dir = os.path.join(data_dir, 'results/results_lognormal{}'.format(self.cat_tag))
         if not os.path.exists(self.result_dir):
             os.makedirs(self.result_dir)
 
         # write initial bases
-        projfn_start = f"../tables/bases{self.cat_tag}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}.dat"
+        projfn_start = os.path.join(data_dir, f"tables/bases{self.cat_tag}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}.dat")
         #alpha_guess was previously called alpha_model
         kwargs = {'cosmo_base':self.cosmo, 'redshift':self.redshift, 'dalpha':dalpha, 'alpha_guess':alpha_model_start, 'bias':self.bias}
         #self.ncomponents, _ = bao.write_bases(self.rbins[0], self.rbins[-1], projfn_start, **kwargs)
+        print(os.getcwd())
         bases = bao_bases(self.rbins[0], self.rbins[-1], projfn_start, **kwargs)
         base_vals = bases[:,1:]
         self.ncomponents = base_vals.shape[1]

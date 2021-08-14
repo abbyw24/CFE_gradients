@@ -22,6 +22,7 @@ import globals
 globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
+boxsize = globals.boxsize
 lognormal_density = globals.lognormal_density
 path_to_data_dir = globals.path_to_data_dir
 grad_type = globals.grad_type
@@ -35,7 +36,9 @@ nthreads = globals.nthreads
 
 mock_file_name_list = generate_mock_list.generate_mock_list()
 
+
 def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
+
     if cosmo_base is None:
         cosmo_base = cosmology.setCosmology('planck15')
 
@@ -43,9 +46,11 @@ def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
 
     return bias**2 * cf(r, z=redshift)
 
+
 # define cosmo_bases function
 def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000, 
               redshift=0.0, bias=1.0):
+
     if cosmo_base is None:
         print("cosmo_base not provided, defaulting to Planck 2015 cosmology ('planck15')")
         cosmo_base = cosmology.setCosmology('planck15')
@@ -62,16 +67,22 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
     ncomponents = bases.shape[1]-1
     return bases
 
+
 # define function to estimate gradient using suave
-def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
+def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, plots=False):
+
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)
     assert isinstance(path_to_data_dir, str)
 
     # create the needed subdirectories
+    tag = f'L{int(boxsize)}_n{lognormal_density}'
+    suave_dir = f'suave_data/{tag}'
+    plots_dir = f'plots/suave/{tag}/grad_recovered'
+
     sub_dirs = [
-        f"suave_data/{lognormal_density}",
-        f"plots/suave/{lognormal_density}/grad_recovered"
+        suave_dir,
+        plots_dir
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
@@ -96,7 +107,7 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
 
     for i in range(len(mock_file_name_list)):
         # load in mock and patch info
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{tag}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         mock_file_name = mock_info["mock_file_name"]
         mock_name = mock_info["mock_name"]
         L = mock_info["boxsize"]
@@ -117,14 +128,6 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
 
         nd = len(mock_data)
         x, y, z = mock_data.T
-
-        # non-loop-required plot parameters
-        v_min = -L/2.
-        v_max = L/2.
-        vs_norm = matplotlib.colors.Normalize(vmin=v_min, vmax=v_max)
-        cmap = matplotlib.cm.get_cmap('cool')
-        nvs = 50
-        vs = np.linspace(v_min, v_max, nvs)
 
         # random set
         nr = randmult*nd
@@ -186,11 +189,19 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         # print(f"mean squared error = {mean_sq_err}")
         suave_info["mean_sq_err"] = mean_sq_err
 
-        fig, ax = plt.subplots()
+        # non-loop-required plot parameters
+        v_min = -L/2.
+        v_max = L/2.
+        nvs = 50
+        vs = np.linspace(v_min, v_max, nvs)
+        
+        if plots == True:
+            fig, ax = plt.subplots()
+            vs_norm = matplotlib.colors.Normalize(vmin=v_min, vmax=v_max)
+            cmap = matplotlib.cm.get_cmap('cool')
 
         xi_locs = []
 
-        # plot correlation functions along the gradient axis
         for i, v in enumerate(vs):
             loc = loc_pivot + v*w_cont_hat
             # if i==len(vs)-1:
@@ -202,21 +213,28 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
                             weights1=weights1, weights2=weights2, weight_type=weight_type)    
             xi_locs.append(xi_loc)
             
-            p = plt.plot(r_fine, xi_loc, color=cmap(vs_norm(v)), lw=0.5)
+            if plots == True:
+                p = plt.plot(r_fine, xi_loc, color=cmap(vs_norm(v)), lw=0.5)
         
-        sm = plt.cm.ScalarMappable(cmap=cmap, norm=vs_norm)
-        cbar = plt.colorbar(sm)
-        cbar.set_label(r'$v \,\, (\mathbf{x} = v\hat{e}_\mathrm{gradient} + \mathbf{x}_\mathrm{pivot})$', rotation=270, labelpad=12)
-        ax.axhline(0, color='grey', lw=0.5)
-        ax.set_ylim((-0.01, 0.12))
-        ax.set_xlabel(r'Separation $r$ ($h^{-1}\,$Mpc)')
-        ax.set_ylabel(r'$\xi(r)$')
-        if grad_type == "1mock":
-            ax.set_title("")
-        else:
-            ax.set_title(f"Recovered Gradient, {mock_name}")
+        if plots == True:
+            
+            sm = plt.cm.ScalarMappable(cmap=cmap, norm=vs_norm)
+            cbar = plt.colorbar(sm)
+            cbar.set_label(r'$v \,\, (\mathbf{x} = v\hat{e}_\mathrm{gradient} + \mathbf{x}_\mathrm{pivot})$', rotation=270, labelpad=12)
+            ax.axhline(0, color='grey', lw=0.5)
+            ax.set_ylim((-0.01, 0.12))
+            ax.set_xlabel(r'Separation $r$ ($h^{-1}\,$Mpc)')
+            ax.set_ylabel(r'$\xi(r)$')
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/suave/{lognormal_density}/grad_recovered/{mock_file_name}.png"))
+            if grad_type == "1mock":
+                ax.set_title("")
+            else:
+                ax.set_title(f"Recovered Gradient, {mock_name}")
+
+            fig.savefig(os.path.join(path_to_data_dir, f'{plots_dir}/{mock_file_name}.png'))
+
+            plt.cla()
+            plt.close("all")
 
         # save other plot parameters
         suave_info["r_avg"] = r_avg
@@ -228,9 +246,6 @@ def suave_exp_vs_rec(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir):
         suave_info["weight_type"] = weight_type
 
         # save suave info dictionary
-        np.save(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_file_name}"), suave_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f'{suave_dir}/{mock_file_name}'), suave_info, allow_pickle=True)
 
-        plt.cla()
-        plt.close("all")
-
-        print(f"suave, {mock_file_name}")
+        print(f"suave --> {mock_file_name}")

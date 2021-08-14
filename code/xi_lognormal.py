@@ -3,14 +3,35 @@ import matplotlib.pyplot as plt
 import os
 import read_lognormal
 from center_mock import center_mock
-from corrfunc_ls import xi_ls
+from ls_debug import xi_ls      # *change this back to corrfunc_ls once you're done debugging
 from create_subdirs import create_subdirs
 import generate_mock_list
 import globals
 globals.initialize_vals()
 
+boxsize = globals.boxsize
+lognormal_density = globals.lognormal_density
+
+def xi_ln_mocklist(prints=False):
+
+    # results for clustered mocks, NO gradient
+    mock_vals = generate_mock_list.generate_mock_list(extra=True)
+    lognorm_file_list = mock_vals["lognorm_file_list"]
+
+    tag = f'L{int(boxsize)}_n{lognormal_density}'
+    sub_dirs = [
+        f'xi/{tag}'
+    ]
+    abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
+    create_subdirs(abs_path, sub_dirs)
+
+    for i in range(len(lognorm_file_list)):
+        xi_results = xi_lognormal(mock_vals["lognorm_mock"], i, prints=prints)
+        np.save(os.path.join(abs_path, f'xi/{tag}/xi_{lognorm_file_list[i]}'), xi_results)
+        print(f'xi, {lognorm_file_list[i]}')
+
 def xi_lognormal(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=2, periodic=globals.periodic, nthreads=globals.nthreads,
-    rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins):
+    rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, prints=False):
 
     path_to_mocks_dir = os.path.join(mock_dir, mock)
     lognorm_file = str(mock)+'_lognormal_rlz'+str(rlz)+'.bin'
@@ -32,20 +53,3 @@ def xi_lognormal(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult
     r_avg, results_xi = xi_ls(mock_data, rand_set, periodic, nthreads, rmin, rmax, nbins)
 
     return r_avg, results_xi
-
-
-# results for clustered mocks, NO gradient
-mock_vals = generate_mock_list.generate_mock_list(extra=True)
-lognorm_file_list = mock_vals["lognorm_file_list"]
-
-sub_dirs = [
-    f'xi/{globals.lognormal_density}'
-]
-abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
-create_subdirs(abs_path, sub_dirs)
-
-for i in range(len(lognorm_file_list)):
-    xi_results = xi_lognormal(mock_vals["lognorm_mock"], i)
-    np.save(os.path.join(abs_path, f'xi/{globals.lognormal_density}/xi_{lognorm_file_list[i]}'), xi_results)
-    print(f'xi, {lognorm_file_list[i]}')
-

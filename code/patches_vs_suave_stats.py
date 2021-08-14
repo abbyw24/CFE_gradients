@@ -24,6 +24,8 @@ def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad
     lognormal_density = lognormal_density, n_patches=n_patches):
 
     # create the needed subdirectories
+    tag = f'L{int(boxsize)}_n{lognormal_density}'
+
     sub_dirs = [
         f"plots/patches_vs_suave/scatter/{grad_type}/{n_mocks}mocks"
     ]
@@ -50,7 +52,7 @@ def scatter_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad
         plt.plot(x, x, color="black", alpha=0.5)
         plt.legend()
         
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/scatter/{grad_type}/{n_mocks}mocks/scatter_{n_patches}patches_vs_suave_L{boxsize}_n{lognormal_density}_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/scatter/{grad_type}/{n_mocks}mocks/scatter_{n_patches}patches_vs_suave_{tag}_{dim[i]}.png"))
         plt.cla()
     
         print(f"scatter plot for patches vs. suave, dim {dim[i]}, done")
@@ -59,6 +61,8 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
     lognormal_density=lognormal_density, n_patches=n_patches, nbins=30, hist_name="hist"):
 
     # create the needed subdirectories
+    tag = f'L{int(boxsize)}_n{lognormal_density}'
+
     sub_dirs = [
         f"plots/patches_vs_suave/histogram/{grad_type}/{n_mocks}mocks"
     ]
@@ -93,7 +97,7 @@ def histogram_patches_vs_suave(grads_exp, grads_rec_patches, grads_rec_suave, gr
 
         plt.legend()
 
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{grad_type}/{n_mocks}mocks/{hist_name}_{n_patches}patches_vs_suave_L{boxsize}_n{lognormal_density}_{dim[i]}.png"))
+        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches_vs_suave/histogram/{grad_type}/{n_mocks}mocks/{hist_name}_{n_patches}patches_vs_suave_{tag}_{dim[i]}.png"))
         plt.cla()
 
         print(f"histogram for patches vs. suave, dim {dim[i]}, done")
@@ -104,15 +108,17 @@ def extract_grads_patches_suave(patches_key="grad_recovered", suave_key="grad_re
     grads_rec_suave = []
 
     # load in mock, patches, and suave info
+    tag = f'L{int(boxsize)}_n{lognormal_density}'
+
     for i in range(len(mock_file_name_list)):
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{tag}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         mock_file_name = mock_info["mock_file_name"]
         grad_expected = mock_info["grad_expected"]
         
-        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{tag}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         grad_rec_patches = patch_info[patches_key].flatten()
 
-        suave_info = np.load(os.path.join(path_to_data_dir, f"suave_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        suave_info = np.load(os.path.join(path_to_data_dir, f"suave_data/{tag}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         grad_rec_suave = suave_info[suave_key].flatten()
 
         assert grad_rec_patches.shape == grad_rec_suave.shape == (3,)
@@ -134,7 +140,10 @@ def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type
     boxsize=boxsize, n_patches=n_patches, lognormal_density=lognormal_density, stats_name="stats"):
 
     n_mocks = len(grads_exp)
+
     # create the needed subdirectories
+    tag = f'L{int(boxsize)}_n{lognormal_density}'
+    
     sub_dirs = [
         f"patches_vs_suave_data/{grad_type}/{n_mocks}mocks"
     ]
@@ -189,4 +198,4 @@ def stats_patches_suave(grads_exp, grads_rec_patches, grads_rec_suave, grad_type
             "std_suave" : std_suave,
         }
 
-        np.save(os.path.join(path_to_data_dir, f"patches_vs_suave_data/{grad_type}/{n_mocks}mocks/{stats_name}_{n_patches}patches_vs_suave_L{boxsize}_n{lognormal_density}_{dim[i]}"), stats)
+        np.save(os.path.join(path_to_data_dir, f"patches_vs_suave_data/{grad_type}/{n_mocks}mocks/{stats_name}_{n_patches}patches_vs_suave_{tag}_{dim[i]}"), stats)

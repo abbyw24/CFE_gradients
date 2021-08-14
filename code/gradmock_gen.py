@@ -28,13 +28,19 @@ b_arr = mock_vals["b_arr"]
 # np.random.seed(123456)
 
 # function to generate gradient mock
-def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source, mock_file_name_list=mock_file_name_list, z_max=-50):
-
+def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source,
+                        mock_file_name_list=mock_file_name_list, plots=False, z_max=-50):
+    
     # create desired path to mocks directory if it doesn't already exist
+    tag = f'L{int(boxsize)}_n{lognormal_density}'
+    mock_dir = f'mock_data/{tag}'
+    colormock_dir = f'plots/color_mocks/{tag}'
+    samecolormock_dir = f'plots/samecolor_mocks/{tag}'
+
     sub_dirs = [
-        f"mock_data/{lognormal_density}",
-        f"plots/color_mocks/{lognormal_density}",
-        f"plots/samecolor_mocks/{lognormal_density}"
+        mock_dir,
+        colormock_dir,
+        samecolormock_dir
     ]
     create_subdirs(path_to_data_dir, sub_dirs)
 
@@ -48,8 +54,7 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
     elif grad_dim == 3:
         w_hat = np.random.normal(size=3)
     else:
-        print("Invalid dimension; must be 1, 2, or 3")
-        assert False
+        assert False, 'Invalid dimension; must be 1, 2, or 3'
 
     # normalize w_hat
     w_hat /= np.linalg.norm(w_hat)
@@ -78,7 +83,7 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f"{lognorm_file}.bin"))
             # define boxsize based on mock; and N = number of data points
         # make sure the boxsize from data equals the boxsize we specified in the file name
-        assert float(Lx) == float(boxsize)
+        assert float(Lx) == float(boxsize), 'boxsize from data does not match boxsize from globals.py'
 
         # boxsize
         L = Lx
@@ -135,47 +140,48 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
 
 
         # VISUALIZATION
-        # plot all points in same color
-        xy_slice = xs_grad[np.where(xs_grad[:,2] < z_max)] # select rows where z < z_max
+        if plots == True:
+            # plot all points in same color
+            xy_slice = xs_grad[np.where(xs_grad[:,2] < z_max)] # select rows where z < z_max
 
-        fig1, ax1 = plt.subplots()
-        plt.plot(xy_slice[:,0], xy_slice[:,1],',')   # plot scatter xy-slice
-        # plot vector w_hat (no z)
-        a = 0.35*L     # controls width of w_hat vector in plot
-        plt.arrow(-a, 0, 2*a, 0, color="black", lw=2, head_width = .1*a, head_length=.2*a, length_includes_head=True, zorder=100, label=w_hat)
-        ax1.set_aspect("equal")      # square aspect ratio
-        ax1.set_xlabel("x (Mpc/h)")
-        ax1.set_ylabel("y (Mpc/h)")
-        if grad_type == "1mock":
-            ax1.set_title("")
-        else:
-            ax1.set_title(mock_name)
-        ax1.legend()
-        fig1.savefig(os.path.join(path_to_data_dir, f"plots/samecolor_mocks/{lognormal_density}/{mock_file_name}.png"))
-        plt.cla()
+            fig1, ax1 = plt.subplots()
+            plt.plot(xy_slice[:,0], xy_slice[:,1],',')   # plot scatter xy-slice
+            # plot vector w_hat (no z)
+            a = 0.35*L     # controls width of w_hat vector in plot
+            plt.arrow(-a, 0, 2*a, 0, color="black", lw=2, head_width = .1*a, head_length=.2*a, length_includes_head=True, zorder=100, label=w_hat)
+            ax1.set_aspect("equal")      # square aspect ratio
+            ax1.set_xlabel("x (Mpc/h)")
+            ax1.set_ylabel("y (Mpc/h)")
+            if grad_type == "1mock":
+                ax1.set_title("")
+            else:
+                ax1.set_title(mock_name)
+            ax1.legend()
+            fig1.savefig(os.path.join(path_to_data_dir, f'{samecolormock_dir}/{lognormal_density}/{mock_file_name}.png'))
+            plt.cla()
 
-        # plot different colors for clust and uncl
-        xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
-        xy_slice_unclust = xs_unclust_grad[np.where(xs_unclust_grad[:,2] < z_max)]
+            # plot different colors for clust and uncl
+            xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
+            xy_slice_unclust = xs_unclust_grad[np.where(xs_unclust_grad[:,2] < z_max)]
 
-        fig2, ax2 = plt.subplots()
-        plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], ',', c="C0", label="clustered")
-        plt.plot(xy_slice_unclust[:,0], xy_slice_unclust[:,1], ',', c="orange", label="unclustered")
-        plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], c="green", label=w_hat)   # plot vector w_hat (no z)
-        ax2.set_aspect("equal")      # square aspect ratio
-        # plt.ylim((-400,400))
-        # plt.xlim((-400,400))
-        ax2.set_xlabel("x (Mpc/h)")
-        ax2.set_ylabel("y (Mpc/h)")
-        ax2.set_title(mock_name)
-        ax2.legend()
-        fig2.savefig(os.path.join(path_to_data_dir, f"plots/color_mocks/{lognormal_density}/color_{mock_file_name}.png"))
-        plt.cla()
+            fig2, ax2 = plt.subplots()
+            plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], ',', c="C0", label="clustered")
+            plt.plot(xy_slice_unclust[:,0], xy_slice_unclust[:,1], ',', c="orange", label="unclustered")
+            plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], c="green", label=w_hat)   # plot vector w_hat (no z)
+            ax2.set_aspect("equal")      # square aspect ratio
+            # plt.ylim((-400,400))
+            # plt.xlim((-400,400))
+            ax2.set_xlabel("x (Mpc/h)")
+            ax2.set_ylabel("y (Mpc/h)")
+            ax2.set_title(mock_name)
+            ax2.legend()
+            fig2.savefig(os.path.join(path_to_data_dir, f'{colormock_dir}/{lognormal_density}/color_{mock_file_name}.png'))
+            plt.cla()
 
-        plt.close("all") 
+            plt.close("all") 
 
         # save dictionary
-        path_to_mock_dict = os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}")
-        np.save(path_to_mock_dict, mock_info)
+        mock_dict_fn = os.path.join(path_to_data_dir, f'{mock_dir}/{mock_file_name_list[i]}')
+        np.save(mock_dict_fn, mock_info)
 
         print(f"gradient generated --> {mock_file_name}")

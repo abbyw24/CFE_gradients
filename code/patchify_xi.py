@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as img
-import math
-import Corrfunc
 import itertools as it
 import os
 from create_subdirs import create_subdirs
@@ -14,6 +12,7 @@ import globals
 globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
+boxsize = globals.boxsize
 lognormal_density = globals.lognormal_density
 path_to_data_dir = globals.path_to_data_dir
 grad_type = globals.grad_type
@@ -28,6 +27,7 @@ nthreads = globals.nthreads
 n_patches = globals.n_patches
 
 mock_file_name_list = generate_mock_list.generate_mock_list()
+
 
 # define patchify
 def patchify(data, boxsize, n_patches=n_patches):
@@ -52,23 +52,25 @@ def patchify(data, boxsize, n_patches=n_patches):
         patch_ids[mask_combined] = patch_id
     return patch_ids, idx_patches
 
+
 # define function to find xi in each patch
-def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_file_name_list = mock_file_name_list, n_patches=n_patches):
-    # make sure all inputs have the right form
-    assert isinstance(grad_dim, int)
-    assert isinstance(path_to_data_dir, str)
-    assert isinstance(n_patches, int)
+def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_file_name_list = mock_file_name_list,
+                    n_patches=n_patches, plots=False):
 
     # create the needed subdirectories
+    tag = f'L{int(boxsize)}_n{lognormal_density}'
+    patch_dir = f'patch_data/{tag}/{n_patches}patches'
+    plots_dir = f'plots/patches/{tag}/{n_patches}patches'
+
     sub_dirs = [
-        f"patch_data/{lognormal_density}/{n_patches}patches",
-        f"plots/patches/{lognormal_density}/{n_patches}patches/xi"
+        patch_dir,
+        plots_dir
     ]
-    create_subdirs(f"{path_to_data_dir}", sub_dirs)
+    create_subdirs(path_to_data_dir, sub_dirs)
 
     for i in range(len(mock_file_name_list)):
         # retrieve mock info dictionary
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{tag}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         mock_file_name = mock_info["mock_file_name"]
         mock_name = mock_info["mock_name"]
         mock_data = mock_info["grad_set"]
@@ -122,23 +124,29 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
         # define r_avg (this is the same for all xi)
         r_avg = results_xi_full[0]
 
-        fig, ax = plt.subplots()
-
         # results in patches
         xi_patches = []
         k = 0
-        cmap = plt.cm.get_cmap("cool")
-        ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
+
+        if plots == True:
+            fig, ax = plt.subplots()
+
+            cmap = plt.cm.get_cmap("cool")
+            ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
 
         for patch_id in patch_id_list:
             patch_data = mock_data[patch_ids_mock == patch_id]
             patch_rand = rand_set[patch_ids_rand == patch_id]
+
             results_xi_patch = xi_ls(patch_data, patch_rand, periodic, nthreads, rmin, rmax, nbins)
+
             xi_patch = results_xi_patch[1]
 
-            plt.plot(r_avg, xi_patch, alpha=0.5, marker=".", label=patches_idx[k])
+            if plots == True:
+                plt.plot(r_avg, xi_patch, alpha=0.5, marker=".", label=patches_idx[k])
             xi_patches.append(xi_patch)
             k += 1
+
         xi_patches = np.array(xi_patches)
 
         # average of patch results
@@ -153,26 +161,30 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
             "xi_patch_avg" : xi_patch_avg,
             "xi_full" : xi_full
             }
-        np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f'{patch_dir}/{mock_file_name}'), patch_info, allow_pickle=True)
 
         # plot results
-        plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")
-        plt.plot(r_avg, xi_patch_avg, color="black", alpha=0.5, marker=".", label="Avg. of Patches")
-        # plot parameters
-        ax.axhline(0, color='grey', lw=0.5)
-        ax.set_box_aspect(1)
-        ax.set_ylim((-0.01, 0.12))
-        ax.set_xlabel(r'Separation $r$ ($h^{-1}\,$Mpc)')
-        ax.set_ylabel(r'$\xi$(r)')
-        plt.rcParams["axes.titlesize"] = 10
-        if grad_type == "1mock":
-            ax.set_title("")
-        else:
-            ax.set_title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name}")
-        plt.legend(prop={'size': 8})
-        fig.savefig(os.path.join(path_to_data_dir, f"plots/patches/{lognormal_density}/{n_patches}patches/xi/{mock_file_name}.png"))
-        ax.cla()
+        if plots == True:
 
-        plt.close("all")
+            plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")
+            plt.plot(r_avg, xi_patch_avg, color="black", alpha=0.5, marker=".", label="Avg. of Patches")
+            # plot parameters
+            ax.axhline(0, color='grey', lw=0.5)
+            ax.set_box_aspect(1)
+            ax.set_ylim((-0.01, 0.12))
+            ax.set_xlabel(r'Separation $r$ ($h^{-1}\,$Mpc)')
+            ax.set_ylabel(r'$\xi$(r)')
+            plt.rcParams["axes.titlesize"] = 10
+
+            if grad_type == "1mock":
+                ax.set_title("")
+            else:
+                ax.set_title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name}")
+
+            plt.legend(prop={'size': 8})
+            fig.savefig(os.path.join(path_to_data_dir, f"{plots_dir}/xi/{mock_file_name}.png"))
+            ax.cla()
+
+            plt.close("all")
 
         print(f"xi in patches --> {mock_file_name}")

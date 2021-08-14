@@ -50,6 +50,7 @@ def generate_mock_list(
             mock_name_list.append(mock_name)
     
     elif grad_type == "1rlz_per_m":
+        assert n_mocks == 1 or n_mocks ==41 or n_mocks == 401, "'n_mocks' must be 1, 41, or 401"
         m_arr = np.linspace(-1.0, 1.0, n_mocks)
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = []
@@ -61,6 +62,7 @@ def generate_mock_list(
             mock_name_list.append(mock_name)
     
     elif grad_type == "1mock":     # (i.e. plots for poster)
+        assert n_mocks == 1, "'n_mocks' must be 1"
         m_arr = m * np.ones([n_mocks])
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = [f"{lognorm_mock}_lognormal_rlz{rlz}"]

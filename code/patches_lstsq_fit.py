@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from create_subdirs import create_subdirs
-from patchify_xi import center_mock
+from center_mock import center_mock
 from suave import cf_model
 import generate_mock_list
 import globals
@@ -10,6 +10,7 @@ import globals
 globals.initialize_vals()  # brings in all the default parameters
 
 grad_dim = globals.grad_dim
+boxsize = globals.boxsize
 lognormal_density = globals.lognormal_density
 path_to_data_dir = globals.path_to_data_dir
 
@@ -26,18 +27,15 @@ def f_bases(r, x):
     return xi_mod * x_pos
 
 def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_patches=n_patches):
-    # create the needed subdirectories
-    sub_dirs = [
-        f"plots/patches/{lognormal_density}/{n_patches}patches/lst_sq_fit/new_fit"
-    ]
-    create_subdirs(path_to_data_dir, sub_dirs)
+
+    tag = f'L{int(boxsize)}_n{lognormal_density}'
 
     for i in range(len(mock_file_name_list)):
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{lognormal_density}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{tag}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         mock_file_name = mock_info["mock_file_name"]
         L = mock_info["boxsize"]
 
-        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
+        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{tag}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
         patch_centers = patch_info["patch_centers"]
 
         # center mock around 0
@@ -84,6 +82,6 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
         # change back patch_center values for dictionary saving
         center_mock(patch_centers, 0, L)
         # resave patch info dictionary
-        np.save(os.path.join(path_to_data_dir, f"patch_data/{lognormal_density}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f"patch_data/{tag}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
 
         print(f"lstsqfit in {n_patches} patches --> {mock_file_name}")

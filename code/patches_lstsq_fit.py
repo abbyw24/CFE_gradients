@@ -31,18 +31,18 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
     tag = f'L{int(boxsize)}_n{lognormal_density}'
 
     for i in range(len(mock_file_name_list)):
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{tag}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
-        mock_file_name = mock_info["mock_file_name"]
-        L = mock_info["boxsize"]
+        mock_info = np.load(os.path.join(path_to_data_dir, f'mock_data/{tag}/{mock_file_name_list[i]}.npy'), allow_pickle=True).item()
+        mock_file_name = mock_info['mock_file_name']
+        L = mock_info['boxsize']
 
-        patch_info = np.load(os.path.join(path_to_data_dir, f"patch_data/{tag}/{n_patches}patches/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
-        patch_centers = patch_info["patch_centers"]
+        patch_info = np.load(os.path.join(path_to_data_dir, f'patch_data/{tag}/{n_patches}patches/{mock_file_name_list[i]}.npy'), allow_pickle=True).item()
+        patch_centers = patch_info['patch_centers']
 
         # center mock around 0
         center_mock(patch_centers, -L/2, L/2)
 
-        r = patch_info["r_avg"]
-        xi_patches = patch_info["xi_patches"]
+        r = patch_info['r_avg']
+        xi_patches = patch_info['xi_patches']
 
         # below we "unroll" the array with binned xi in each patch (dimensions nbins x npatches) into a 1D array with length nbins x npatches
         #   in order to perform our least square fit
@@ -71,17 +71,17 @@ def patches_lstsq_fit(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, n_pa
         m_fit = theta[1:]
     
         # add recovered values to patch info dictionary
-        patch_info["theta"] = theta
-        patch_info["b_fit"] = b_fit
-        patch_info["m_fit"] = m_fit
+        patch_info['theta'] = theta
+        patch_info['b_fit'] = b_fit
+        patch_info['m_fit'] = m_fit
 
         # add recovered gradient value to patch info dictionary
         grad_recovered = m_fit/b_fit
-        patch_info["grad_recovered"] = grad_recovered
+        patch_info['grad_recovered'] = grad_recovered
 
         # change back patch_center values for dictionary saving
         center_mock(patch_centers, 0, L)
         # resave patch info dictionary
-        np.save(os.path.join(path_to_data_dir, f"patch_data/{tag}/{n_patches}patches/{mock_file_name}"), patch_info, allow_pickle=True)
+        np.save(os.path.join(path_to_data_dir, f'patch_data/{tag}/{n_patches}patches/{mock_file_name}'), patch_info, allow_pickle=True)
 
         print(f"lstsqfit in {n_patches} patches --> {mock_file_name}")

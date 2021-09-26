@@ -68,6 +68,16 @@ def generate_mock_list(
         lognorm_file_list = [f"{lognorm_mock}_lognormal_rlz{rlz}"]
         mock_file_name_list = ["{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m_arr[0], b)]
         mock_name_list = ["n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[0], b)]
+    
+    elif grad_type == "lognormal":
+        m_arr = None
+        b_arr = None
+        mock_name_list = None
+        lognorm_file_list = []
+        for i in range(n_mocks):
+            filename = f"{lognorm_mock}_lognormal_rlz{i}"
+            lognorm_file_list.append(filename)
+            mock_file_name_list.append(filename)
 
     else:
         print("'grad_type' must be '1rlz', '1m', or '1rlz_per_m'")

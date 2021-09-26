@@ -70,11 +70,11 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
 
     for i in range(len(mock_file_name_list)):
         # retrieve mock info dictionary
-        mock_info = np.load(os.path.join(path_to_data_dir, f"mock_data/{tag}/{mock_file_name_list[i]}.npy"), allow_pickle=True).item()
-        mock_file_name = mock_info["mock_file_name"]
-        mock_name = mock_info["mock_name"]
-        mock_data = mock_info["grad_set"]
-        L = mock_info["boxsize"]
+        mock_info = np.load(os.path.join(path_to_data_dir, f'mock_data/{tag}/{mock_file_name_list[i]}.npy'), allow_pickle=True).item()
+        mock_file_name = mock_info['mock_file_name']
+        mock_name = mock_info['mock_name']
+        mock_data = mock_info['grad_set']
+        L = mock_info['boxsize']
 
         # center mock from 0 to L
         center_mock(mock_data, 0, L)
@@ -94,7 +94,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
         patch_ids_rand = patches_rand[0]
         patch_id_list_rand = np.unique(patch_ids_rand)
 
-        # make sure patch lists match for mock and random, that there's nothing weird going on
+        # make sure patch lists match for mock and random
         assert np.all(patch_id_list_mock == patch_id_list_rand)
         patch_id_list = patch_id_list_mock
         n_patches = len(patch_id_list)
@@ -114,11 +114,11 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
 
         # save values used to calculate xi
         patch_info = {
-            "periodic" : periodic,
-            "nthreads" : nthreads,
-            "rmin" : rmin,
-            "rmax" : rmax,
-            "nbins" : nbins
+            'periodic' : periodic,
+            'nthreads' : nthreads,
+            'rmin' : rmin,
+            'rmax' : rmax,
+            'nbins' : nbins
         }
 
         # define r_avg (this is the same for all xi)
@@ -131,7 +131,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
         if plots == True:
             fig, ax = plt.subplots()
 
-            cmap = plt.cm.get_cmap("cool")
+            cmap = plt.cm.get_cmap('cool')
             ax.set_prop_cycle('color', cmap(np.linspace(0, 1, n_patches)))
 
         for patch_id in patch_id_list:
@@ -143,7 +143,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
             xi_patch = results_xi_patch[1]
 
             if plots == True:
-                plt.plot(r_avg, xi_patch, alpha=0.5, marker=".", label=patches_idx[k])
+                plt.plot(r_avg, xi_patch, alpha=0.5, marker='.', label=patches_idx[k])
             xi_patches.append(xi_patch)
             k += 1
 
@@ -154,37 +154,37 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
 
         # save xi data– to load in separate file for least square fit
         patch_info = {
-            "n_patches" : n_patches,
-            "patch_centers" : patch_centers,
-            "r_avg" : r_avg,
-            "xi_patches" : xi_patches,
-            "xi_patch_avg" : xi_patch_avg,
-            "xi_full" : xi_full
+            'n_patches' : n_patches,
+            'patch_centers' : patch_centers,
+            'r_avg' : r_avg,
+            'xi_patches' : xi_patches,
+            'xi_patch_avg' : xi_patch_avg,
+            'xi_full' : xi_full
             }
         np.save(os.path.join(path_to_data_dir, f'{patch_dir}/{mock_file_name}'), patch_info, allow_pickle=True)
 
         # plot results
         if plots == True:
 
-            plt.plot(r_avg, xi_full, color="black", marker=".", label="Full Mock")
-            plt.plot(r_avg, xi_patch_avg, color="black", alpha=0.5, marker=".", label="Avg. of Patches")
+            plt.plot(r_avg, xi_full, color='black', marker='.', label="Full Mock")
+            plt.plot(r_avg, xi_patch_avg, color='black', alpha=0.5, marker='.', label="Avg. of Patches")
             # plot parameters
             ax.axhline(0, color='grey', lw=0.5)
             ax.set_box_aspect(1)
             ax.set_ylim((-0.01, 0.12))
-            ax.set_xlabel(r'Separation $r$ ($h^{-1}\,$Mpc)')
-            ax.set_ylabel(r'$\xi$(r)')
-            plt.rcParams["axes.titlesize"] = 10
+            ax.set_xlabel(r"Separation $r$ ($h^{-1}\,$Mpc)")
+            ax.set_ylabel(r"$\xi$(r)")
+            plt.rcParams['axes.titlesize'] = 10
 
-            if grad_type == "1mock":
+            if grad_type == '1mock':
                 ax.set_title("")
             else:
                 ax.set_title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name}")
 
             plt.legend(prop={'size': 8})
-            fig.savefig(os.path.join(path_to_data_dir, f"{plots_dir}/xi/{mock_file_name}.png"))
+            fig.savefig(os.path.join(path_to_data_dir, f'{plots_dir}/xi/{mock_file_name}.png'))
             ax.cla()
 
-            plt.close("all")
+            plt.close('all')
 
         print(f"xi in patches --> {mock_file_name}")

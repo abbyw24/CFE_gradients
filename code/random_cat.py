@@ -1,4 +1,3 @@
-
 import os
 import time
 import numpy as np
@@ -6,13 +5,13 @@ import numpy as np
 import globals
 globals.initialize_vals()
 
-def main(boxsize=globals.boxsize, nbar_str=globals.lognormal_density, nx=globals.As):
+def main(boxsize=globals.boxsize, nbar_str=globals.lognormal_density, nx=1):
 
     tag = '_L{}_n{}'.format(boxsize, nbar_str)
     
     print("Making random catalogs for {}".format(tag))
 
-    cat_dir = 'research-summer2020_output/catalogs/randoms'
+    cat_dir = '/scratch/aew492/research-summer2020_output/catalogs/randoms'
     if not os.path.isdir(cat_dir):
         os.makedirs(cat_dir)
 
@@ -21,17 +20,17 @@ def main(boxsize=globals.boxsize, nbar_str=globals.lognormal_density, nx=globals
     boxsize = float(boxsize)
 
     if not os.path.isfile(rand_fn):
-        random = generate_random(nbar, boxsize, nx, savepos=rand_fn)
+        generate_random(nbar, boxsize, nx, savepos=rand_fn)
     else:
         print("File already exists! Exiting.", rand_fn)
 
 def generate_random(nbar, boxsize, nx, savepos=None):  # previously had an optional seed argument; do i need to worry about this?
     print("Making random catalog")
     s = time.time()
-    nr = float(nbar) * float(boxsize)**3
-    random = np.random.uniform(-boxsize/2, boxsize/2, (3,nr))
+    nr = nx * float(nbar) * int(boxsize)**3
+    random = np.random.uniform(0, boxsize, (int(nr),3))
     print('time: {}'.format(time.time()-s))
-    print("Random: {}".format(nr))
+    print("Random: {}".format(int(nr)))
     if savepos:
         np.savetxt(savepos, random)     # keeping this saved in txt format since this is what kate had / is in bao_iterative
     return random

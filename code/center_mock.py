@@ -6,7 +6,7 @@ def center_mock(data, min_val, max_val, shift_val=None):
     if shift_val == None:
         shift_val = (max_val - min_val)/2
     while np.all((data >= min_val) & (data <= max_val)) == False:
-        # print(f"correction {k}: min patch_center = {data.min()}, max patch_center = {data.max()}")
+        # print(f"correction {k}: min data = {data.min()}, max data = {data.max()}")
         if np.any(data <= min_val):
             # print("too low, shifting up by {:.2f}".format(shift_val))
             data += shift_val
@@ -17,3 +17,5 @@ def center_mock(data, min_val, max_val, shift_val=None):
             assert np.all((data >= min_val) & (data <= max_val))
             break
         k += 1
+        if k >= 10:
+            assert False, "error centering mock– too many iterations"

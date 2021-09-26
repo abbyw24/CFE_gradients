@@ -13,7 +13,8 @@ from Corrfunc.bases import bao_bases
 from colossus.cosmology import cosmology
 
 import read_lognormal as reader
-# import bao_utils      (hopefully) actually unused in this script, otherwise I need to copy from kate's github repo
+
+from center_mock import center_mock
 
 import globals
 globals.initialize_vals()
@@ -21,19 +22,17 @@ globals.initialize_vals()
 
 def main():
 
-    # CHANGE THIS STUFF
     boxsize = globals.boxsize
     density = globals.lognormal_density
-    cat_tag = f'_L{boxsize}_n{density}_z057_patchy'
-    data_dir = '/scratch/aew492/research-summer2020_output/'
+    cat_tag = f'_L{boxsize}_n{density}_z057_patchy_As2x'
+    data_dir = '/scratch/aew492/research-summer2020_output'
     result_dir = os.path.join(data_dir, f'lognormal/iterative_results/lognormal{cat_tag}')
     cat_dir = f'/scratch/ksf293/mocks/lognormal/cat{cat_tag}'
-    random_fn = os.path.join(data_dir, f'catalogs/rand_L{boxsize}_n{density}_1x.dat')  # generate my own random catalogs
-    # *change file / file format
+    random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{boxsize}_n{density}_1x.dat')  # generate my own random catalogs
 
     proj = 'baoiter'
     # cosmo_name options: ['b17', 'planck', 'wmap9'] (for example)
-    #cosmo_name = 'b17'
+    # cosmo_name = 'b17'
     cosmo_name = 'planck15'
     cosmo = cosmology.setCosmology(cosmo_name)
     cf_tag = f"_{proj}_cosmo{cosmo_name}_test"
@@ -45,9 +44,9 @@ def main():
     niter_max = 160 # stop after this many iterations if not converged 
 
     skip_converged = True
-    trr_analytic = True
+    trr_analytic = False     # needs to be False eventually
     nthreads = globals.nthreads
-    dalpha = 0.001
+    dalpha = 0.1    # previously .001
     k0 = 0.1
 
     print(Corrfunc.__file__)
@@ -102,7 +101,7 @@ def main():
         converged = False
         while (not converged) and (niter < niter_max):
 
-            xi, amps = biter.bao_iterative(dalpha, alpha_model)
+            xi, amps, bases = biter.bao_iterative(dalpha, alpha_model)
             C = amps[4]
 
             alpha_result = alpha_model + C*k0
@@ -145,12 +144,15 @@ def main():
         if converged:
             print(f"converged after {niter} iterations with error {err} (threshold {convergence_threshold})")
 
+            # resave converged correlation function (our new basis function!) as a .dat file (instead of .npy) to fit suave script
+            biter.save_basis(xi, amps, niter, extra_dict)
+            
 
 
 class BAO_iterator:
 
     def __init__(self, boxsize, cat_tag, cat_dir, cosmo, data_dir, Nr=0, rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, 
-                 cf_tag='_baoiter', trr_analytic=True, nthreads=globals.nthreads, 
+                 cf_tag='_baoiter', trr_analytic=False, nthreads=globals.nthreads, 
                  redshift=0.0, bias=2.0, alpha_model_start=1.0, dalpha=0.01, k0=0.1,
                  random_fn=None):
 
@@ -169,7 +171,7 @@ class BAO_iterator:
         self.bias = bias
         self.k0 = k0
         self.weight_type = None
-        self.periodic = True
+        self.periodic = False   # previously True
         self.nthreads = nthreads
         self.nmubins = 1
         self.verbose = False
@@ -179,7 +181,7 @@ class BAO_iterator:
         # set up other data
         self.rbins = np.linspace(rmin, rmax, nbins+1)
         self.rbins_avg = 0.5*(self.rbins[1:]+self.rbins[:-1])
-        self.rcont = np.linspace(rmin, rmax, 1000)
+        self.rcont = np.linspace(rmin, rmax, 2000)
 
         self.cat_tag = cat_tag
         self.cat_dir = cat_dir
@@ -187,24 +189,26 @@ class BAO_iterator:
         if not trr_analytic and random_fn is None:
             raise ValueError("Must choose trr_analytic or pass random_fn!")
         self.random_fn = random_fn
-        # need to create tables directory; figure out organization
-        self.projfn = os.path.join(data_dir, f"tables/bases{self.cat_tag}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}_rlz{self.Nr}.dat")
-        if not os.path.exists(self.projfn):
-            os.makedirs(self.projfn)
+
+        self.data_dir = data_dir
+        self.projfn = os.path.join(self.data_dir, f"tables/bases{self.cat_tag}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}_rlz{self.Nr}.dat")
+        if not os.path.exists(os.path.join(self.data_dir, f"tables")):
+            os.makedirs(os.path.join(self.data_dir, f"tables"))
 
         # set up result dir
-        self.result_dir = os.path.join(data_dir, 'results/results_lognormal{}'.format(self.cat_tag))
+        self.result_dir = os.path.join(self.data_dir, 'results/results_lognormal{}'.format(self.cat_tag))
         if not os.path.exists(self.result_dir):
             os.makedirs(self.result_dir)
 
         # write initial bases
-        projfn_start = os.path.join(data_dir, f"tables/bases{self.cat_tag}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}.dat")
+        projfn_start = os.path.join(self.data_dir, f"tables/bases{self.cat_tag}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}.dat")
         #alpha_guess was previously called alpha_model
         kwargs = {'cosmo_base':self.cosmo, 'redshift':self.redshift, 'dalpha':dalpha, 'alpha_guess':alpha_model_start, 'bias':self.bias}
         #self.ncomponents, _ = bao.write_bases(self.rbins[0], self.rbins[-1], projfn_start, **kwargs)
         print(os.getcwd())
         bases = bao_bases(self.rbins[0], self.rbins[-1], projfn_start, **kwargs)
         base_vals = bases[:,1:]
+        # print("base vals:", base_vals)
         self.ncomponents = base_vals.shape[1]
 
 
@@ -215,6 +219,14 @@ class BAO_iterator:
         np.save(save_fn, [self.rcont, xi, amps, 'baoiter', extra_dict])
         print(f"Saved to {save_fn}")
 
+    def save_basis(self, xi, amps, niter, extra_dict):
+        if not os.path.exists(os.path.join(self.data_dir, f'tables/final_bases')):
+            os.makedirs(os.path.join(self.data_dir, f'tables/final_bases'))
+        basis_fn = f'{self.data_dir}/tables/final_bases/basis{self.cat_tag}_rlz{self.Nr}.dat'
+        basis = np.array([self.rcont, xi]).T
+        np.savetxt(basis_fn, basis)
+        print(f"Saved final basis to {basis_fn}")
+
 
     def load_catalogs(self):
         self.load_data()
@@ -224,14 +236,18 @@ class BAO_iterator:
 
     def load_data(self):
         data_fn = f'{self.cat_dir}/cat{self.cat_tag}_lognormal_rlz{self.Nr}.bin'
-        _, _, _, N, data = reader.read(data_fn) # first 3 are Lx, Ly, Lz
+        L, _, _, N, data = reader.read(data_fn) # first 3 are Lx, Ly, Lz
+        assert L == self.boxsize, "boxsize from data must equal boxsize from globals"
         self.x, self.y, self.z, _, _, _ = data.T
+        pos = np.array([self.x, self.y, self.z])
+        center_mock(pos, 0, self.boxsize)
         self.nd = N
         self.weights = None
 
 
     def load_random(self):
-        random = self.random_fn
+        random = np.loadtxt(self.random_fn)
+        center_mock(random, 0, self.boxsize)
         self.x_rand, self.y_rand, self.z_rand = random.T
         self.nr = random.shape[0]
         self.weights_rand = None
@@ -239,9 +255,13 @@ class BAO_iterator:
 
     def run_estimator_analytic(self):
         # TODO: make that can pass rbins as None to DDsmu for e.g. generalr when dont need!
+
         _, dd_proj, _ = DDsmu(1, self.nthreads, self.rbins, self.mumax, self.nmubins, self.x, self.y, self.z,
                         proj_type=self.proj_type, ncomponents=self.ncomponents, projfn=self.projfn,
                         verbose=self.verbose, boxsize=self.boxsize, periodic=self.periodic, isa='fallback')
+        projfn = np.loadtxt(self.projfn)
+        print("projfn:", self.projfn, projfn)
+        print("dd:", dd_proj)
 
         volume = float(self.boxsize**3)
         rr_ana, trr_ana = trr_analytic(self.rmin, self.rmax, self.nd, volume, self.ncomponents, self.proj_type, rbins=self.rbins, projfn=self.projfn)
@@ -254,9 +274,12 @@ class BAO_iterator:
         return xi_periodic_ana, amps_periodic_ana
 
 
-
     def run_estimator_numeric(self):
 
+        # print("running DD")
+        # print(f"nthreads: {self.nthreads}, rbins: {self.rbins}, mumax: {self.mumax}, nmubins: {self.nmubins}")
+        # print(f"x: {self.x}, y: {self.y}, z: {self.z}")
+        # print(f"proj_type: {self.proj_type}, ncomponents: {self.ncomponents}, projfn: {self.projfn}, verbose: {self.verbose}, boxsize: {self.boxsize}, periodic: {self.periodic}")
         _, dd_proj, _ = DDsmu(1, self.nthreads, self.rbins, self.mumax, self.nmubins, self.x, self.y, self.z,
                         proj_type=self.proj_type, ncomponents=self.ncomponents, projfn=self.projfn,
                         verbose=self.verbose, boxsize=self.boxsize, periodic=self.periodic)
@@ -273,7 +296,7 @@ class BAO_iterator:
         print("nd nr", self.nd, self.nr)
         amps = compute_amps(self.ncomponents, self.nd, self.nd, self.nr, self.nr, dd_proj, dr_proj, dr_proj, rr_proj, trr_proj)
         print("AMPS:", amps)
-        xi_proj = evaluate_xi(self.ncomponents, amps, len(self.rcont), self.rcont, len(self.rbins)-1, self.rbins, self.proj_type, projfn=self.projfn)
+        xi_proj = evaluate_xi(amps, self.rcont, self.proj_type, rbins=self.rbins, projfn=self.projfn)
 
         return xi_proj, amps
 
@@ -289,11 +312,11 @@ class BAO_iterator:
     def bao_iterative(self, dalpha, alpha_model):
 
         kwargs = {'cosmo_base':self.cosmo, 'redshift':self.redshift, 'dalpha':dalpha, 'alpha_guess':alpha_model, 'bias':self.bias, 'k0':self.k0}
-        #self.ncomponents, _ = bao.write_bases(self.rbins[0], self.rbins[-1], self.projfn, **kwargs)      
+        # self.ncomponents, _ = bao.write_bases(self.rbins[0], self.rbins[-1], self.projfn, **kwargs)    
         bases = bao_bases(self.rbins[0], self.rbins[-1], self.projfn, **kwargs)
         xi, amps = self.run_estimator()
-        
-        return xi, amps
+
+        return xi, amps, bases
 
 
 

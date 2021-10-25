@@ -3,6 +3,7 @@ start = datetime.now()
 
 # compute correlation function on lognormal mocks (no gradient!)
 import xi_lognormal
+xi_lognormal.xi_ls_ln_mocklist()
 
 # generate gradient mocks based on the specified grad_type in globals
 import gradmock_gen

@@ -11,8 +11,11 @@ def initialize_vals():
     global grad_dim
     grad_dim = 1        # dimension of w_hat in gradient mock
 
-    global path_to_data_dir
-    path_to_data_dir = f'/scratch/aew492/research-summer2020_output/{grad_dim}D'
+    global data_dir
+    data_dir = f'/scratch/aew492/research-summer2020_output'
+
+    global grad_dir
+    grad_dir = os.path.join(data_dir, f'gradients/{grad_dim}D')
 
     global boxsize
     boxsize = 750
@@ -23,11 +26,17 @@ def initialize_vals():
     global As
     As = 2
 
-    global grad_type
-    grad_type = "1mock"
+    global cat_tag
+    if As == 1:
+        cat_tag = f'L{boxsize}_n{lognormal_density}_z057_patchy'
+    else:
+        cat_tag = f'L{boxsize}_n{lognormal_density}_z057_patchy_As{As}x'
+
+    global mock_type
+    mock_type = '1m'     # choose from '1rlz', '1m', '1rlz_per_m', '1mock', or 'lognormal'
 
     global m
-    m = 0
+    m = 1.0
 
     global b
     b = 0.5
@@ -36,7 +45,7 @@ def initialize_vals():
     rlz = 0
 
     global n_mocks
-    n_mocks = 1 
+    n_mocks = 401 
 
     global mocks_info
 
@@ -44,9 +53,9 @@ def initialize_vals():
     global m_arr
     global b_arr
 
-    # parameters for landy-szalay:
+    # parameters for cf estimators:
     global randmult
-    randmult = 2
+    randmult = 3 
     global periodic
     periodic = False
     global rmin

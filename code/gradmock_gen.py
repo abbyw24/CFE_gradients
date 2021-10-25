@@ -8,11 +8,13 @@ import globals
 import generate_mock_list
 globals.initialize_vals()
 
-path_to_data_dir = globals.path_to_data_dir
+data_dir = globals.data_dir
+grad_dir = globals.grad_dir
 grad_dim = globals.grad_dim
 boxsize = globals.boxsize
-grad_type = globals.grad_type
+mock_type = globals.mock_type
 lognormal_density = globals.lognormal_density
+cat_tag = globals.cat_tag
 
 mock_vals = generate_mock_list.generate_mock_list(extra=True)
 path_to_lognorm_source = mock_vals['path_to_lognorm_source']
@@ -22,25 +24,24 @@ lognorm_file_list = mock_vals['lognorm_file_list']
 m_arr = mock_vals['m_arr']
 b_arr = mock_vals['b_arr']
 
-# # pick a seed number so that random set stays the same every time (for now)
-# np.random.seed(123456)
+# pick a seed number so that random set stays the same every time (for now)
+np.random.seed(123456)
 
 # function to generate gradient mock
-def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source,
+def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source,
                         mock_file_name_list=mock_file_name_list, plots=False, z_max=-50):
     
     # create desired path to mocks directory if it doesn't already exist
-    tag = f'L{int(boxsize)}_n{lognormal_density}'
-    mock_dir = f'mock_data/{tag}'
-    colormock_dir = f'plots/color_mocks/{tag}'
-    samecolormock_dir = f'plots/samecolor_mocks/{tag}'
+    mock_dir = f'mock_data/{cat_tag}'
+    colormock_dir = f'plots/color_mocks/{cat_tag}'
+    samecolormock_dir = f'plots/samecolor_mocks/{cat_tag}'
 
     sub_dirs = [
         mock_dir,
         colormock_dir,
         samecolormock_dir
     ]
-    create_subdirs(path_to_data_dir, sub_dirs)
+    create_subdirs(grad_dir, sub_dirs)
 
     ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
     # generate unit vector– this is the direction of the gradient
@@ -80,6 +81,9 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         # LOGNORMAL SET
         Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f'{lognorm_file}.bin'))
             # define boxsize based on mock; and N = number of data points
+        
+        # number of data points
+        mock_info['N'] = N
 
         # boxsize
         L = Lx
@@ -99,8 +103,8 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         mock_info['velocities'] = velocities
 
 
-        # RANDOM SET
-        # generate a random data set (same size as mock)
+        # NULL SET
+        # generate a null (unclustered) data set (same size as mock)
         xs_rand = np.random.uniform(-L/2,L/2,(3,N))
         mock_info['rand_set'] = xs_rand
 
@@ -136,6 +140,13 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
         xs_grad = np.append(xs_clust_grad, xs_unclust_grad, axis=0)
         mock_info['grad_set'] = xs_grad
 
+        # save grad_set to catalogs directory
+        cat_dir = os.path.join(data_dir, f'catalogs/gradients/{cat_tag}')
+        if not os.path.exists(cat_dir):
+            os.makedirs(cat_dir)
+        cat_fn = os.path.join(cat_dir, f'{mock_file_name}')
+        np.save(cat_fn, xs_grad)
+
 
         # VISUALIZATION
         if plots == True:
@@ -150,12 +161,12 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
             ax1.set_aspect('equal')      # square aspect ratio
             ax1.set_xlabel("x (Mpc/h)")
             ax1.set_ylabel("y (Mpc/h)")
-            if grad_type == '1mock':
+            if mock_type == '1mock':
                 ax1.set_title("")
             else:
                 ax1.set_title(mock_name)
             ax1.legend()
-            fig1.savefig(os.path.join(path_to_data_dir, f'{samecolormock_dir}/{mock_file_name}.png'))
+            fig1.savefig(os.path.join(grad_dir, f'{samecolormock_dir}/{mock_file_name}.png'))
             plt.cla()
 
             # plot different colors for clust and uncl
@@ -173,13 +184,13 @@ def generate_gradmocks(grad_type=grad_type, grad_dim=grad_dim, path_to_lognorm_s
             ax2.set_ylabel("y (Mpc/h)")
             ax2.set_title(mock_name)
             ax2.legend()
-            fig2.savefig(os.path.join(path_to_data_dir, f'{colormock_dir}/color_{mock_file_name}.png'))
+            fig2.savefig(os.path.join(grad_dir, f'{colormock_dir}/color_{mock_file_name}.png'))
             plt.cla()
 
             plt.close('all') 
 
         # save dictionary
-        mock_dict_fn = os.path.join(path_to_data_dir, f'{mock_dir}/{mock_file_name_list[i]}')
+        mock_dict_fn = os.path.join(grad_dir, f'{mock_dir}/{mock_file_name_list[i]}')
         np.save(mock_dict_fn, mock_info)
 
         print(f"gradient generated --> {mock_file_name}")

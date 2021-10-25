@@ -11,11 +11,12 @@ import globals
 
 globals.initialize_vals()  # brings in all the default parameters
 
+cat_tag = globals.cat_tag
 grad_dim = globals.grad_dim
 boxsize = globals.boxsize
 lognormal_density = globals.lognormal_density
 path_to_data_dir = globals.path_to_data_dir
-grad_type = globals.grad_type
+mock_type = globals.mock_type
 
 randmult = globals.randmult
 periodic = globals.periodic
@@ -58,9 +59,8 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
                     n_patches=n_patches, plots=False):
 
     # create the needed subdirectories
-    tag = f'L{int(boxsize)}_n{lognormal_density}'
-    patch_dir = f'patch_data/{tag}/{n_patches}patches'
-    plots_dir = f'plots/patches/{tag}/{n_patches}patches'
+    patch_dir = f'patch_data/{cat_tag}/{n_patches}patches'
+    plots_dir = f'plots/patches/{cat_tag}/{n_patches}patches'
 
     sub_dirs = [
         patch_dir,
@@ -70,7 +70,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
 
     for i in range(len(mock_file_name_list)):
         # retrieve mock info dictionary
-        mock_info = np.load(os.path.join(path_to_data_dir, f'mock_data/{tag}/{mock_file_name_list[i]}.npy'), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(path_to_data_dir, f'mock_data/{cat_tag}/{mock_file_name_list[i]}.npy'), allow_pickle=True).item()
         mock_file_name = mock_info['mock_file_name']
         mock_name = mock_info['mock_name']
         mock_data = mock_info['grad_set']
@@ -176,7 +176,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
             ax.set_ylabel(r"$\xi$(r)")
             plt.rcParams['axes.titlesize'] = 10
 
-            if grad_type == '1mock':
+            if mock_type == '1mock':
                 ax.set_title("")
             else:
                 ax.set_title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name}")

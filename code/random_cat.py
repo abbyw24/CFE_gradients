@@ -5,7 +5,7 @@ import numpy as np
 import globals
 globals.initialize_vals()
 
-def main(boxsize=globals.boxsize, nbar_str=globals.lognormal_density, nx=1):
+def main(boxsize=globals.boxsize, nbar_str=globals.lognormal_density, nx=3):
 
     tag = '_L{}_n{}'.format(boxsize, nbar_str)
     
@@ -46,4 +46,4 @@ if __name__=='__main__':
     nbar_str_list = ['1e-6', '1e-5', '1e-4', '2e-4', '4e-4']
     for boxsize in boxsize_list:
         for nbar_str in nbar_str_list:
-            main(boxsize=boxsize, nbar_str=nbar_str)
+            main(boxsize=boxsize, nbar_str=nbar_str, nx=globals.randmult)

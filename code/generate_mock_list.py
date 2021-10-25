@@ -7,25 +7,22 @@ def generate_mock_list(
     boxsize = globals.boxsize,
     lognormal_density = globals.lognormal_density,
     As = globals.As,
-    grad_type = globals.grad_type,
+    cat_tag = globals.cat_tag,
+    mock_type = globals.mock_type,
     n_mocks = globals.n_mocks,
     m = globals.m,
     b = globals.b,
     rlz = globals.rlz,
     extra = False
 ):
-    if As == 2:
-        As_key = '_As2x'
-    elif As == 1:
-        As_key = ''
 
-    lognorm_mock = f'cat_L{boxsize}_n{lognormal_density}_z057_patchy{As_key}'
+    lognorm_mock = f'cat_{cat_tag}'
     path_to_lognorm_source = os.path.join('/scratch/ksf293/mocks/lognormal', lognorm_mock)
 
     mock_file_name_list = []
     mock_name_list = []
 
-    if grad_type == "1rlz":
+    if mock_type == "1rlz":
         m_arr = np.linspace(-1.0, 1.0, n_mocks)
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = [f'{lognorm_mock}_lognormal_rlz{rlz}']
@@ -36,7 +33,7 @@ def generate_mock_list(
                 mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m, b)
                 mock_name_list.append(mock_name)
 
-    elif grad_type == "1m":
+    elif mock_type == "1m":
         m_arr = m * np.ones([n_mocks])
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = []
@@ -49,7 +46,7 @@ def generate_mock_list(
             mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m, b)
             mock_name_list.append(mock_name)
     
-    elif grad_type == "1rlz_per_m":
+    elif mock_type == "1rlz_per_m":
         assert n_mocks == 1 or n_mocks ==41 or n_mocks == 401, "'n_mocks' must be 1, 41, or 401"
         m_arr = np.linspace(-1.0, 1.0, n_mocks)
         b_arr = b * np.ones([n_mocks])
@@ -61,7 +58,7 @@ def generate_mock_list(
             mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[i], b)
             mock_name_list.append(mock_name)
     
-    elif grad_type == "1mock":     # (i.e. plots for poster)
+    elif mock_type == "1mock":     # (i.e. plots for poster)
         assert n_mocks == 1, "'n_mocks' must be 1"
         m_arr = m * np.ones([n_mocks])
         b_arr = b * np.ones([n_mocks])
@@ -69,7 +66,7 @@ def generate_mock_list(
         mock_file_name_list = ["{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m_arr[0], b)]
         mock_name_list = ["n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[0], b)]
     
-    elif grad_type == "lognormal":
+    elif mock_type == "lognormal":
         m_arr = None
         b_arr = None
         mock_name_list = None
@@ -80,7 +77,7 @@ def generate_mock_list(
             mock_file_name_list.append(filename)
 
     else:
-        print("'grad_type' must be '1rlz', '1m', or '1rlz_per_m'")
+        print("'mock_type' must be '1rlz', '1m', or '1rlz_per_m'")
         assert False
     
     if extra == True:

@@ -13,8 +13,13 @@ import generate_mock_list
 import globals
 globals.initialize_vals()
 
-boxsize = globals.boxsize
+data_dir = globals.data_dir
+grad_dir = globals.grad_dir
 cat_tag = globals.cat_tag
+mock_type = globals.mock_type
+boxsize = globals.boxsize
+density = globals.lognormal_density
+randmult = globals.randmult
 
 
 def xi_ls_ln(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=globals.randmult, periodic=globals.periodic, nthreads=globals.nthreads,
@@ -41,6 +46,7 @@ def xi_ls_ln(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=glo
 
     return r_avg, results_xi
 
+
 def xi_ls_ln_mocklist(prints=False):
 
     s = time.time()
@@ -60,6 +66,7 @@ def xi_ls_ln_mocklist(prints=False):
     
     total_time = time.time()-s
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
+
 
 def xi_bao_ln_mocklist(prints=False, rmin=globals.rmin, rmax=globals.rmax, redshift=0.57, bias=2.0):
 
@@ -90,6 +97,7 @@ def xi_bao_ln_mocklist(prints=False, rmin=globals.rmin, rmax=globals.rmax, redsh
     total_time = time.time()-s
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
+
 # currently bao_iterative.py calculates this, so you shouldn't need to call this function; it's redundant
 def xi_bao_it_ln_mocklist(prints=False):
 
@@ -117,3 +125,48 @@ def xi_bao_it_ln_mocklist(prints=False):
     
     total_time = time.time()-s
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
+
+
+def xi_ls_mocklist():
+
+    s = time.time()
+
+    # mocklist
+    mock_fn_list = generate_mock_list.generate_mock_list()
+
+    mock_tag = 'lognormal' if mock_type == 'lognormal' else 'gradient'
+
+    for mock_fn in mock_fn_list:
+        data_fn = os.path.join(data_dir, f'catalogs/{mock_tag}/{cat_tag}/{mock_fn}.npy')
+        mock_data = np.load(data_fn, allow_pickle=True)
+        center_mock(mock_data, 0, boxsize)
+        # data.shape == (N, 3)
+
+        # other parameters
+        periodic = globals.periodic
+        nthreads = globals.nthreads
+        rmin = globals.rmin
+        rmax = globals.rmax
+        nbins = globals.nbins
+
+        # random set
+        random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{boxsize}_n{density}_{randmult}x.dat')
+        rand_set = np.loadtxt(random_fn)
+        center_mock(rand_set, 0, boxsize)
+
+        # run landy-szalay
+        r_avg, results_xi = xi_ls(mock_data, rand_set, periodic=periodic, nthreads=nthreads, rmin=rmin, rmax=rmax, nbins=nbins)
+
+        # save directory
+        if mock_tag == 'lognormal':
+            save_dir = os.path.join(data_dir, f'lognormal/xi/ls/{cat_tag}')
+        else:
+            assert mock_tag == 'gradient'
+            save_dir = os.path.join(grad_dir, f'ls/{cat_tag}')
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        save_fn = os.path.join(save_dir, f'xi_ls_{randmult}x_{mock_fn}.npy')
+
+        np.save(save_fn, np.array([r_avg, results_xi]))
+
+        print(f"landy-szalay --> {mock_fn}")

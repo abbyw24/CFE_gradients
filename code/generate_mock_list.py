@@ -23,58 +23,66 @@ def generate_mock_list(
     mock_name_list = []
 
     if mock_type == "1rlz":
+
         m_arr = np.linspace(-1.0, 1.0, n_mocks)
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = [f'{lognorm_mock}_lognormal_rlz{rlz}']
-        for m in m_arr:
-            for b in b_arr:
-                mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m, b)
-                mock_file_name_list.append(mock_file_name)
-                mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m, b)
-                mock_name_list.append(mock_name)
+
+        for i in range(n_mocks):
+            grad_tag_list[i] = "m-{:.3f}-L_b-{:.3f}".format(m_arr[i], b_arr[i])
+            mock_file_name_list[i] = "{}_{}".format(lognorm_file_list[i], grad_tag_list[i])
+            mock_name_list[i] = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[i], b_arr[i])
+
 
     elif mock_type == "1m":
+
         m_arr = m * np.ones([n_mocks])
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = []
+        grad_tag_list = []
+
         for i in range(n_mocks):
             lognorm_file_list.append(f"{lognorm_mock}_lognormal_rlz{i}")
+            grad_tag_list.append("m-{:.3f}-L_b-{:.3f}".format(m, b))
+            mock_file_name_list.append("{}_{}".format(lognorm_file_list[i], grad_tag_list[i]))
+            mock_name_list.append("n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[i], b_arr[i]))
 
-        for lognorm_file in lognorm_file_list:
-            mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file, m, b)
-            mock_file_name_list.append(mock_file_name)
-            mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m, b)
-            mock_name_list.append(mock_name)
     
     elif mock_type == "1rlz_per_m":
+
         assert n_mocks == 1 or n_mocks ==41 or n_mocks == 401, "'n_mocks' must be 1, 41, or 401"
         m_arr = np.linspace(-1.0, 1.0, n_mocks)
         b_arr = b * np.ones([n_mocks])
-        lognorm_file_list = []
+        lognorm_file_list = np.empty(n_mocks)
+        grad_tag_list = np.empty(n_mocks)
+
         for i in range(n_mocks):
-            lognorm_file_list.append(f"{lognorm_mock}_lognormal_rlz{i}")
-            mock_file_name = "{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[i], m_arr[i], b)
-            mock_file_name_list.append(mock_file_name)
-            mock_name = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[i], b)
-            mock_name_list.append(mock_name)
+            lognorm_file_list[i] = f"{lognorm_mock}_lognormal_rlz{i}"
+            grad_tag_list[i] = "m-{:.3f}-L_b-{:.3f}".format(m_arr[i], b_arr[i])
+            mock_file_name_list[i] = "{}_{}".format(lognorm_file_list[i], grad_tag_list[i])
+            mock_name_list[i] = "n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[i], b_arr[i])
+
     
     elif mock_type == "1mock":     # (i.e. plots for poster)
         assert n_mocks == 1, "'n_mocks' must be 1"
         m_arr = m * np.ones([n_mocks])
         b_arr = b * np.ones([n_mocks])
         lognorm_file_list = [f"{lognorm_mock}_lognormal_rlz{rlz}"]
-        mock_file_name_list = ["{}_m-{:.3f}-L_b-{:.3f}".format(lognorm_file_list[0], m_arr[0], b)]
-        mock_name_list = ["n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[0], b)]
+        grad_tag_list = ["m-{:.3f}-L_b-{:.3f}".format(m, b)]
+        mock_file_name_list = ["{}_{}".format(lognorm_file_list[i], grad_tag_list[i])]
+        mock_name_list = ["n{}, m={:.3f}, b={:.3f}".format(lognormal_density, m_arr[0], b_arr[0])]
     
     elif mock_type == "lognormal":
         m_arr = None
         b_arr = None
         mock_name_list = None
-        lognorm_file_list = []
+        grad_tag_list = None
+        lognorm_file_list = np.empty(n_mocks)
+
         for i in range(n_mocks):
             filename = f"{lognorm_mock}_lognormal_rlz{i}"
-            lognorm_file_list.append(filename)
-            mock_file_name_list.append(filename)
+            lognorm_file_list[i] = filename
+            mock_file_name_list[i] = filename
 
     else:
         print("'mock_type' must be '1rlz', '1m', or '1rlz_per_m'")
@@ -88,7 +96,8 @@ def generate_mock_list(
             "lognorm_file_list" : lognorm_file_list,
             "path_to_lognorm_source" : path_to_lognorm_source,
             "m_arr" : m_arr,
-            "b_arr" : b_arr
+            "b_arr" : b_arr,
+            "grad_tag_list" : grad_tag_list
         }
         return vals
     else:

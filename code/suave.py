@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import os
+import time
 
 import Corrfunc
 from Corrfunc.theory.DDsmu import DDsmu
@@ -67,6 +68,7 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
 
 # define function to estimate gradient using suave
 def suave_grad(grad_dim=grad_dim, grad_dir=grad_dir, cosmo=False, plots=False):
+    s = time.time()
 
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)
@@ -246,6 +248,9 @@ def suave_grad(grad_dim=grad_dim, grad_dir=grad_dir, cosmo=False, plots=False):
         np.save(os.path.join(grad_dir, f'{suave_dir}/{mock_file_name}'), suave_info, allow_pickle=True)
 
         print(f"suave --> {mock_file_name}")
+    
+    total_time = time.time()-s
+    print(datetime.timedelta(seconds=total_time))
 
 # function to run suave with any basis; NOT for gradient though
 def suave(x, y, z, boxsize, projfn,

@@ -63,6 +63,7 @@ def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_s
         mock_info = {
             'mock_file_name' : mock_file_name_list[i],
             'mock_name' : mock_name_list[i],
+            'cat_tag' : cat_tag,
             'lognorm_rlz' : lognorm_file_list[i],
             'w_hat' : w_hat,
             'm' : m_arr[i],
@@ -107,6 +108,7 @@ def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_s
         # generate a null (unclustered) data set (same size as mock)
         xs_rand = np.random.uniform(-L/2,L/2,(3,N))
         mock_info['rand_set'] = xs_rand
+            # should this be generated here, or should I use the random catalogs in catalogs/randoms ?
 
 
         # INJECT GRADIENT
@@ -141,7 +143,7 @@ def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_s
         mock_info['grad_set'] = xs_grad
 
         # save grad_set to catalogs directory
-        cat_dir = os.path.join(data_dir, f'catalogs/gradients/{cat_tag}')
+        cat_dir = os.path.join(data_dir, f'catalogs/gradient/{cat_tag}')
         if not os.path.exists(cat_dir):
             os.makedirs(cat_dir)
         cat_fn = os.path.join(cat_dir, f'{mock_file_name}')

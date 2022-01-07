@@ -13,13 +13,13 @@ grad_dir = globals.grad_dir
 grad_dim = globals.grad_dim
 boxsize = globals.boxsize
 mock_type = globals.mock_type
+assert mock_type != 'lognormal', "mock_type must not be lognormal for gradient generation!"
 lognormal_density = globals.lognormal_density
 cat_tag = globals.cat_tag
 
 mock_vals = generate_mock_list.generate_mock_list(extra=True)
 path_to_lognorm_source = mock_vals['path_to_lognorm_source']
 mock_file_name_list = mock_vals['mock_file_name_list']
-mock_name_list = mock_vals['mock_name_list']
 lognorm_file_list = mock_vals['lognorm_file_list']
 m_arr = mock_vals['m_arr']
 b_arr = mock_vals['b_arr']
@@ -59,10 +59,10 @@ def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_s
     w_hat /= np.linalg.norm(w_hat)
 
     for i in range(len(mock_file_name_list)):
+
         # create dictionary with mock info
         mock_info = {
             'mock_file_name' : mock_file_name_list[i],
-            'mock_name' : mock_name_list[i],
             'cat_tag' : cat_tag,
             'lognorm_rlz' : lognorm_file_list[i],
             'w_hat' : w_hat,
@@ -73,7 +73,6 @@ def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_s
 
         # redefine dictionary values for simplicity
         mock_file_name = str(mock_info['mock_file_name'])
-        mock_name = str(mock_info['mock_name'])
         lognorm_file = str(mock_info['lognorm_rlz'])
         m = float(mock_info['m'])
         b = float(mock_info['b'])
@@ -166,7 +165,7 @@ def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_s
             if mock_type == '1mock':
                 ax1.set_title("")
             else:
-                ax1.set_title(mock_name)
+                ax1.set_title(mock_file_name)
             ax1.legend()
             fig1.savefig(os.path.join(grad_dir, f'{samecolormock_dir}/{mock_file_name}.png'))
             plt.cla()
@@ -184,7 +183,7 @@ def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_s
             # plt.xlim((-400,400))
             ax2.set_xlabel("x (Mpc/h)")
             ax2.set_ylabel("y (Mpc/h)")
-            ax2.set_title(mock_name)
+            ax2.set_title(mock_file_name)
             ax2.legend()
             fig2.savefig(os.path.join(grad_dir, f'{colormock_dir}/color_{mock_file_name}.png'))
             plt.cla()

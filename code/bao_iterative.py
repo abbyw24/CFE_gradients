@@ -26,7 +26,7 @@ def main():
     s = time.time()
 
     globals.initialize_vals()
-    mock_type = globals.mock_type
+    mock_tag = globals.mock_tag
     data_dir = globals.data_dir
     grad_dim = globals.grad_dim
     boxsize = globals.boxsize
@@ -35,10 +35,9 @@ def main():
     n_mocks = globals.n_mocks
     randmult = globals.randmult
     
-    data_dir = '/scratch/aew492/research-summer2020_output'
-    mock_list_info = generate_mock_list.generate_mock_list(extra=True)  # this is only used if mock_type is not lognormal
+    mock_list_info = generate_mock_list.generate_mock_list(extra=True)  # this is only used if mock_tag is not lognormal
 
-    if mock_type == 'lognormal':
+    if mock_tag == 'lognormal':
         cat_dir = os.path.join(data_dir, f'catalogs/lognormal/cat_{cat_tag}') #f'/scratch/ksf293/mocks/lognormal/cat_{cat_tag}'
     else:
         cat_dir = os.path.join(data_dir, f'gradient/{grad_dim}D/mock_data/{cat_tag}')
@@ -79,14 +78,14 @@ def main():
 
         alpha_model_start = 1.0
         eta = 0.5
-        biter = BAO_iterator(mock_type, boxsize, periodic, cat_tag, rand_tag, cat_dir, cosmo, data_dir,
+        biter = BAO_iterator(mock_tag, boxsize, periodic, cat_tag, rand_tag, cat_dir, cosmo, data_dir,
                             mock_list_info=mock_list_info, Nr=Nr, cf_tag=cf_tag, trr_analytic=trr_analytic,
                             save_iterated_bases=save_iterated_bases, nthreads=nthreads, redshift=redshift,
                             alpha_model_start=alpha_model_start, dalpha=dalpha, k0=k0, random_fn=random_fn)
 
         # update this
         if skip_converged:
-            converged_fn = f'{biter.result_dir}/converged/cf{biter.cf_tag}_{biter.trr_tag}{biter.rand_tag}{biter.per_tag}_{biter.grad_tag}_rlz{biter.Nr}.npy'
+            converged_fn = f'{biter.result_dir}/converged/cf{biter.cf_tag}_{biter.trr_tag}{biter.rand_tag}{biter.per_tag}_{biter.mock_name}_rlz{biter.Nr}.npy'
             matches = glob.glob(converged_fn)
             if len(matches)>0:
                 print("Already converged and saved to", matches[0])
@@ -95,7 +94,7 @@ def main():
         # initial parameters
         niter_start = 0
         if restart_unconverged:
-            pattern = f"cf{biter.cf_tag}{trr_tag}{rand_tag}{per_tag}_niter([0-9]+)_{biter.grad_tag}_rlz{biter.Nr}.npy"
+            pattern = f"cf{biter.cf_tag}{trr_tag}{rand_tag}{per_tag}_niter([0-9]+)_{biter.mock_name}_rlz{biter.Nr}.npy"
             niters_done = []
             for fn in os.listdir(biter.result_dir):
                 matches = re.search(pattern, fn)
@@ -104,7 +103,7 @@ def main():
             
             if niters_done: # if matches found (list not empty), start from latest iter; otherwise, will start from zero
                 niter_lastdone = max(niters_done) # load in last completed one
-                start_fn = f'{biter.result_dir}/cf{biter.cf_tag}{trr_tag}{rand_tag}{per_tag}_niter{niter_lastdone}_{biter.grad_tag}_rlz{biter.Nr}.npy'
+                start_fn = f'{biter.result_dir}/cf{biter.cf_tag}{trr_tag}{rand_tag}{per_tag}_niter{niter_lastdone}_{biter.mock_name}_rlz{biter.Nr}.npy'
                 res = np.load(start_fn, allow_pickle=True, encoding='latin1')
                 _, _, amps, _, extra_dict = res
                 alpha_model_prev = extra_dict['alpha_model']
@@ -181,13 +180,13 @@ def main():
 
 class BAO_iterator:
 
-    def __init__(self, mock_type, boxsize, periodic, cat_tag, rand_tag, cat_dir, cosmo, data_dir, mock_list_info=None, Nr=0,
+    def __init__(self, mock_tag, boxsize, periodic, cat_tag, rand_tag, cat_dir, cosmo, data_dir, mock_list_info=None, Nr=0,
                     rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, cf_tag='_baoiter', trr_analytic=False,
                     save_iterated_bases=False, nthreads=globals.nthreads, redshift=0.0, bias=2.0,
                     alpha_model_start=1.0, dalpha=0.01, k0=0.1, random_fn=None):
 
         # input params
-        self.mock_type = mock_type
+        self.mock_tag = mock_tag
         self.boxsize = boxsize
         self.Nr = Nr
         self.cosmo = cosmo
@@ -215,13 +214,13 @@ class BAO_iterator:
         self.rbins_avg = 0.5*(self.rbins[1:]+self.rbins[:-1])
         self.rcont = np.linspace(rmin, rmax, 2000)
 
-        if mock_type != 'lognormal':
+        if mock_tag != 'lognormal':
             self.mock_list_info = mock_list_info
             self.mock_fn_list = self.mock_list_info['mock_file_name_list']
-            self.grad_tag_list = self.mock_list_info['grad_tag_list']
+            self.mock_param_list = self.mock_list_info['mock_param_list']
 
         self.cat_tag = cat_tag
-        self.grad_tag = cat_tag if self.mock_type == 'lognormal' else f'{cat_tag}_{self.grad_tag_list[self.Nr]}'
+        self.mock_name = cat_tag if self.mock_tag == 'lognormal' else f'{cat_tag}_{self.mock_param_list[self.Nr]}'
         self.rand_tag = rand_tag
         self.cat_dir = cat_dir
         self.cf_tag = cf_tag
@@ -233,8 +232,7 @@ class BAO_iterator:
 
         self.data_dir = data_dir
         self.bases_dir = os.path.join(self.data_dir, 'bases/bao_iterative')
-        self.mock_tag = 'lognormal' if mock_type == 'lognormal' else 'gradient'
-        self.projfn = os.path.join(self.bases_dir, f"tables/bases_{self.mock_tag}_{self.grad_tag}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}_rlz{self.Nr}.dat")
+        self.projfn = os.path.join(self.bases_dir, f"tables/bases_{self.mock_tag}_{self.mock_name}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}_rlz{self.Nr}.dat")
         if not os.path.exists(os.path.join(self.bases_dir, f"tables")):
             os.makedirs(os.path.join(self.bases_dir, f"tables"))
 
@@ -244,7 +242,7 @@ class BAO_iterator:
             os.makedirs(self.result_dir)
 
         # write initial bases
-        projfn_start = os.path.join(self.bases_dir, f"tables/bases_{self.grad_tag}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}.dat")
+        projfn_start = os.path.join(self.bases_dir, f"tables/bases_{self.mock_tag}_{self.mock_name}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}.dat")
         #alpha_guess was previously called alpha_model
         kwargs = {'cosmo_base':self.cosmo, 'redshift':self.redshift, 'dalpha':dalpha, 'alpha_guess':alpha_model_start, 'bias':self.bias}
         #self.ncomponents, _ = bao.write_bases(self.rbins[0], self.rbins[-1], projfn_start, **kwargs)
@@ -254,9 +252,17 @@ class BAO_iterator:
         self.ncomponents = base_vals.shape[1]
 
 
-    # currently only for lognormal mock_type
+    # currently only for lognormal mock_tag
     def save_cf(self, xi, amps, niter, extra_dict, rand_tag, converged=True):
         if converged:
+            save_dir = f'{self.result_dir}/converged'
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir)
+            save_fn = os.path.join(save_dir, f'cf{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_{self.mock_name}_rlz{self.Nr}.npy')
+            np.save(save_fn, [self.rcont, xi, amps, 'baoiter', extra_dict])
+            print(f"Saved converged to {save_fn}")
+
+            # if mocks are lognormal, also save converged cf to the lognormal result directory
             if self.mock_tag == 'lognormal':
                 save_dir = f'{self.data_dir}/lognormal/xi/bao_iterative/{self.cat_tag}'
                 save_fn = os.path.join(save_dir, f'xi{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_{self.cat_tag}_rlz{self.Nr}.npy')
@@ -264,22 +270,15 @@ class BAO_iterator:
                     os.makedirs(save_dir)
                 np.save(save_fn, [self.rcont, xi, amps, 'baoiter', extra_dict])
                 print(f"Saved converged to {save_fn}")
-
-            save_dir = f'{self.result_dir}/converged'
-            if not os.path.exists(save_dir):
-                os.makedirs(save_dir)
-            save_fn = os.path.join(save_dir, f'cf{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_{self.grad_tag}_rlz{self.Nr}.npy')
-            np.save(save_fn, [self.rcont, xi, amps, 'baoiter', extra_dict])
-            print(f"Saved converged to {save_fn}")
         else:
-            save_fn = f'{self.result_dir}/cf{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_niter{niter}_{self.grad_tag}_rlz{self.Nr}.npy'
+            save_fn = f'{self.result_dir}/cf{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_niter{niter}_{self.mock_name}_rlz{self.Nr}.npy'
             np.save(save_fn, [self.rcont, xi, amps, 'baoiter', extra_dict])
 
         
     def save_final_basis(self, xi):
         if not os.path.exists(os.path.join(self.result_dir, 'final_bases')):
             os.makedirs(os.path.join(self.result_dir, f'final_bases'))
-        basis_fn = f'{self.result_dir}/final_bases/basis_{self.mock_tag}_{self.grad_tag}_{self.trr_tag}{self.rand_tag}_rlz{self.Nr}.dat'
+        basis_fn = f'{self.result_dir}/final_bases/basis_{self.mock_tag}_{self.mock_name}_{self.trr_tag}{self.rand_tag}_rlz{self.Nr}.dat'
         final_basis = np.array([self.rcont, xi]).T
         np.savetxt(basis_fn, final_basis)
         print(f"Saved final basis to {basis_fn}")
@@ -389,7 +388,7 @@ class BAO_iterator:
             save_dir = os.path.join(self.bases_dir, 'tables/iterated_bases')
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
-            save_basis_fn = os.path.join(save_dir, f'bases_{self.mock_tag}_{self.grad_tag}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}_rlz{self.Nr}_niter{niter}.dat')
+            save_basis_fn = os.path.join(save_dir, f'bases_{self.mock_tag}_{self.mock_name}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}_rlz{self.Nr}_niter{niter}.dat')
             np.savetxt(save_basis_fn, bases)
 
         base_vals = bases[:,1:]

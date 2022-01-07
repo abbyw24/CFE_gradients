@@ -3,6 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import os
 import time
+import datetime
 
 import Corrfunc
 from Corrfunc.theory.DDsmu import DDsmu
@@ -33,7 +34,9 @@ rmax = globals.rmax
 nbins = globals.nbins
 nthreads = globals.nthreads
 
-mock_file_name_list = generate_mock_list.generate_mock_list()
+mock_list_info = generate_mock_list.generate_mock_list(extra=True)
+mock_file_name_list = mock_list_info['mock_file_name_list']
+mock_param_list = mock_list_info['mock_param_list']
 
 
 def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
@@ -67,6 +70,7 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
 
 
 # define function to estimate gradient using suave
+# cosmo=False ==> default bases are iterative results
 def suave_grad(grad_dim=grad_dim, grad_dir=grad_dir, cosmo=False, plots=False):
     s = time.time()
 
@@ -104,9 +108,11 @@ def suave_grad(grad_dim=grad_dim, grad_dir=grad_dir, cosmo=False, plots=False):
 
     for i in range(len(mock_file_name_list)):
 
+        mock_name = cat_tag if mock_type == 'lognormal' else f'{cat_tag}_{mock_param_list[i]}'
+
         # load bases
         if not cosmo:
-            projfn = os.path.join(data_dir, f'bases/bao_iterative/tables/final_bases/basis_gradient_{cat_tag}_trrnum_{randmult}x_rlz{i}.dat')
+            projfn = os.path.join(data_dir, f'bases/bao_iterative/results/results_gradient_{cat_tag}/final_bases/basis_gradient_{mock_name}_trrnum_{randmult}x_rlz{i}.dat')
             basis = np.loadtxt(projfn)
             ncomponents = 4*(basis.shape[1]-1)
 
@@ -114,7 +120,6 @@ def suave_grad(grad_dim=grad_dim, grad_dir=grad_dir, cosmo=False, plots=False):
         # load in mock and patch info
         mock_info = np.load(os.path.join(grad_dir, f'mock_data/{cat_tag}/{mock_file_name_list[i]}.npy'), allow_pickle=True).item()
         mock_file_name = mock_info['mock_file_name']
-        mock_name = mock_info['mock_name']
         L = mock_info['boxsize']
         mock_data = mock_info['grad_set']
         grad_expected = mock_info['grad_expected']
@@ -228,7 +233,7 @@ def suave_grad(grad_dim=grad_dim, grad_dir=grad_dir, cosmo=False, plots=False):
             if mock_type == '1mock':
                 ax.set_title("")
             else:
-                ax.set_title(f"Recovered Gradient, {mock_name}")
+                ax.set_title(f"Recovered Gradient, {mock_file_name}")
 
             fig.savefig(os.path.join(grad_dir, f'{plots_dir}/{mock_file_name}.png'))
 

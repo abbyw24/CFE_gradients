@@ -15,7 +15,7 @@ cat_tag = globals.cat_tag
 grad_dim = globals.grad_dim
 boxsize = globals.boxsize
 lognormal_density = globals.lognormal_density
-path_to_data_dir = globals.path_to_data_dir
+grad_dir = globals.grad_dir
 mock_type = globals.mock_type
 
 randmult = globals.randmult
@@ -27,7 +27,7 @@ nthreads = globals.nthreads
 
 n_patches = globals.n_patches
 
-mock_file_name_list = generate_mock_list.generate_mock_list()
+mock_fn_list = generate_mock_list.generate_mock_list()
 
 
 # define patchify
@@ -55,7 +55,7 @@ def patchify(data, boxsize, n_patches=n_patches):
 
 
 # define function to find xi in each patch
-def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_file_name_list = mock_file_name_list,
+def xi_in_patches(grad_dim=grad_dim, grad_dir=grad_dir, mock_fn_list = mock_fn_list,
                     n_patches=n_patches, plots=False):
 
     # create the needed subdirectories
@@ -66,13 +66,12 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
         patch_dir,
         plots_dir
     ]
-    create_subdirs(path_to_data_dir, sub_dirs)
+    create_subdirs(grad_dir, sub_dirs)
 
-    for i in range(len(mock_file_name_list)):
+    for i in range(len(mock_fn_list)):
         # retrieve mock info dictionary
-        mock_info = np.load(os.path.join(path_to_data_dir, f'mock_data/{cat_tag}/{mock_file_name_list[i]}.npy'), allow_pickle=True).item()
+        mock_info = np.load(os.path.join(grad_dir, f'mock_data/{cat_tag}/{mock_fn_list[i]}.npy'), allow_pickle=True).item()
         mock_file_name = mock_info['mock_file_name']
-        mock_name = mock_info['mock_name']
         mock_data = mock_info['grad_set']
         L = mock_info['boxsize']
 
@@ -161,7 +160,7 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
             'xi_patch_avg' : xi_patch_avg,
             'xi_full' : xi_full
             }
-        np.save(os.path.join(path_to_data_dir, f'{patch_dir}/{mock_file_name}'), patch_info, allow_pickle=True)
+        np.save(os.path.join(grad_dir, f'{patch_dir}/{mock_file_name}'), patch_info, allow_pickle=True)
 
         # plot results
         if plots == True:
@@ -179,10 +178,10 @@ def xi_in_patches(grad_dim=grad_dim, path_to_data_dir=path_to_data_dir, mock_fil
             if mock_type == '1mock':
                 ax.set_title("")
             else:
-                ax.set_title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_name}")
+                ax.set_title(f"Standard Estimator, Xi in Patches, {grad_dim}D, {mock_file_name}")
 
             plt.legend(prop={'size': 8})
-            fig.savefig(os.path.join(path_to_data_dir, f'{plots_dir}/xi/{mock_file_name}.png'))
+            fig.savefig(os.path.join(grad_dir, f'{plots_dir}/xi/{mock_file_name}.png'))
             ax.cla()
 
             plt.close('all')

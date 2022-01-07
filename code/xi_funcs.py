@@ -47,7 +47,7 @@ def xi_ls_ln(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=glo
     return r_avg, results_xi
 
 
-def xi_ls_ln_mocklist(prints=False):
+def xi_ls_ln_mocklist(randmult=globals.randmult, prints=False):
 
     s = time.time()
     # results for clustered mocks, NO gradient
@@ -60,8 +60,8 @@ def xi_ls_ln_mocklist(prints=False):
         os.makedirs(save_dir)
 
     for i in range(len(lognorm_file_list)):
-        xi_results = xi_ls_ln(mock_vals["lognorm_mock"], i, prints=prints)
-        np.save(os.path.join(save_dir, f'xi_{lognorm_file_list[i]}'), xi_results)
+        xi_results = xi_ls_ln(mock_vals["lognorm_mock"], i, randmult=randmult, prints=prints)
+        np.save(os.path.join(save_dir, f'xi_ls_{randmult}x_{lognorm_file_list[i]}'), xi_results)
         print(f'xi, {lognorm_file_list[i]}')
     
     total_time = time.time()-s

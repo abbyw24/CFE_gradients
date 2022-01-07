@@ -15,13 +15,13 @@ def initialize_vals():
     data_dir = f'/scratch/aew492/research-summer2020_output'
 
     global grad_dir
-    grad_dir = os.path.join(data_dir, f'gradients/{grad_dim}D')
+    grad_dir = os.path.join(data_dir, f'gradient/{grad_dim}D')
 
     global boxsize
-    boxsize = 750
+    boxsize = 1000
 
     global lognormal_density
-    lognormal_density = "1e-4"
+    lognormal_density = "2e-4"
 
     global As
     As = 2
@@ -35,8 +35,11 @@ def initialize_vals():
     global mock_type
     mock_type = '1m'     # choose from '1rlz', '1m', '1rlz_per_m', '1mock', or 'lognormal'
 
+    global mock_tag
+    mock_tag = 'lognormal' if mock_type == 'lognormal' else 'gradient'
+
     global m
-    m = 1.0
+    m = 1
 
     global b
     b = 0.5

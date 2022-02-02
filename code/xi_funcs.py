@@ -170,3 +170,6 @@ def xi_ls_mocklist():
         np.save(save_fn, np.array([r_avg, results_xi]))
 
         print(f"landy-szalay --> {mock_fn}")
+    
+    total_time = time.time()-s
+    print(f"total time: {datetime.timedelta(seconds=total_time)}")

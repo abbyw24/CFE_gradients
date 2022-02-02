@@ -4,9 +4,6 @@ import globals
 globals.initialize_vals()
 
 def generate_mock_list(
-    boxsize = globals.boxsize,
-    lognormal_density = globals.lognormal_density,
-    As = globals.As,
     cat_tag = globals.cat_tag,
     mock_type = globals.mock_type,
     n_mocks = globals.n_mocks,

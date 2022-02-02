@@ -9,6 +9,7 @@ from suave import cf_model
 import generate_mock_list
 
 import globals
+globals.initialize_vals()
 
 def fit_to_cf_model(alpha, xi_ls, r_avg, ncont=1000):
 
@@ -29,19 +30,19 @@ def fit_to_cf_model(alpha, xi_ls, r_avg, ncont=1000):
     C_inv = np.linalg.inv(C)
 
     # performing the fit
-    X = np.linalg.inv(A.T @ C_inv @ A) @ (A.T @ C_inv @ Y)
+    M = np.linalg.inv(A.T @ C_inv @ A) @ (A.T @ C_inv @ Y)
 
-    B_sq, a1, a2, a3 = X
+    B_sq, a1, a2, a3 = M
 
     xi_fit = B_sq*xi_mod + a1/r_avg**2 + a2/r_avg + a3
 
-    # # putting X values back into equation for xi_fit— but with finer r grid
+    # # putting M values back into equation for xi_fit— but with finer r grid
     # r_avg_fine = np.linspace(min(r_avg), max(r_avg), ncont+1)
     # xi_mod_fine = cf_model(alpha*r_avg_fine, cosmo_base=cosmo_base, redshift=redshift, bias=bias)
 
     # xi_fit = B_sq*xi_mod_fine + a1/r_avg_fine**2 + a2/r_avg_fine + a3
 
-    return xi_fit, X, C
+    return xi_fit, M, C
 
 # for the standard approach, we perform this fit for several different alpha values and find the one which minimizes chi-squared
 def find_best_alpha(xi_ls, r_avg, alpha_min=0.75, alpha_max=1.25, nalphas=51):
@@ -50,10 +51,12 @@ def find_best_alpha(xi_ls, r_avg, alpha_min=0.75, alpha_max=1.25, nalphas=51):
     alpha_grid = np.linspace(alpha_min, alpha_max, nalphas)
 
     xi_fits = np.empty((nalphas, nbins))
+    Ms = np.empty((nalphas, nbins, 4))
     Cs = np.empty((nalphas, nbins, nbins))
     for i in range(nalphas):
-        xi_fit, _, C = fit_to_cf_model(alpha_grid[i], xi_ls, r_avg)
+        xi_fit, M, C = fit_to_cf_model(alpha_grid[i], xi_ls, r_avg)
         xi_fits[i] = xi_fit
+        Ms[i] = M
         Cs[i] = C
     
     # chi-squared test: find the alpha which minimizes chi-squared
@@ -64,22 +67,21 @@ def find_best_alpha(xi_ls, r_avg, alpha_min=0.75, alpha_max=1.25, nalphas=51):
         chi_squareds[i] = chi_squared
     
     best_alpha = alpha_grid[chi_squareds.argmin()]
+    M = Ms[chi_squareds.argmin()]
 
-    return best_alpha, alpha_grid, chi_squareds
+    return best_alpha, alpha_grid, chi_squareds, M
 
 # loop through the list of mocks to find the best fit to cf_model for each one
-def main():
-    s = time.time()
+def main(mock_tag = globals.mock_tag,
+            data_dir = globals.data_dir,
+            grad_dir = globals.grad_dir,
+            grad_dim = globals.grad_dim,
+            boxsize = globals.boxsize,
+            density = globals.lognormal_density,
+            cat_tag = globals.cat_tag,
+            randmult = globals.randmult):
 
-    globals.initialize_vals()
-    mock_tag = globals.mock_tag
-    data_dir = globals.data_dir
-    grad_dir = globals.grad_dir
-    grad_dim = globals.grad_dim
-    boxsize = globals.boxsize
-    density = globals.lognormal_density
-    cat_tag = globals.cat_tag
-    randmult = globals.randmult
+    s = time.time()
 
     mock_list_info = generate_mock_list.generate_mock_list(extra=True)  # this is only used if mock_type is not lognormal
     mock_fn_list = mock_list_info['mock_file_name_list']
@@ -100,7 +102,7 @@ def main():
         xi_ls = xi_results[1]
         
         # find the best alpha (the one that minimizes chi-squared)
-        best_alpha, _, _ = find_best_alpha(xi_ls, r_avg)
+        best_alpha, _, _, M = find_best_alpha(xi_ls, r_avg)
 
         # plug best_alpha back in to retrieve the best-fit correlation function
         xi_bestfit, _, _ = fit_to_cf_model(best_alpha, xi_ls, r_avg)
@@ -109,10 +111,21 @@ def main():
         save_dir = os.path.join(data_dir, f'bases/4-parameter_fit/results_{mock_tag}_{cat_tag}')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
+
+        # unpacking M matrix
+        B_sq, a1, a2, a3 = M.T
         
         save_fn = os.path.join(save_dir, f'basis_{mock_tag}_{mock_fn_list[i]}')
-        np.save(save_fn, [r_avg, xi_bestfit])
-            # should I save other values such as alpha or X (bestfit) values?
+        save_data = {
+            'best_alpha' : best_alpha,
+            'B_sq' : B_sq,
+            'a1' : a1,
+            'a2' : a2,
+            'a3' : a3
+        }
+        np.save(save_fn, save_data)
+        # here we only save the resulting best-fit values (as opposed to the resulting bestfit correlation function) in order to
+        #   reduce redundancy and increase flexibility– B, a1, a2, and a3 can be used with any r_avg to output xi
         
         print(f"4-parameter fit --> {mock_fn_list[i]}")
 

@@ -11,12 +11,15 @@ import generate_mock_list
 import globals
 globals.initialize_vals()
 
-def fit_to_cf_model(alpha, xi_ls, r_avg, ncont=1000):
+def xi_bestfit(r, xi_mod, B_sq, a1, a2, a3):
+
+    xi_bestfit = B_sq*xi_mod + a1/r**2 + a2/r + a3
+
+    return xi_bestfit
+
+def fit_to_cf_model(alpha, xi_ls, r_avg, C_inv, cosmo_base=None, redshift=0.57, bias=2.0):
 
     nbins = len(r_avg)
-    cosmo_base = None
-    redshift = 0.57
-    bias = 2.0
 
     # xi_mod
     xi_mod = cf_model(alpha*r_avg, cosmo_base=cosmo_base, redshift=redshift, bias=bias)
@@ -26,44 +29,37 @@ def fit_to_cf_model(alpha, xi_ls, r_avg, ncont=1000):
 
     A = np.array([xi_mod, 1/r_avg**2, 1/r_avg, np.ones(nbins)]).T       # feature matrix
 
-    C = np.identity(len(Y))     # covariance matrix; ones for now
-    C_inv = np.linalg.inv(C)
-
     # performing the fit
-    M = np.linalg.inv(A.T @ C_inv @ A) @ (A.T @ C_inv @ Y)
+    a = A.T @ C_inv @ A
+    b = A.T @ C_inv @ Y
+
+    M, _, _, _ = np.linalg.lstsq(a, b, rcond=None)
 
     B_sq, a1, a2, a3 = M
 
-    xi_fit = B_sq*xi_mod + a1/r_avg**2 + a2/r_avg + a3
+    xi_fit = xi_bestfit(r_avg, xi_mod, B_sq, a1, a2, a3)
 
-    # # putting M values back into equation for xi_fit— but with finer r grid
-    # r_avg_fine = np.linspace(min(r_avg), max(r_avg), ncont+1)
-    # xi_mod_fine = cf_model(alpha*r_avg_fine, cosmo_base=cosmo_base, redshift=redshift, bias=bias)
-
-    # xi_fit = B_sq*xi_mod_fine + a1/r_avg_fine**2 + a2/r_avg_fine + a3
-
-    return xi_fit, M, C
+    return xi_fit, M
 
 # for the standard approach, we perform this fit for several different alpha values and find the one which minimizes chi-squared
-def find_best_alpha(xi_ls, r_avg, alpha_min=0.75, alpha_max=1.25, nalphas=51):
+def find_best_alpha(xi_ls, r_avg, C_inv, alpha_min=0.75, alpha_max=1.25, nalphas=51):
 
     nbins = len(r_avg)
     alpha_grid = np.linspace(alpha_min, alpha_max, nalphas)
 
+    Ms = np.empty((nalphas, 4))     # design matrix
     xi_fits = np.empty((nalphas, nbins))
-    Ms = np.empty((nalphas, nbins, 4))
-    Cs = np.empty((nalphas, nbins, nbins))
+
     for i in range(nalphas):
-        xi_fit, M, C = fit_to_cf_model(alpha_grid[i], xi_ls, r_avg)
-        xi_fits[i] = xi_fit
+        xi_fit, M = fit_to_cf_model(alpha_grid[i], xi_ls, r_avg, C_inv)
         Ms[i] = M
-        Cs[i] = C
+        xi_fits[i] = xi_fit
     
     # chi-squared test: find the alpha which minimizes chi-squared
     chi_squareds = np.ones(nalphas)
     for i in range(nalphas):
         diff = xi_ls - xi_fits[i]
-        chi_squared = np.dot(diff, np.linalg.solve(Cs[i], diff))
+        chi_squared = np.dot(diff, np.linalg.solve(C_inv, diff))
         chi_squareds[i] = chi_squared
     
     best_alpha = alpha_grid[chi_squareds.argmin()]
@@ -100,12 +96,14 @@ def main(mock_tag = globals.mock_tag,
         xi_results = np.load(os.path.join(cat_dir, f'xi_ls_{randmult}x_{mock_fn_list[i]}.npy'), allow_pickle=True)
         r_avg = xi_results[0]
         xi_ls = xi_results[1]
+
+        # covariance matrix (identity for now)
+        C_inv = np.identity(len(r_avg))
+            # this was previously built into find_best_alpha, with option for a different C for each alpha; do I want to retain this?
+            # i.e. C_invs = np.empty((nalphas, nbins, nbins))
         
         # find the best alpha (the one that minimizes chi-squared)
-        best_alpha, _, _, M = find_best_alpha(xi_ls, r_avg)
-
-        # plug best_alpha back in to retrieve the best-fit correlation function
-        xi_bestfit, _, _ = fit_to_cf_model(best_alpha, xi_ls, r_avg)
+        best_alpha, _, _, M = find_best_alpha(xi_ls, r_avg, C_inv)
         
         # save best-fit cf
         save_dir = os.path.join(data_dir, f'bases/4-parameter_fit/results_{mock_tag}_{cat_tag}')
@@ -121,11 +119,13 @@ def main(mock_tag = globals.mock_tag,
             'B_sq' : B_sq,
             'a1' : a1,
             'a2' : a2,
-            'a3' : a3
+            'a3' : a3,
+            'C_inv' : C_inv
         }
         np.save(save_fn, save_data)
         # here we only save the resulting best-fit values (as opposed to the resulting bestfit correlation function) in order to
         #   reduce redundancy and increase flexibility– B, a1, a2, and a3 can be used with any r_avg to output xi
+        # should I be saving C_inv like this? we use it in patches_lstsq_fit; I want to make sure the covariances used are consistent
         
         print(f"4-parameter fit --> {mock_fn_list[i]}")
 

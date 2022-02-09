@@ -52,7 +52,8 @@ def xi_ls_ln_mocklist(randmult=globals.randmult, prints=False):
     s = time.time()
     # results for clustered mocks, NO gradient
     mock_vals = generate_mock_list.generate_mock_list(extra=True)
-    lognorm_file_list = mock_vals["lognorm_file_list"]
+    lognorm_file_list = mock_vals['lognorm_file_list']
+    mock_fn_list = mock_vals['mock_file_name_list']
 
     abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
     save_dir = os.path.join(abs_path, f'xi/ls/{cat_tag}')
@@ -61,8 +62,8 @@ def xi_ls_ln_mocklist(randmult=globals.randmult, prints=False):
 
     for i in range(len(lognorm_file_list)):
         xi_results = xi_ls_ln(mock_vals["lognorm_mock"], i, randmult=randmult, prints=prints)
-        np.save(os.path.join(save_dir, f'xi_ls_{randmult}x_{lognorm_file_list[i]}'), xi_results)
-        print(f'xi, {lognorm_file_list[i]}')
+        np.save(os.path.join(save_dir, f'xi_ls_{randmult}x_{mock_fn_list[i]}'), xi_results)
+        print(f'xi, lognormal {mock_fn_list[i]}')
     
     total_time = time.time()-s
     print(f"total time: {datetime.timedelta(seconds=total_time)}")

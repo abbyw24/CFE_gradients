@@ -32,7 +32,6 @@ def xi_ls_ln(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=glo
     Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_mocks_dir, lognorm_file))
     L = Lx      # boxsize
     x, y, z, vx, vy, vz = data.T
-        # i believe (?) the raw data is centered at L/2 (0-L)
     mock_data = np.array([x, y, z]).T
     center_mock(mock_data, 0, L)
 
@@ -62,8 +61,9 @@ def xi_ls_ln_mocklist(randmult=globals.randmult, prints=False):
 
     for i in range(len(lognorm_file_list)):
         xi_results = xi_ls_ln(mock_vals["lognorm_mock"], i, randmult=randmult, prints=prints)
-        np.save(os.path.join(save_dir, f'xi_ls_{randmult}x_{mock_fn_list[i]}'), xi_results)
-        print(f'xi, lognormal {mock_fn_list[i]}')
+        save_file = os.path.join(save_dir, f'xi_ls_{randmult}x_{mock_fn_list[i]}')
+        np.save(save_file, xi_results)
+        print(f'xi, lognormal; saved to {save_file}')
     
     total_time = time.time()-s
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
@@ -127,7 +127,7 @@ def xi_bao_it_ln_mocklist(prints=False):
     total_time = time.time()-s
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
-
+# lognormal catalogs have to have been run through 
 def xi_ls_mocklist():
 
     s = time.time()
@@ -138,9 +138,18 @@ def xi_ls_mocklist():
     mock_tag = 'lognormal' if mock_type == 'lognormal' else 'gradient'
 
     for mock_fn in mock_fn_list:
-        data_fn = os.path.join(data_dir, f'catalogs/{mock_tag}/{cat_tag}/{mock_fn}.npy')
-        mock_data = np.load(data_fn, allow_pickle=True)
-        center_mock(mock_data, 0, boxsize)
+        if mock_tag == 'lognormal':
+            lognorm_file = f'{cat_tag}_lognormal_rlz{rlz}.bin'
+            data_fn = os.path.join(data_dir, f'catalogs/{mock_tag}/{cat_tag}/{lognorm_file}.npy')
+            Lx, Ly, Lz, N, data = read_lognormal.read(data_fn)
+            assert Lx == boxsize      # boxsize
+            x, y, z, vx, vy, vz = data.T
+            mock_data = np.array([x, y, z]).T
+            center_mock(mock_data, 0, boxsize)
+        else:
+            data_fn = os.path.join(data_dir, f'catalogs/{mock_tag}/{cat_tag}/{mock_fn}.npy')
+            mock_data = np.load(data_fn, allow_pickle=True)
+            center_mock(mock_data, 0, boxsize)
         # data.shape == (N, 3)
 
         # other parameters

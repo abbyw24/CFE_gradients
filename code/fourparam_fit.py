@@ -62,10 +62,11 @@ def find_best_alpha(xi_ls, r_avg, C_inv, alpha_min=0.75, alpha_max=1.25, nalphas
         chi_squared = np.dot(diff, np.linalg.solve(C_inv, diff))
         chi_squareds[i] = chi_squared
     
+    min_chi_squared = min(chi_squareds)
     best_alpha = alpha_grid[chi_squareds.argmin()]
     M = Ms[chi_squareds.argmin()]
 
-    return best_alpha, alpha_grid, chi_squareds, M
+    return best_alpha, alpha_grid, min_chi_squared, M
 
 # loop through the list of mocks to find the best fit to cf_model for each one
 def main(mock_tag = globals.mock_tag,
@@ -103,7 +104,7 @@ def main(mock_tag = globals.mock_tag,
             # i.e. C_invs = np.empty((nalphas, nbins, nbins))
         
         # find the best alpha (the one that minimizes chi-squared)
-        best_alpha, _, _, M = find_best_alpha(xi_ls, r_avg, C_inv)
+        best_alpha, _, min_chi_squared, M = find_best_alpha(xi_ls, r_avg, C_inv)
         
         # save best-fit cf
         save_dir = os.path.join(data_dir, f'bases/4-parameter_fit/results_{mock_tag}_{cat_tag}')
@@ -116,6 +117,7 @@ def main(mock_tag = globals.mock_tag,
         save_fn = os.path.join(save_dir, f'basis_{mock_tag}_{mock_fn_list[i]}')
         save_data = {
             'best_alpha' : best_alpha,
+            'chi_squared' : min_chi_squared,
             'B_sq' : B_sq,
             'a1' : a1,
             'a2' : a2,

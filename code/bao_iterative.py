@@ -127,17 +127,17 @@ def main():
             C = amps[4]
 
             alpha_result = alpha_model + C*k0
+            err = (alpha_result - alpha_result_prev)/alpha_result
             extra_dict = {'r_edges': biter.rbins, 'ncomponents': biter.ncomponents, 
                           'proj_type': biter.proj_type, 'projfn': biter.projfn,
                           'alpha_start': alpha_model_start, 'alpha_model': alpha_model,
                           #'alpha_model_next': alpha_model_next, #for if iteration interrupted
                           'dalpha': dalpha, 'alpha_result': alpha_result,
-                          'niter': niter}
+                          'niter': niter, 'err': err}
 
             print(f'iter {niter}')
             # print(f'alpha: {alpha_model}, dalpha: {dalpha}')
             # print(f"C: {C}")
-            err = (alpha_result - alpha_result_prev)/alpha_result
             if abs(err) < convergence_threshold:
                 converged = True
             
@@ -252,7 +252,6 @@ class BAO_iterator:
         self.ncomponents = base_vals.shape[1]
 
 
-    # currently only for lognormal mock_tag
     def save_cf(self, xi, amps, niter, extra_dict, rand_tag, converged=True):
         if converged:
             save_dir = f'{self.result_dir}/converged'

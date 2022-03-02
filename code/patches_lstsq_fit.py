@@ -22,11 +22,11 @@ n_patches = globals.n_patches
 mock_file_name_list = generate_mock_list.generate_mock_list()
 
 # instead of the old cf_model (fiducial), we now use the results from the 4-parameter fit (analogous to bao_iterative)
-def f_bases(mock_fn, r, x):
+def f_bases(mock_fn, r, x, cov_type = 'identity'):
     assert len(x) == 3
 
     # load in best-fit parameters
-    fit_results = np.load(os.path.join(data_dir, f'bases/4-parameter_fit/results_gradient_{cat_tag}/basis_gradient_{mock_fn}.npy'), allow_pickle=True).item()
+    fit_results = np.load(os.path.join(data_dir, f'bases/4-parameter_fit/{cov_type}/results_gradient_{cat_tag}/basis_gradient_{mock_fn}.npy'), allow_pickle=True).item()
     alpha = fit_results['best_alpha']
     B_sq = fit_results['B_sq']
     a1 = fit_results['a1']

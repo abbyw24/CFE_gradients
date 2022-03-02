@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import sys
 import os
 import time
+import datetime
 
 from suave import cf_model
 
@@ -11,13 +12,16 @@ import generate_mock_list
 import globals
 globals.initialize_vals()
 
+nmocks = globals.nmocks
+nbins = globals.nbins
+
 def xi_bestfit(r, xi_mod, B_sq, a1, a2, a3):
 
     xi_bestfit = B_sq*xi_mod + a1/r**2 + a2/r + a3
 
     return xi_bestfit
 
-def fit_to_cf_model(alpha, xi_ls, r_avg, C_inv, cosmo_base=None, redshift=0.57, bias=2.0):
+def fit_to_cf_model(alpha, xi_ls, r_avg, cov, cosmo_base=None, redshift=0.57, bias=2.0):
 
     nbins = len(r_avg)
 
@@ -30,8 +34,8 @@ def fit_to_cf_model(alpha, xi_ls, r_avg, C_inv, cosmo_base=None, redshift=0.57, 
     A = np.array([xi_mod, 1/r_avg**2, 1/r_avg, np.ones(nbins)]).T       # feature matrix
 
     # performing the fit
-    a = A.T @ C_inv @ A
-    b = A.T @ C_inv @ Y
+    a = A.T @ np.linalg.solve(cov, A)
+    b = A.T @ np.linalg.solve(cov, Y)
 
     M, _, _, _ = np.linalg.lstsq(a, b, rcond=None)
 
@@ -42,7 +46,7 @@ def fit_to_cf_model(alpha, xi_ls, r_avg, C_inv, cosmo_base=None, redshift=0.57, 
     return xi_fit, M
 
 # for the standard approach, we perform this fit for several different alpha values and find the one which minimizes chi-squared
-def find_best_alpha(xi_ls, r_avg, C_inv, alpha_min=0.75, alpha_max=1.25, nalphas=51):
+def find_best_alpha(xi_ls, r_avg, cov, alpha_min=0.75, alpha_max=1.25, nalphas=501):
 
     nbins = len(r_avg)
     alpha_grid = np.linspace(alpha_min, alpha_max, nalphas)
@@ -51,7 +55,7 @@ def find_best_alpha(xi_ls, r_avg, C_inv, alpha_min=0.75, alpha_max=1.25, nalphas
     xi_fits = np.empty((nalphas, nbins))
 
     for i in range(nalphas):
-        xi_fit, M = fit_to_cf_model(alpha_grid[i], xi_ls, r_avg, C_inv)
+        xi_fit, M = fit_to_cf_model(alpha_grid[i], xi_ls, r_avg, cov)
         Ms[i] = M
         xi_fits[i] = xi_fit
     
@@ -59,7 +63,7 @@ def find_best_alpha(xi_ls, r_avg, C_inv, alpha_min=0.75, alpha_max=1.25, nalphas
     chi_squareds = np.ones(nalphas)
     for i in range(nalphas):
         diff = xi_ls - xi_fits[i]
-        chi_squared = np.dot(diff, np.linalg.solve(C_inv, diff))
+        chi_squared = np.dot(diff, np.linalg.solve(cov, diff))
         chi_squareds[i] = chi_squared
     
     min_chi_squared = min(chi_squareds)
@@ -76,7 +80,8 @@ def main(mock_tag = globals.mock_tag,
             boxsize = globals.boxsize,
             density = globals.lognormal_density,
             cat_tag = globals.cat_tag,
-            randmult = globals.randmult):
+            randmult = globals.randmult,
+            cov_type = 'identity'):
 
     s = time.time()
 
@@ -88,26 +93,36 @@ def main(mock_tag = globals.mock_tag,
         cat_dir = os.path.join(data_dir, f'lognormal/xi/ls/{cat_tag}')
     else:
         cat_dir = os.path.join(grad_dir, f'ls/{cat_tag}')
+
+    # calculate covariance matrix
+    if cov_type == 'identity':
+        cov = np.identity(nbins)
+    elif cov_type =='full':
+        xi_lss = np.empty((nmocks, nbins))
+
+        for rlz in range(nmocks):
+            xi_results = np.load(os.path.join(cat_dir, f'xi_ls_{randmult}x_{mock_fn_list[rlz]}.npy'), allow_pickle=True)
+            r_avg = xi_results[0]
+            xi_lss[rlz] = xi_results[1]
+
+            ls_std = np.std(xi_lss, axis=0)
+
+        cov = np.cov(xi_lss.T)
+    else:
+        assert False, "unknown cov_type"
     
     for i in range(len(mock_fn_list)):
-
-        # mock_name = cat_tag if mock_tag == 'lognormal' else f'{cat_tag}_{mock_param_list[i]}'
 
         # load in data
         xi_results = np.load(os.path.join(cat_dir, f'xi_ls_{randmult}x_{mock_fn_list[i]}.npy'), allow_pickle=True)
         r_avg = xi_results[0]
         xi_ls = xi_results[1]
-
-        # covariance matrix (identity for now)
-        C_inv = np.identity(len(r_avg))
-            # this was previously built into find_best_alpha, with option for a different C for each alpha; do I want to retain this?
-            # i.e. C_invs = np.empty((nalphas, nbins, nbins))
         
         # find the best alpha (the one that minimizes chi-squared)
-        best_alpha, _, min_chi_squared, M = find_best_alpha(xi_ls, r_avg, C_inv)
+        best_alpha, _, min_chi_squared, M = find_best_alpha(xi_ls, r_avg, cov)
         
         # save best-fit cf
-        save_dir = os.path.join(data_dir, f'bases/4-parameter_fit/results_{mock_tag}_{cat_tag}')
+        save_dir = os.path.join(data_dir, f'bases/4-parameter_fit/{cov_type}/results_{mock_tag}_{cat_tag}')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
 
@@ -122,15 +137,18 @@ def main(mock_tag = globals.mock_tag,
             'a1' : a1,
             'a2' : a2,
             'a3' : a3,
-            'C_inv' : C_inv
+            'cov' : cov
         }
         np.save(save_fn, save_data)
         # here we only save the resulting best-fit values (as opposed to the resulting bestfit correlation function) in order to
         #   reduce redundancy and increase flexibility– B, a1, a2, and a3 can be used with any r_avg to output xi
-        # should I be saving C_inv like this? we use it in patches_lstsq_fit; I want to make sure the covariances used are consistent
         
-        print(f"4-parameter fit --> {mock_fn_list[i]}")
+        print(f"4-parameter fit --> {mock_fn_list[i]}: {cov_type} covariance matrix")
+    
+    total_time = time.time()-s
+    print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
 
 if __name__=="__main__":
-    main()
+    main(cov_type='full')
+    main(cov_type='identity')

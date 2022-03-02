@@ -138,18 +138,15 @@ def xi_ls_mocklist():
     mock_tag = 'lognormal' if mock_type == 'lognormal' else 'gradient'
 
     for mock_fn in mock_fn_list:
+        data_fn = os.path.join(data_dir, f'catalogs/{mock_tag}/{cat_tag}/{mock_fn}.npy')
+        # lognormal mock data is in a dictionary (along w N and L), so we need to pull out just the galaxy positions
         if mock_tag == 'lognormal':
-            lognorm_file = f'{cat_tag}_lognormal_rlz{rlz}.bin'
-            data_fn = os.path.join(data_dir, f'catalogs/{mock_tag}/{cat_tag}/{lognorm_file}.npy')
-            Lx, Ly, Lz, N, data = read_lognormal.read(data_fn)
-            assert Lx == boxsize      # boxsize
-            x, y, z, vx, vy, vz = data.T
-            mock_data = np.array([x, y, z]).T
-            center_mock(mock_data, 0, boxsize)
+            mock_dict = np.load(data_fn, allow_pickle=True).item()
+            mock_data = mock_dict['data']
         else:
-            data_fn = os.path.join(data_dir, f'catalogs/{mock_tag}/{cat_tag}/{mock_fn}.npy')
+            assert mock_tag == 'gradient'
             mock_data = np.load(data_fn, allow_pickle=True)
-            center_mock(mock_data, 0, boxsize)
+        center_mock(mock_data, 0, boxsize)
         # data.shape == (N, 3)
 
         # other parameters

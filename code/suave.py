@@ -34,10 +34,6 @@ rmax = globals.rmax
 nbins = globals.nbins
 nthreads = globals.nthreads
 
-mock_list_info = generate_mock_list.generate_mock_list(extra=True)
-mock_file_name_list = mock_list_info['mock_file_name_list']
-mock_param_list = mock_list_info['mock_param_list']
-
 
 def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
 
@@ -71,8 +67,12 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
 
 # define function to estimate gradient using suave
 # cosmo=False ==> default bases are iterative results
-def suave_grad(grad_dim=grad_dim, grad_dir=grad_dir, cosmo=False, plots=False):
+def suave_grad(cat_tag=cat_tag, grad_dim=grad_dim, grad_dir=grad_dir, cosmo=False, plots=False):
     s = time.time()
+
+    mock_list_info = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
+    mock_file_name_list = mock_list_info['mock_file_name_list']
+    mock_param_list = mock_list_info['mock_param_list']
 
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)

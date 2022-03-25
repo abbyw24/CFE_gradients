@@ -21,21 +21,20 @@ from center_mock import center_mock
 import generate_mock_list
 
 import globals
+globals.initialize_vals()
 
-def main():
+def main(cat_tag=globals.cat_tag,
+            mock_tag = globals.mock_tag,
+            data_dir = globals.data_dir,
+            grad_dim = globals.grad_dim,
+            boxsize = globals.boxsize,
+            density = globals.lognormal_density,
+            nmocks = globals.nmocks,
+            randmult = globals.randmult):
+
     s = time.time()
-
-    globals.initialize_vals()
-    mock_tag = globals.mock_tag
-    data_dir = globals.data_dir
-    grad_dim = globals.grad_dim
-    boxsize = globals.boxsize
-    density = globals.lognormal_density
-    cat_tag = globals.cat_tag
-    nmocks = globals.nmocks
-    randmult = globals.randmult
     
-    mock_list_info = generate_mock_list.generate_mock_list(extra=True)  # this is only used if mock_tag is not lognormal
+    mock_list_info = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)  # this is only used if mock_tag is not lognormal
 
     if mock_tag == 'lognormal':
         cat_dir = os.path.join(data_dir, f'catalogs/lognormal/{cat_tag}') #f'/scratch/ksf293/mocks/lognormal/cat_{cat_tag}'
@@ -73,6 +72,8 @@ def main():
     trr_tag = '' if trr_analytic else '_trrnum'
     rand_tag = '' if trr_analytic else f'_{randmult}x'
     per_tag = '_perTrue' if periodic else ''
+
+    print(cat_tag, mock_tag)
 
     for Nr in realizations:
         print(f"Realization {Nr}")
@@ -291,14 +292,6 @@ class BAO_iterator:
 
 
     def load_data(self):
-        # if self.mock_tag == 'lognormal':
-        #     data_fn = f'{self.cat_dir}/{self.mock_name}.bin'
-        #     L, _, _, N, data = reader.read(data_fn) # first 3 are Lx, Ly, Lz
-        #     self.x, self.y, self.z = data.T
-        #     assert L == self.boxsize, "boxsize from data must equal boxsize from globals"
-        #     pos = np.array([self.x, self.y, self.z])
-        #     center_mock(pos, 0, self.boxsize)
-        #     self.nd = N
         data_fn = f'{self.cat_dir}/{self.mock_name}.npy'
         mock_info = np.load(data_fn, allow_pickle=True).item()
         if self.mock_tag == 'lognormal':
@@ -308,10 +301,6 @@ class BAO_iterator:
             L, N, data = mock_info['boxsize'], mock_info['N'], mock_info['grad_set']
         center_mock(data, 0, self.boxsize)
         self.x, self.y, self.z = data.T
-            # data_fn = f'{self.data_dir}/catalogs/gradient/{self.cat_tag}/{self.mock_fn_list[self.Nr]}.npy'
-            # data = np.load(data_fn, allow_pickle=True)
-            # center_mock(data, 0, self.boxsize)
-            # self.x, self.y, self.z = data.T
         self.nd = len(data)
 
         self.weights = None
@@ -401,4 +390,25 @@ class BAO_iterator:
 
 
 if __name__=="__main__":
+
+    cat_tags = [
+        'L1000_n4e-4_z057_patchy_As2x',
+        'L1500_n1e-6_z057_patchy_As2x',
+        'L500_n1e-6_z057_patchy_As2x',
+        'L750_n1e-4_z057_patchy',
+        # 'L750_n2e-4_z057_patchy_As2x',
+        # 'L1000_n1e-4_z057_patchy_As2x',
+        'L1500_n1e-4_z057_patchy_As2x',
+        # 'L500_n1e-4_z057_patchy_As2x',
+        # 'L500_n2e-4_z057_patchy_As2x',
+        # 'L750_n1e-4_z057_patchy_As2x',
+        'L750_n4e-4_z057_patchy',
+        # 'L1000_n2e-4_z057_patchy_As2x',
+        'L1500_n1e-5_z057_patchy_As2x',
+        'L500_n1e-5_z057_patchy_As2x',
+        'L500_n4e-4_z057_patchy_As2x',
+        'L750_n2e-4_z057_patchy',
+        'L750_n4e-4_z057_patchy_As2x'
+    ]
+    
     main()

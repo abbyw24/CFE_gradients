@@ -30,7 +30,7 @@ def generate_random(nbar, boxsize, nx, savepos=None):  # previously had an optio
     nr = nx * float(nbar) * int(boxsize)**3
     random = np.random.uniform(0, boxsize, (int(nr),3))
     print('time: {}'.format(time.time()-s))
-    print("Random: {}".format(int(nr)))
+    print("N: {}".format(int(nr)))
     if savepos:
         np.savetxt(savepos, random)     # keeping this saved in txt format since this is what kate had / is in bao_iterative
     return random

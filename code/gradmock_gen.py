@@ -1,6 +1,8 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+import datetime
 
 import read_lognormal
 from create_subdirs import create_subdirs
@@ -8,28 +10,28 @@ import globals
 import generate_mock_list
 globals.initialize_vals()
 
-data_dir = globals.data_dir
-grad_dir = globals.grad_dir
-grad_dim = globals.grad_dim
-boxsize = globals.boxsize
-mock_type = globals.mock_type
-assert mock_type != 'lognormal', "mock_type must not be lognormal for gradient generation!"
-lognormal_density = globals.lognormal_density
-cat_tag = globals.cat_tag
-
-mock_vals = generate_mock_list.generate_mock_list(extra=True)
-path_to_lognorm_source = mock_vals['path_to_lognorm_source']
-mock_file_name_list = mock_vals['mock_file_name_list']
-lognorm_file_list = mock_vals['lognorm_file_list']
-m_arr = mock_vals['m_arr']
-b_arr = mock_vals['b_arr']
-
 # pick a seed number so that random set stays the same every time (for now)
 np.random.seed(123456)
 
 # function to generate gradient mock
-def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_source=path_to_lognorm_source,
-                        mock_file_name_list=mock_file_name_list, plots=False, z_max=-50):
+def generate_gradmocks(data_dir = globals.data_dir,
+                        grad_dir = globals.grad_dir,
+                        grad_dim = globals.grad_dim,
+                        mock_type = globals.mock_type,
+                        cat_tag = globals.cat_tag,
+                        plots=False, z_max=-50):
+    
+    s = time.time()
+    
+    # generate mock list
+    mock_vals = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
+    path_to_lognorm_source = mock_vals['path_to_lognorm_source']
+    mock_file_name_list = mock_vals['mock_file_name_list']
+    lognorm_file_list = mock_vals['lognorm_file_list']
+    m_arr = mock_vals['m_arr']
+    b_arr = mock_vals['b_arr']
+    
+    assert mock_type != 'lognormal', "mock_type must not be lognormal for gradient generation!"
     
     # create desired path to mocks directory if it doesn't already exist
     mock_dir = f'mock_data/{cat_tag}'
@@ -68,7 +70,6 @@ def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_s
             'w_hat' : w_hat,
             'm' : m_arr[i],
             'b' : b_arr[i],
-            'lognorm_density' : lognormal_density
         }
 
         # redefine dictionary values for simplicity
@@ -87,7 +88,7 @@ def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_s
 
         # boxsize
         L = Lx
-        assert float(L) == float(boxsize), "Boxsize from data does not match boxsize from globals.py"
+        # assert float(L) == float(boxsize), "Boxsize from data does not match boxsize from globals.py"
             # make sure the boxsize from data equals the boxsize we specified in the file name
         mock_info['boxsize'] = L
 
@@ -146,7 +147,14 @@ def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_s
         if not os.path.exists(cat_dir):
             os.makedirs(cat_dir)
         cat_fn = os.path.join(cat_dir, f'{mock_file_name}')
-        np.save(cat_fn, xs_grad)
+
+        mock_dict = {
+            'data' : xs_grad,
+            'cat_tag' : cat_tag,
+            'L' : L,
+            'N' : N
+        }
+        np.save(cat_fn, mock_dict)
 
 
         # VISUALIZATION
@@ -195,3 +203,6 @@ def generate_gradmocks(mock_type=mock_type, grad_dim=grad_dim, path_to_lognorm_s
         np.save(mock_dict_fn, mock_info)
 
         print(f"gradient generated --> {mock_file_name}")
+    
+    total_time = time.time()-s
+    print(datetime.timedelta(seconds=total_time))

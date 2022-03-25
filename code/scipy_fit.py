@@ -89,7 +89,7 @@ def main(mock_tag = globals.mock_tag,
 
     s = time.time()
 
-    mock_list_info = generate_mock_list.generate_mock_list(extra=True)  # this is only used if mock_type is not lognormal
+    mock_list_info = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)  # this is only used if mock_type is not lognormal
     mock_fn_list = mock_list_info['mock_file_name_list']
     mock_param_list = mock_list_info['mock_param_list']
 

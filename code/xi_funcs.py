@@ -22,6 +22,7 @@ density = globals.lognormal_density
 randmult = globals.randmult
 
 
+# run Landy-Szalay on lognormal mocks directly from Kate's directory; avoid if possible
 def xi_ls_ln(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=globals.randmult, periodic=globals.periodic, nthreads=globals.nthreads,
     rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, prints=False):
 
@@ -46,11 +47,11 @@ def xi_ls_ln(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=glo
     return r_avg, results_xi
 
 
-def xi_ls_ln_mocklist(randmult=globals.randmult, prints=False):
+def xi_ls_ln_mocklist(cat_tag=cat_tag, randmult=globals.randmult, prints=False):
 
     s = time.time()
     # results for clustered mocks, NO gradient
-    mock_vals = generate_mock_list.generate_mock_list(extra=True)
+    mock_vals = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
     lognorm_file_list = mock_vals['lognorm_file_list']
     mock_fn_list = mock_vals['mock_file_name_list']
 
@@ -61,11 +62,14 @@ def xi_ls_ln_mocklist(randmult=globals.randmult, prints=False):
 
     for i in range(len(lognorm_file_list)):
         xi_results = xi_ls_ln(mock_vals["lognorm_mock"], i, randmult=randmult, prints=prints)
+
         save_file = os.path.join(save_dir, f'xi_ls_{randmult}x_{mock_fn_list[i]}')
         np.save(save_file, xi_results)
-        print(f'xi, lognormal; saved to {save_file}')
+        if prints:
+            print(f'xi, lognormal --> {mock_fn_list[i]}')
     
     total_time = time.time()-s
+    print(f'xi, lognormal {cat_tag}')
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
 
@@ -128,12 +132,12 @@ def xi_bao_it_ln_mocklist(prints=False):
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
 # lognormal catalogs have to have been run through 
-def xi_ls_mocklist():
+def xi_ls_mocklist(cat_tag=cat_tag, prints=False):
 
     s = time.time()
 
     # mocklist
-    mock_fn_list = generate_mock_list.generate_mock_list()
+    mock_fn_list = generate_mock_list.generate_mock_list(cat_tag=cat_tag)
 
     mock_tag = 'lognormal' if mock_type == 'lognormal' else 'gradient'
 
@@ -176,7 +180,9 @@ def xi_ls_mocklist():
 
         np.save(save_fn, np.array([r_avg, results_xi]))
 
-        print(f"landy-szalay --> {mock_fn}")
+        if prints:
+            print(f"landy-szalay --> {mock_fn}")
     
     total_time = time.time()-s
+    print(f"landy-szalay --> {cat_tag}, {len(mock_fn_list)} mocks")
     print(f"total time: {datetime.timedelta(seconds=total_time)}")

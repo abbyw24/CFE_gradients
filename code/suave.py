@@ -26,6 +26,7 @@ lognormal_density = globals.lognormal_density
 data_dir = globals.data_dir
 grad_dir = globals.grad_dir
 mock_type = globals.mock_type
+mock_tag = globals.mock_tag
 
 randmult = globals.randmult
 periodic = globals.periodic
@@ -67,7 +68,7 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
 
 # define function to estimate gradient using suave
 # cosmo=False ==> default bases are iterative results
-def suave_grad(cat_tag=cat_tag, grad_dim=grad_dim, grad_dir=grad_dir, cosmo=False, plots=False):
+def suave_grad(cat_tag=cat_tag, mock_tag=mock_tag, grad_dim=grad_dim, grad_dir=grad_dir, cosmo=False, plots=False):
     s = time.time()
 
     mock_list_info = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
@@ -108,11 +109,11 @@ def suave_grad(cat_tag=cat_tag, grad_dim=grad_dim, grad_dir=grad_dir, cosmo=Fals
 
     for i in range(len(mock_file_name_list)):
 
-        mock_name = cat_tag if mock_type == 'lognormal' else f'{cat_tag}_{mock_param_list[i]}'
+        mock_name = f'{cat_tag}_rlz{i}_lognormal' if mock_tag == 'lognormal' else f'{cat_tag}_rlz{i}_{mock_param_list[i]}'
 
         # load bases
         if not cosmo:
-            projfn = os.path.join(data_dir, f'bases/bao_iterative/results/results_gradient_{cat_tag}/final_bases/basis_gradient_{mock_name}_trrnum_{randmult}x_rlz{i}.dat')
+            projfn = os.path.join(data_dir, f'bases/bao_iterative/results/results_gradient_{cat_tag}/final_bases/basis_gradient_{mock_name}_trrnum_{randmult}x.dat')
             basis = np.loadtxt(projfn)
             ncomponents = 4*(basis.shape[1]-1)
 

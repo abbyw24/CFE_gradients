@@ -390,25 +390,5 @@ class BAO_iterator:
 
 
 if __name__=="__main__":
-
-    cat_tags = [
-        'L1000_n4e-4_z057_patchy_As2x',
-        'L1500_n1e-6_z057_patchy_As2x',
-        'L500_n1e-6_z057_patchy_As2x',
-        'L750_n1e-4_z057_patchy',
-        # 'L750_n2e-4_z057_patchy_As2x',
-        # 'L1000_n1e-4_z057_patchy_As2x',
-        'L1500_n1e-4_z057_patchy_As2x',
-        # 'L500_n1e-4_z057_patchy_As2x',
-        # 'L500_n2e-4_z057_patchy_As2x',
-        # 'L750_n1e-4_z057_patchy_As2x',
-        'L750_n4e-4_z057_patchy',
-        # 'L1000_n2e-4_z057_patchy_As2x',
-        'L1500_n1e-5_z057_patchy_As2x',
-        'L500_n1e-5_z057_patchy_As2x',
-        'L500_n4e-4_z057_patchy_As2x',
-        'L750_n2e-4_z057_patchy',
-        'L750_n4e-4_z057_patchy_As2x'
-    ]
     
     main()

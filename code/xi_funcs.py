@@ -13,14 +13,6 @@ import generate_mock_list
 import globals
 globals.initialize_vals()
 
-data_dir = globals.data_dir
-grad_dir = globals.grad_dir
-cat_tag = globals.cat_tag
-mock_type = globals.mock_type
-boxsize = globals.boxsize
-density = globals.lognormal_density
-randmult = globals.randmult
-
 
 # run Landy-Szalay on lognormal mocks directly from Kate's directory; avoid if possible
 def xi_ls_ln(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=globals.randmult, periodic=globals.periodic, nthreads=globals.nthreads,
@@ -47,7 +39,7 @@ def xi_ls_ln(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=glo
     return r_avg, results_xi
 
 
-def xi_ls_ln_mocklist(cat_tag=cat_tag, randmult=globals.randmult, prints=False):
+def xi_ls_ln_mocklist(cat_tag=globals.cat_tag, randmult=globals.randmult, prints=False):
 
     s = time.time()
     # results for clustered mocks, NO gradient
@@ -104,7 +96,7 @@ def xi_bao_ln_mocklist(prints=False, rmin=globals.rmin, rmax=globals.rmax, redsh
 
 
 # currently bao_iterative.py calculates this, so you shouldn't need to call this function; it's redundant
-def xi_bao_it_ln_mocklist(prints=False):
+def xi_bao_it_ln_mocklist(cat_tag=globals.cat_tag, prints=False):
 
     s = time.time()
     # results for clustered mocks, NO gradient
@@ -132,7 +124,9 @@ def xi_bao_it_ln_mocklist(prints=False):
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
 # lognormal catalogs have to have been run through 
-def xi_ls_mocklist(cat_tag=cat_tag, prints=False):
+def xi_ls_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize=globals.boxsize, density=globals.lognormal_density,
+                    prints=False, randmult=globals.randmult, periodic=globals.periodic, nthreads=globals.nthreads,
+                    rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, data_dir=globals.data_dir, grad_dir=globals.grad_dir):
 
     s = time.time()
 
@@ -143,22 +137,15 @@ def xi_ls_mocklist(cat_tag=cat_tag, prints=False):
 
     for mock_fn in mock_fn_list:
         data_fn = os.path.join(data_dir, f'catalogs/{mock_tag}/{cat_tag}/{mock_fn}.npy')
-        # lognormal mock data is in a dictionary (along w N and L), so we need to pull out just the galaxy positions
+        # mock data is in a dictionary (along w N and L), so we need to pull out just the galaxy positions
         if mock_tag == 'lognormal':
             mock_dict = np.load(data_fn, allow_pickle=True).item()
-            mock_data = mock_dict['data']
         else:
             assert mock_tag == 'gradient'
-            mock_data = np.load(data_fn, allow_pickle=True)
+            mock_dict = np.load(data_fn, allow_pickle=True).item()
+        mock_data = mock_dict['data']
         center_mock(mock_data, 0, boxsize)
         # data.shape == (N, 3)
-
-        # other parameters
-        periodic = globals.periodic
-        nthreads = globals.nthreads
-        rmin = globals.rmin
-        rmax = globals.rmax
-        nbins = globals.nbins
 
         # random set
         random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{boxsize}_n{density}_{randmult}x.dat')

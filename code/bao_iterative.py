@@ -51,7 +51,7 @@ def main(cat_tag=globals.cat_tag,
     cosmo = cosmology.setCosmology(cosmo_name)
     cf_tag = f"_{proj}_cosmo{cosmo_name}_test"
     redshift = 0.57
-    realizations = range(nmocks)
+    realizations = mock_list_info['rlz_list']
 
     restart_unconverged = False # will restart any unconverged realizations - WARNING, IF FALSE WILL OVERWRITE ITERATIONS OF UNCONVERGED ONES
     convergence_threshold = 1e-5 #when to stop (fractional change)
@@ -75,13 +75,15 @@ def main(cat_tag=globals.cat_tag,
 
     print(cat_tag, mock_tag)
 
-    for Nr in realizations:
+    for Nr in range(nmocks):
         print(f"Realization {Nr}")
+
+        rlz = realizations[Nr]
 
         alpha_model_start = 1.0
         eta = 0.5
-        biter = BAO_iterator(mock_tag, boxsize, periodic, cat_tag, rand_tag, cat_dir, cosmo, data_dir,
-                            mock_list_info=mock_list_info, Nr=Nr, cf_tag=cf_tag, trr_analytic=trr_analytic,
+        biter = BAO_iterator(Nr, mock_tag, boxsize, periodic, cat_tag, rand_tag, cat_dir, cosmo, data_dir, rlz,
+                            mock_list_info=mock_list_info, cf_tag=cf_tag, trr_analytic=trr_analytic,
                             save_iterated_bases=save_iterated_bases, nthreads=nthreads, redshift=redshift,
                             alpha_model_start=alpha_model_start, dalpha=dalpha, k0=k0, random_fn=random_fn)
 
@@ -182,15 +184,16 @@ def main(cat_tag=globals.cat_tag,
 
 class BAO_iterator:
 
-    def __init__(self, mock_tag, boxsize, periodic, cat_tag, rand_tag, cat_dir, cosmo, data_dir, mock_list_info=None, Nr=0,
+    def __init__(self, Nr, mock_tag, boxsize, periodic, cat_tag, rand_tag, cat_dir, cosmo, data_dir, rlz, mock_list_info=None,
                     rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, cf_tag='_baoiter', trr_analytic=False,
                     save_iterated_bases=False, nthreads=globals.nthreads, redshift=0.0, bias=2.0,
                     alpha_model_start=1.0, dalpha=0.01, k0=0.1, random_fn=None):
 
         # input params
+        self.Nr = Nr
         self.mock_tag = mock_tag
         self.boxsize = boxsize
-        self.Nr = Nr
+        self.rlz = rlz
         self.cosmo = cosmo
 
         self.rmin = rmin
@@ -222,7 +225,7 @@ class BAO_iterator:
             self.mock_param_list = self.mock_list_info['mock_param_list']
 
         self.cat_tag = cat_tag
-        self.mock_name = f'{cat_tag}_rlz{self.Nr}_lognormal' if self.mock_tag == 'lognormal' else f'{cat_tag}_rlz{self.Nr}_{self.mock_param_list[self.Nr]}'
+        self.mock_name = f'{cat_tag}_rlz{self.rlz}_lognormal' if self.mock_tag == 'lognormal' else f'{cat_tag}_rlz{self.rlz}_{self.mock_param_list[self.Nr]}'
         self.rand_tag = rand_tag
         self.cat_dir = cat_dir
         self.cf_tag = cf_tag

@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import matplotlib.image as img
 import itertools as it
 import os
+import time
+import datetime
+
 from create_subdirs import create_subdirs
 from corrfunc_ls import xi_ls
 from center_mock import center_mock
@@ -26,8 +29,6 @@ nbins = globals.nbins
 nthreads = globals.nthreads
 
 n_patches = globals.n_patches
-
-mock_fn_list = generate_mock_list.generate_mock_list()
 
 
 # define patchify
@@ -55,18 +56,15 @@ def patchify(data, boxsize, n_patches=n_patches):
 
 
 # define function to find xi in each patch
-def xi_in_patches(grad_dim=grad_dim, grad_dir=grad_dir, mock_fn_list = mock_fn_list,
-                    n_patches=n_patches, plots=False):
+def xi_in_patches(cat_tag=cat_tag, grad_dim=grad_dim, grad_dir=grad_dir, n_patches=n_patches, plots=False):
+
+    s = time.time()
+
+    mock_fn_list = generate_mock_list.generate_mock_list(cat_tag=cat_tag)
 
     # create the needed subdirectories
     patch_dir = f'patch_data/{cat_tag}/{n_patches}patches'
-    plots_dir = f'plots/patches/{cat_tag}/{n_patches}patches'
-
-    sub_dirs = [
-        patch_dir,
-        plots_dir
-    ]
-    create_subdirs(grad_dir, sub_dirs)
+    create_subdirs(grad_dir, [patch_dir])
 
     for i in range(len(mock_fn_list)):
         # retrieve mock info dictionary
@@ -83,6 +81,7 @@ def xi_in_patches(grad_dim=grad_dim, grad_dir=grad_dir, mock_fn_list = mock_fn_l
         # create random set
         nr = randmult*nd
         rand_set = np.random.uniform(0, L, (nr,3))
+            # should i be creating a random set here, or using the one already created in my catalog directory?
 
         # patchify mock data and random set
         patches_mock = patchify(mock_data, L, n_patches=n_patches)
@@ -128,6 +127,9 @@ def xi_in_patches(grad_dim=grad_dim, grad_dir=grad_dir, mock_fn_list = mock_fn_l
         k = 0
 
         if plots == True:
+            plots_dir = f'plots/patches/{cat_tag}/{n_patches}patches'
+            create_subdirs(grad_dir, patch_dir)
+
             fig, ax = plt.subplots()
 
             cmap = plt.cm.get_cmap('cool')
@@ -187,3 +189,7 @@ def xi_in_patches(grad_dim=grad_dim, grad_dir=grad_dir, mock_fn_list = mock_fn_l
             plt.close('all')
 
         print(f"xi in patches --> {mock_file_name}")
+    
+    print(f"xi in patches, {cat_tag} {mock_type}")
+    total_time = time.time()-s
+    print(f"total time: {datetime.timedelta(seconds=total_time)}")

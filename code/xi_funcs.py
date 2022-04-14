@@ -95,7 +95,6 @@ def xi_bao_ln_mocklist(prints=False, rmin=globals.rmin, rmax=globals.rmax, redsh
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
 
-# currently bao_iterative.py calculates this, so you shouldn't need to call this function; it's redundant
 def xi_bao_it_ln_mocklist(cat_tag=globals.cat_tag, prints=False):
 
     s = time.time()
@@ -122,6 +121,7 @@ def xi_bao_it_ln_mocklist(cat_tag=globals.cat_tag, prints=False):
     
     total_time = time.time()-s
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
+
 
 # lognormal catalogs have to have been run through 
 def xi_ls_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize=globals.boxsize, density=globals.lognormal_density,

@@ -16,13 +16,13 @@ globals.initialize_vals()
 nmocks = globals.nmocks
 nbins = globals.nbins
 
-def chisq(x, A, y, Cinv):
+def chisq(x, A, y, cov):
     resid = y - A@x
-    return resid @ (Cinv @ resid)
+    return resid @ np.linalg.solve(cov, resid)
 
-def jacobian(x, A, y, Cinv):
+def jacobian(x, A, y, cov):
     resid = y - A@x
-    return -2*A.T @ (Cinv @ resid)  # essentially returns the derivative of chi-squared
+    return -2*A.T @ np.linalg.solve(cov, resid)  # essentially returns the derivative of chi-squared
 
 def scipy_fit(alpha, xi_ls, r_avg, cov, cosmo_base=None, redshift=0.57, bias=2.0):
 
@@ -34,16 +34,13 @@ def scipy_fit(alpha, xi_ls, r_avg, cov, cosmo_base=None, redshift=0.57, bias=2.0
     # feature matrix
     A = np.array([xi_mod, 1/r_avg**2, 1/r_avg, np.ones(nbins)]).T
 
-    # covariance matrix
-    Cinv = np.linalg.inv(cov)      # !! this should be changed to avoid np.linalg.inv
-
     # initial parameters guess
     x0 = np.ones(4)
 
     # bounds for parameters (B^2 > 0)
     bnds = ((0, None), (None, None), (None, None), (None, None))
     
-    minimize_results = scipy.optimize.minimize(chisq, x0, args=(A,xi_ls,Cinv), method='L-BFGS-B', jac=jacobian, bounds=bnds)
+    minimize_results = scipy.optimize.minimize(chisq, x0, args=(A,xi_ls,cov), method='L-BFGS-B', jac=jacobian, bounds=bnds)
     M = minimize_results['x']
 
     # plug M (best-fit params) into xi equation
@@ -146,5 +143,10 @@ def main(mock_tag = globals.mock_tag,
 
 if __name__=="__main__":
 
-    for cat_tag in globals.cat_tags:
+    cat_tags = [
+        'L500_n1e-6_z057_patchy_As2x',
+        'L500_n1e-5_z057_patchy_As2x'
+    ]
+
+    for cat_tag in cat_tags:
         main(cat_tag=cat_tag)

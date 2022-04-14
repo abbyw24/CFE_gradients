@@ -67,22 +67,23 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
 
 
 # define function to estimate gradient using suave
-# cosmo=False ==> default bases are iterative results
-def suave_grad(cat_tag=cat_tag, mock_tag=mock_tag, grad_dim=grad_dim, grad_dir=grad_dir, cosmo=False, plots=False):
+# bao_fixed=False ==> default bases are iterative results
+def suave_grad(cat_tag=cat_tag, mock_tag=mock_tag, grad_dim=grad_dim, grad_dir=grad_dir, bao_fixed=False, mock_range=None, plots=False):
     s = time.time()
 
     mock_list_info = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
     mock_file_name_list = mock_list_info['mock_file_name_list']
     mock_param_list = mock_list_info['mock_param_list']
+    realizations = mock_list_info['rlz_list']
 
     # make sure all inputs have the right form
     assert isinstance(grad_dim, int)
     assert isinstance(grad_dir, str)
 
     # create the needed subdirectories
-    basis_type = 'bao_fixed' if cosmo else 'bao_iterative'
+    basis_type = 'bao_fixed' if bao_fixed else 'bao_iterative'
     suave_dir = f'suave_data/{cat_tag}/{basis_type}'
-    plots_dir = f'plots/suave/{cat_tag}/{basis_type}/grad_recovered' if cosmo else f''
+    plots_dir = f'plots/suave/{cat_tag}/{basis_type}/grad_recovered' if bao_fixed else f''
 
     sub_dirs = [
         suave_dir,
@@ -101,18 +102,22 @@ def suave_grad(cat_tag=cat_tag, mock_tag=mock_tag, grad_dim=grad_dim, grad_dir=g
     proj_type = 'gradient'
     weight_type = 'pair_product_gradient'
 
-    # basis if cosmo (outside of loop because it's the same basis for all realizations)
-    if cosmo:
+    # basis if bao_fixed (outside of loop because it's the same basis for all realizations)
+    if bao_fixed:
         projfn = os.path.join(data_dir, f'bases/bao_fixed/cosmo_basis.dat')
         basis = cosmo_bases(rmin, rmax, projfn, redshift=0.57, bias=2.0)
         ncomponents = 4*(basis.shape[1]-1)
+    
+    mock_range = mock_range if mock_range else range(len(mock_file_name_list))
 
-    for i in range(len(mock_file_name_list)):
+    for i in mock_range:
 
-        mock_name = f'{cat_tag}_rlz{i}_lognormal' if mock_tag == 'lognormal' else f'{cat_tag}_rlz{i}_{mock_param_list[i]}'
+        rlz = realizations[i]
+
+        mock_name = f'{cat_tag}_rlz{rlz}_lognormal' if mock_tag == 'lognormal' else f'{cat_tag}_rlz{rlz}_{mock_param_list[i]}'
 
         # load bases
-        if not cosmo:
+        if not bao_fixed:
             projfn = os.path.join(data_dir, f'bases/bao_iterative/results/results_gradient_{cat_tag}/final_bases/basis_gradient_{mock_name}_trrnum_{randmult}x.dat')
             basis = np.loadtxt(projfn)
             ncomponents = 4*(basis.shape[1]-1)
@@ -258,7 +263,7 @@ def suave_grad(cat_tag=cat_tag, mock_tag=mock_tag, grad_dim=grad_dim, grad_dir=g
     total_time = time.time()-s
     print(datetime.timedelta(seconds=total_time))
 
-# function to run suave with any basis; NOT for gradient though
+# function to run suave with any basis
 def suave(x, y, z, boxsize, projfn,
             proj_type='generalr',
             randmult = globals.randmult,

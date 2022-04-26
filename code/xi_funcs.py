@@ -65,11 +65,12 @@ def xi_ls_ln_mocklist(cat_tag=globals.cat_tag, randmult=globals.randmult, prints
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
 
-def xi_bao_ln_mocklist(prints=False, rmin=globals.rmin, rmax=globals.rmax, redshift=0.57, bias=2.0):
+# results for clustered mocks, NO gradient
+def xi_baofix_ln_mocklist(cat_tag=globals.cat_tag, data_dir=globals.data_dir, rmin=globals.rmin, rmax=globals.rmax,
+                            redshift=0.57, bias=2.0, prints=False):
 
     s = time.time()
-    # results for clustered mocks, NO gradient
-    mock_vals = generate_mock_list.generate_mock_list(extra=True)
+    mock_vals = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
     lognorm_file_list = mock_vals["lognorm_file_list"]
 
     abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
@@ -82,10 +83,14 @@ def xi_bao_ln_mocklist(prints=False, rmin=globals.rmin, rmax=globals.rmax, redsh
     basis = cosmo_bases(rmin, rmax, projfn, redshift=0.57, bias=2.0)
 
     for i in range(len(lognorm_file_list)):
+
         # load data
-        Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(mock_vals["path_to_lognorm_source"], f'{lognorm_file_list[i]}.bin'))
-        L = Lx      # boxsize
-        x, y, z, _, _, _ = data.T
+        data_fn = os.path.join(data_dir, f'catalogs/lognormal/{cat_tag}/{lognorm_file_list[i]}.npy')
+        mock_dict = np.load(data_fn, allow_pickle=True).item()
+        mock_data = mock_dict['data']
+        L = mock_dict['L']
+        center_mock(mock_data, 0, L)
+        x, y, z = mock_data.T
 
         xi_results = suave(x, y, z, L, projfn)
         np.save(os.path.join(save_dir, f'xi_{lognorm_file_list[i]}'), xi_results)
@@ -95,10 +100,10 @@ def xi_bao_ln_mocklist(prints=False, rmin=globals.rmin, rmax=globals.rmax, redsh
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
 
-def xi_bao_it_ln_mocklist(cat_tag=globals.cat_tag, prints=False):
+# results for clustered mocks, NO gradient
+def xi_baoit_ln_mocklist(cat_tag=globals.cat_tag, prints=False):
 
     s = time.time()
-    # results for clustered mocks, NO gradient
     mock_vals = generate_mock_list.generate_mock_list(extra=True)
     lognorm_file_list = mock_vals["lognorm_file_list"]
 
@@ -144,7 +149,8 @@ def xi_ls_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize
             assert mock_tag == 'gradient'
             mock_dict = np.load(data_fn, allow_pickle=True).item()
         mock_data = mock_dict['data']
-        center_mock(mock_data, 0, boxsize)
+        L = mock_dict['L']
+        center_mock(mock_data, 0, L)
         # data.shape == (N, 3)
 
         # random set
@@ -172,4 +178,47 @@ def xi_ls_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize
     
     total_time = time.time()-s
     print(f"landy-szalay --> {cat_tag}, {len(mock_fn_list)} mocks")
+    print(f"total time: {datetime.timedelta(seconds=total_time)}")
+
+
+# lognormal catalogs have to have been run through 
+def xi_clust_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize=globals.boxsize, density=globals.lognormal_density,
+                    prints=False, randmult=globals.randmult, periodic=globals.periodic, nthreads=globals.nthreads,
+                    rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, data_dir=globals.data_dir, grad_dir=globals.grad_dir):
+
+    s = time.time()
+
+    # mocklist
+    mock_fn_list = generate_mock_list.generate_mock_list(cat_tag=cat_tag)
+
+    for mock_fn in mock_fn_list:
+        data_fn = os.path.join(data_dir, f'gradient/1D/mock_data/{cat_tag}/{mock_fn}.npy')
+        # mock data is in a dictionary (along w N and L), so we need to pull out just the galaxy positions
+        mock_dict = np.load(data_fn, allow_pickle=True).item()
+        clust_data = mock_dict['clust_set']
+        L = mock_dict['boxsize']
+        center_mock(clust_data, 0, L)
+        # data.shape == (N, 3)
+
+        # random set
+        random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{boxsize}_n{density}_{randmult}x.dat')
+        rand_set = np.loadtxt(random_fn)
+        center_mock(rand_set, 0, boxsize)
+
+        # run landy-szalay
+        r_avg, results_xi = xi_ls(clust_data, rand_set, periodic=periodic, nthreads=nthreads, rmin=rmin, rmax=rmax, nbins=nbins)
+
+        # save directory
+        save_dir = os.path.join(grad_dir, f'ls/{cat_tag}/clustered_only')
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        save_fn = os.path.join(save_dir, f'clust_xi_ls_{randmult}x_{mock_fn}.npy')
+
+        np.save(save_fn, np.array([r_avg, results_xi]))
+
+        if prints:
+            print(f"landy-szalay, clustered only --> {mock_fn}")
+    
+    total_time = time.time()-s
+    print(f"landy-szalay, clustered only --> {cat_tag}, {len(mock_fn_list)} mocks")
     print(f"total time: {datetime.timedelta(seconds=total_time)}")

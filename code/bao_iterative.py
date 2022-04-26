@@ -302,6 +302,7 @@ class BAO_iterator:
         else:   # different data structure to load for gradient mocks
             assert self.mock_tag == 'gradient'
             L, N, data = mock_info['boxsize'], mock_info['N'], mock_info['grad_set']
+        assert float(L) == float(self.boxsize)
         center_mock(data, 0, self.boxsize)
         self.x, self.y, self.z = data.T
         self.nd = len(data)

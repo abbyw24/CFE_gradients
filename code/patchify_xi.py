@@ -17,7 +17,6 @@ globals.initialize_vals()  # brings in all the default parameters
 cat_tag = globals.cat_tag
 grad_dim = globals.grad_dim
 boxsize = globals.boxsize
-lognormal_density = globals.lognormal_density
 grad_dir = globals.grad_dir
 mock_type = globals.mock_type
 

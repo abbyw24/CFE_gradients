@@ -9,8 +9,8 @@ def xi_ls(data, rand_set, periodic, nthreads, rmin, rmax, nbins, prints=False):
     nd = len(data)
     nr = len(rand_set)
 
-    x, y, z = data[:,0], data[:,1], data[:,2]
-    x_rand, y_rand, z_rand = rand_set[:,0], rand_set[:,1], rand_set[:,2]
+    x, y, z = data.T
+    x_rand, y_rand, z_rand = rand_set.T
 
     dd_res = Corrfunc.theory.DD(1, nthreads, r_edges, x, y, z, periodic=periodic, output_ravg=True)
     if prints == True:

@@ -42,8 +42,8 @@ def generate_random(nbar, boxsize, nx, savepos=None):  # previously had an optio
 #     return catx, caty, catz
 
 if __name__=='__main__':
-    boxsize_list = [500, 750, 1000, 1500]
-    nbar_str_list = ['1e-6', '1e-5', '1e-4', '2e-4', '4e-4']
+    boxsize_list = [500, 750]
+    nbar_str_list = ['1e-3']
     for boxsize in boxsize_list:
         for nbar_str in nbar_str_list:
             main(boxsize=boxsize, nbar_str=nbar_str, nx=globals.randmult)

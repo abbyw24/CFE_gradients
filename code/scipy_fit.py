@@ -103,7 +103,7 @@ def main(mock_tag = globals.mock_tag,
         xi_lss[rlz] = xi_results[1]
     cov = np.cov(xi_lss.T)
     
-    for i in range(len(mock_fn_list)):
+    for i in range(nmocks):
 
         # load in data
         xi_results = np.load(os.path.join(cat_dir, f'xi_ls_{randmult}x_{mock_fn_list[i]}.npy'), allow_pickle=True)
@@ -142,11 +142,14 @@ def main(mock_tag = globals.mock_tag,
 
 
 if __name__=="__main__":
-
+    
     cat_tags = [
-        'L500_n1e-6_z057_patchy_As2x',
-        'L500_n1e-5_z057_patchy_As2x'
+        'L1000_n1e-5_z057_patchy_As2x',
+        'L1000_n1e-6_z057_patchy_As2x',
+        'L750_n1e-5_z057_patchy_As2x',
+        'L750_n1e-6_z057_patchy_As2x',
+        'L750_n1e-3_z057_patchy_As2x',
+        'L500_n1e-3_z057_patchy_As2x'
     ]
-
     for cat_tag in cat_tags:
         main(cat_tag=cat_tag)

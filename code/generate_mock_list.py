@@ -27,7 +27,7 @@ def generate_mock_list(
         b_arr = b * np.ones(nmocks)
 
         for i in range(nmocks):
-            lognorm_file_list.append(f'{cat_tag}_lognormal_rlz{rlz}')
+            lognorm_file_list.append(f'{cat_tag}_rlz{rlz}_lognormal')
             mock_param_list.append("m-{:.3f}-L_b-{:.3f}".format(m_arr[i], b_arr[i]))
             mock_file_name_list.append("{}_rlz{}_{}".format(cat_tag, rlz, mock_param_list[i]))
             rlz_list.append(rlz)
@@ -39,7 +39,7 @@ def generate_mock_list(
         b_arr = b * np.ones(nmocks)
 
         for i in range(nmocks):
-            lognorm_file_list.append(f"{cat_tag}_lognormal_rlz{i}")
+            lognorm_file_list.append(f"{cat_tag}_rlz{i}_lognormal")
             mock_param_list.append("m-{:.3f}-L_b-{:.3f}".format(m, b))
             mock_file_name_list.append("{}_rlz{}_{}".format(cat_tag, i, mock_param_list[i]))
             rlz_list.append(i)
@@ -52,7 +52,7 @@ def generate_mock_list(
         b_arr = b * np.ones(nmocks)
 
         for i in range(nmocks):
-            lognorm_file_list.append(f"{cat_tag}_lognormal_rlz{i}")
+            lognorm_file_list.append(f"{cat_tag}_rlz{i}_lognormal")
             mock_param_list.append("m-{:.3f}-L_b-{:.3f}".format(m_arr[i], b_arr[i]))
             mock_file_name_list.append("{}_rlz{}_{}".format(cat_tag, i, mock_param_list[i]))
             rlz_list.append(i)
@@ -62,7 +62,7 @@ def generate_mock_list(
         assert nmocks == 1, "'nmocks' must be 1"
         m_arr = m * np.ones(nmocks)
         b_arr = b * np.ones(nmocks)
-        lognorm_file_list.append(f"{cat_tag}_lognormal_rlz{rlz}")
+        lognorm_file_list.append(f"{cat_tag}_rlz{rlz}_lognormal")
         mock_param_list.append("m-{:.3f}-L_b-{:.3f}".format(m, b))
         mock_file_name_list.append("{}_rlz{}_{}".format(cat_tag, rlz, mock_param_list[0]))
         rlz_list.append(rlz)
@@ -73,7 +73,7 @@ def generate_mock_list(
         mock_param_list = None
 
         for i in range(nmocks):
-            filename = f"{cat_tag}_lognormal_rlz{i}"
+            filename = f"{cat_tag}_rlz{i}_lognormal"
             lognorm_file_list.append(filename)
             mock_file_name_list.append("{}_rlz{}_lognormal".format(cat_tag, i))
             rlz_list.append(i)

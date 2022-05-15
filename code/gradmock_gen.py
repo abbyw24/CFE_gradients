@@ -10,8 +10,6 @@ import globals
 import generate_mock_list
 globals.initialize_vals()
 
-# pick a seed number so that random set stays the same every time (for now)
-np.random.seed(123456)
 
 # function to generate gradient mock
 def generate_gradmocks(data_dir = globals.data_dir,
@@ -108,7 +106,6 @@ def generate_gradmocks(data_dir = globals.data_dir,
         # generate a null (unclustered) data set (same size as mock)
         xs_rand = np.random.uniform(-L/2,L/2,(3,N))
         mock_info['rand_set'] = xs_rand
-            # should this be generated here, or should I use the random catalogs in catalogs/randoms ?
 
 
         # INJECT GRADIENT

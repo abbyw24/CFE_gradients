@@ -101,10 +101,10 @@ def xi_baofix_ln_mocklist(cat_tag=globals.cat_tag, data_dir=globals.data_dir, rm
 
 
 # results for clustered mocks, NO gradient
-def xi_baoit_ln_mocklist(cat_tag=globals.cat_tag, prints=False):
+def xi_baoit_ln(cat_tag=globals.cat_tag, prints=False):
 
     s = time.time()
-    mock_vals = generate_mock_list.generate_mock_list(extra=True)
+    mock_vals = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
     lognorm_file_list = mock_vals["lognorm_file_list"]
 
     abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
@@ -130,7 +130,7 @@ def xi_baoit_ln_mocklist(cat_tag=globals.cat_tag, prints=False):
 
 # lognormal catalogs have to have been run through 
 def xi_ls_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize=globals.boxsize, density=globals.lognormal_density,
-                    prints=False, randmult=globals.randmult, periodic=globals.periodic, nthreads=globals.nthreads,
+                    prints=False, load_rand=True, randmult=globals.randmult, periodic=globals.periodic, nthreads=globals.nthreads,
                     rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, data_dir=globals.data_dir, grad_dir=globals.grad_dir):
 
     s = time.time()
@@ -142,31 +142,35 @@ def xi_ls_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize
 
     for mock_fn in mock_fn_list:
         data_fn = os.path.join(data_dir, f'catalogs/{mock_tag}/{cat_tag}/{mock_fn}.npy')
-        # mock data is in a dictionary (along w N and L), so we need to pull out just the galaxy positions
-        if mock_tag == 'lognormal':
-            mock_dict = np.load(data_fn, allow_pickle=True).item()
-        else:
-            assert mock_tag == 'gradient'
-            mock_dict = np.load(data_fn, allow_pickle=True).item()
+        mock_dict = np.load(data_fn, allow_pickle=True).item()
         mock_data = mock_dict['data']
-        L = mock_dict['L']
-        center_mock(mock_data, 0, L)
+        assert int(mock_dict['L']) == boxsize, "input boxsize does not match loaded mock data!"
+        center_mock(mock_data, 0, boxsize)
         # data.shape == (N, 3)
 
         # random set
-        random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{boxsize}_n{density}_{randmult}x.dat')
-        rand_set = np.loadtxt(random_fn)
+        if load_rand:
+            random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{boxsize}_n{density}_{randmult}x.dat')
+            rand_set = np.loadtxt(random_fn)
+            # rand_set.shape == (N, 3)
+        else:
+            nr = randmult * float(density) * int(boxsize)**3
+            rand_set = np.random.uniform(0, boxsize, (int(nr),3))
         center_mock(rand_set, 0, boxsize)
 
         # run landy-szalay
-        r_avg, results_xi = xi_ls(mock_data, rand_set, periodic=periodic, nthreads=nthreads, rmin=rmin, rmax=rmax, nbins=nbins)
+        rr_fn = os.path.join(data_dir, f'catalogs/randoms/rr_terms/rr_res_rand_L{boxsize}_n{density}_{randmult}x.npy') if load_rand else None
+
+        r_avg, results_xi = xi_ls(mock_data, rand_set, periodic=periodic, nthreads=nthreads, rmin=rmin, rmax=rmax, nbins=nbins, rr_fn=rr_fn)
 
         # save directory
+        rand_tag = '' if load_rand else '/unique_rands'
+
         if mock_tag == 'lognormal':
-            save_dir = os.path.join(data_dir, f'lognormal/xi/ls/{cat_tag}')
+            save_dir = os.path.join(data_dir, f'lognormal/xi/ls/{cat_tag}{rand_tag}')
         else:
             assert mock_tag == 'gradient'
-            save_dir = os.path.join(grad_dir, f'ls/{cat_tag}')
+            save_dir = os.path.join(grad_dir, f'ls/{cat_tag}{rand_tag}')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         save_fn = os.path.join(save_dir, f'xi_ls_{randmult}x_{mock_fn}.npy')
@@ -182,6 +186,7 @@ def xi_ls_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize
 
 
 # lognormal catalogs have to have been run through 
+# **this might be buggy
 def xi_clust_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize=globals.boxsize, density=globals.lognormal_density,
                     prints=False, randmult=globals.randmult, periodic=globals.periodic, nthreads=globals.nthreads,
                     rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, data_dir=globals.data_dir, grad_dir=globals.grad_dir):

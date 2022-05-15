@@ -2,7 +2,7 @@ import numpy as np
 import Corrfunc
 
 # define Corrfunc Landy-Szalay
-def xi_ls(data, rand_set, periodic, nthreads, rmin, rmax, nbins, prints=False):
+def xi_ls(data, rand_set, periodic, nthreads, rmin, rmax, nbins, rr_fn=None, prints=False):
     # parameters
     r_edges = np.linspace(rmin, rmax, nbins+1)
     r_avg = 0.5*(r_edges[1:]+r_edges[:-1])
@@ -18,7 +18,11 @@ def xi_ls(data, rand_set, periodic, nthreads, rmin, rmax, nbins, prints=False):
     dr_res = Corrfunc.theory.DD(0, nthreads, r_edges, x, y, z, X2=x_rand, Y2=y_rand, Z2=z_rand, periodic=periodic)
     if prints == True:
         print("DR calculated")
-    rr_res = Corrfunc.theory.DD(1, nthreads, r_edges, x_rand, y_rand, z_rand, periodic=periodic)
+    
+    if rr_fn:
+        rr_res = np.load(rr_fn, allow_pickle=True)
+    else:
+        rr_res = Corrfunc.theory.DD(1, nthreads, r_edges, x_rand, y_rand, z_rand, periodic=periodic)
     if prints == True:
         print("RR calculated")
 

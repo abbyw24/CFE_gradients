@@ -77,7 +77,7 @@ def suave_grad(cat_tag=cat_tag, mock_tag=mock_tag, grad_dim=grad_dim, grad_dir=g
     realizations = mock_list_info['rlz_list']
 
     # make sure all inputs have the right form
-    assert isinstance(grad_dim, int)
+    assert isinstance(grad_dim, int), 'grad_dim'
     assert isinstance(grad_dir, str)
 
     # create the needed subdirectories
@@ -260,6 +260,7 @@ def suave_grad(cat_tag=cat_tag, mock_tag=mock_tag, grad_dim=grad_dim, grad_dir=g
 
         print(f"suave --> {mock_file_name}")
     
+    print(f"suave --> {cat_tag}, {basis_type} basis")
     total_time = time.time()-s
     print(datetime.timedelta(seconds=total_time))
 

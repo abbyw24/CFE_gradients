@@ -88,8 +88,10 @@ def patches_lstsq_fit(cat_tag=globals.cat_tag, grad_dim=globals.grad_dim, grad_d
         if cov_type == 'diag':
             cov_big = np.zeros(cov_tiled.shape)
             np.fill_diagonal(cov_big, np.diag(cov_tiled))
-        else:
+        elif cov_type == 'full':
             cov_big = cov_tiled
+        else:
+            assert False, "cov_type must be 'diag' or 'full'"
 
         # performing the fit: xi = X @ theta
 
@@ -101,17 +103,17 @@ def patches_lstsq_fit(cat_tag=globals.cat_tag, grad_dim=globals.grad_dim, grad_d
 
         # theta = np.linalg.inv(X.T @ C_inv @ X) @ (X.T @ C_inv @ xi)
 
-        b_fit = theta[0]
-        m_fit = theta[1:]
+        # b_fit = theta[0]
+        # m_fit = theta[1:]
     
         # add recovered values to patch info dictionary
         patch_info['theta'] = theta
-        patch_info['b_fit'] = b_fit
-        patch_info['m_fit'] = m_fit
-            # should i be saving b_fit and m_fit, if this info is contained in theta ?
+        # patch_info['b_fit'] = b_fit
+        # patch_info['m_fit'] = m_fit
+        #     # should i be saving b_fit and m_fit, if this info is contained in theta ?
 
         # add recovered gradient value to patch info dictionary
-        grad_recovered = m_fit/b_fit
+        grad_recovered = theta[1:]/theta[0]
         patch_info['grad_recovered'] = grad_recovered
 
         # change back patch_center values for dictionary saving

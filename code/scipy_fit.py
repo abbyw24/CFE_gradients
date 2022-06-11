@@ -114,7 +114,7 @@ def main(mock_tag = globals.mock_tag,
         best_alpha, _, min_chi_squared, M = find_best_alpha(xi_ls, r_avg, cov)
         
         # save best-fit cf
-        save_dir = os.path.join(data_dir, f'bases/4-parameter_fit/scipy/results_{mock_tag}_{cat_tag}')
+        save_dir = os.path.join(data_dir, f'bases/{grad_dim}D/4-parameter_fit/scipy/results_{mock_tag}_{cat_tag}')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
 
@@ -142,14 +142,4 @@ def main(mock_tag = globals.mock_tag,
 
 
 if __name__=="__main__":
-    
-    cat_tags = [
-        'L1000_n1e-5_z057_patchy_As2x',
-        'L1000_n1e-6_z057_patchy_As2x',
-        'L750_n1e-5_z057_patchy_As2x',
-        'L750_n1e-6_z057_patchy_As2x',
-        'L750_n1e-3_z057_patchy_As2x',
-        'L500_n1e-3_z057_patchy_As2x'
-    ]
-    for cat_tag in cat_tags:
-        main(cat_tag=cat_tag)
+    main()

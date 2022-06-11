@@ -17,6 +17,7 @@ def generate_gradmocks(data_dir = globals.data_dir,
                         grad_dim = globals.grad_dim,
                         mock_type = globals.mock_type,
                         cat_tag = globals.cat_tag,
+                        arb_dir = False,
                         plots=False, z_max=-50):
     
     s = time.time()
@@ -48,10 +49,16 @@ def generate_gradmocks(data_dir = globals.data_dir,
     if grad_dim == 1:
         w_hat = np.array([1.0,0,0])
     elif grad_dim == 2:
-        w_hat = np.random.normal(size=3)
-        w_hat[2] = 0
+        if arb_dir:
+            w_hat = np.random.normal(size=3)
+            w_hat[2] = 0
+        else:
+            w_hat = np.array([1.0,1.0,0])
     elif grad_dim == 3:
-        w_hat = np.random.normal(size=3)
+        if arb_dir:
+            w_hat = np.random.normal(size=3)
+        else:
+            w_hat = np.array([1.0,1.0,1.0])
     else:
         assert False, "Invalid dimension; must be 1, 2, or 3"
 

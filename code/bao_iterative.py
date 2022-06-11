@@ -185,8 +185,8 @@ def main(cat_tag=globals.cat_tag,
 class BAO_iterator:
 
     def __init__(self, Nr, mock_tag, boxsize, periodic, cat_tag, rand_tag, cat_dir, cosmo, data_dir, rlz, mock_list_info=None,
-                    rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, cf_tag='_baoiter', trr_analytic=False,
-                    save_iterated_bases=False, nthreads=globals.nthreads, redshift=0.0, bias=2.0,
+                    grad_dim=globals.grad_dim, rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, cf_tag='_baoiter',
+                    trr_analytic=False, save_iterated_bases=False, nthreads=globals.nthreads, redshift=0.0, bias=2.0,
                     alpha_model_start=1.0, dalpha=0.01, k0=0.1, random_fn=None):
 
         # input params
@@ -195,6 +195,7 @@ class BAO_iterator:
         self.boxsize = boxsize
         self.rlz = rlz
         self.cosmo = cosmo
+        self.grad_dim = grad_dim
 
         self.rmin = rmin
         self.rmax = rmax
@@ -236,7 +237,7 @@ class BAO_iterator:
         self.random_fn = random_fn
 
         self.data_dir = data_dir
-        self.bases_dir = os.path.join(self.data_dir, 'bases/bao_iterative')
+        self.bases_dir = os.path.join(self.data_dir, f'bases/{self.grad_dim}D/bao_iterative')
         self.projfn = os.path.join(self.bases_dir, f"tables/bases_{self.mock_tag}_{self.mock_name}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}.dat")
         if not os.path.exists(os.path.join(self.bases_dir, f"tables")):
             os.makedirs(os.path.join(self.bases_dir, f"tables"))

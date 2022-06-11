@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import globals
+globals.initialize_vals()
 
 def recover_amps(mock_file_name_list, cat_tag, grad_dir=globals.grad_dir, nbins=globals.nbins, n_patches=8, method="suave", basis=None):
     amps_rec = np.empty((len(mock_file_name_list), 4))

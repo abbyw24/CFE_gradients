@@ -185,6 +185,71 @@ def xi_ls_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
 
+def xi_cfe_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, mock_tag=globals.mock_tag, grad_dir=globals.grad_dir, data_dir=globals.data_dir,
+                    rmin=globals.rmin, rmax=globals.rmax, bao_fixed=True, mock_range=None, prints=False):
+    s = time.time()
+
+    mock_list_info = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
+    mock_file_name_list = mock_list_info['mock_file_name_list']
+    mock_param_list = mock_list_info['mock_param_list']
+    realizations = mock_list_info['rlz_list']
+
+    # create the needed subdirectories
+    basis_type = 'bao_fixed' if bao_fixed else 'bao_iterative'
+    suave_dir = os.path.join(grad_dir, f'suave_data/{cat_tag}/{basis_type}')
+
+    if not os.path.exists(suave_dir):
+        os.makedirs(suave_dir)
+
+    # parameters for suave (not already imported from globals)
+    ncont = 2000
+    r_fine = np.linspace(rmin, rmax, ncont)
+
+    nmubins = 1
+    mumax = 1.0
+
+    # basis if bao_fixed (outside of loop because it's the same basis for all realizations)
+    if bao_fixed:
+        projfn = os.path.join(data_dir, f'bases/bao_fixed/cosmo_basis.dat')
+    
+    mock_range = mock_range if mock_range else range(len(mock_file_name_list))
+
+    for i in mock_range:
+        rlz = realizations[i]
+
+        mock_name = f'{cat_tag}_rlz{rlz}_lognormal' if mock_tag == 'lognormal' else f'{cat_tag}_rlz{rlz}_{mock_param_list[i]}'
+
+        # load bases
+        if not bao_fixed:
+            projfn = os.path.join(data_dir, f'bases/bao_iterative/results/results_gradient_{cat_tag}/final_bases/basis_gradient_{mock_name}_trrnum_{randmult}x.dat')
+
+        # load in mock and patch info
+        mock_info = np.load(os.path.join(grad_dir, f'mock_data/{cat_tag}/{mock_file_name_list[i]}.npy'), allow_pickle=True).item()
+        mock_file_name = mock_info['mock_file_name']
+        L = mock_info['boxsize']
+        mock_data = mock_info['grad_set']
+
+        # center data points between 0 and L
+        center_mock(mock_data, 0, L)
+
+        nd = len(mock_data)
+        x, y, z = mock_data.T
+
+        xi_results = suave(x, y, z, L, projfn)
+        suave_dict_fn = os.path.join(suave_dir, f'{mock_name}.npy')
+        suave_dict = np.load(suave_dict_fn, allow_pickle=True).item()
+        suave_dict['cfe_full'] = xi_results
+        np.save(suave_dict_fn, suave_dict)
+
+        if prints:
+            print(f"CFE on full mock ({basis_type} basis) --> {mock_fn}")
+
+    
+    total_time = time.time()-s
+    print(f'non-gradient CFE, {basis_type} basis --> {cat_tag}, {len(mock_range)} mocks')
+    print(f"total time: {datetime.timedelta(seconds=total_time)}")
+
+
 # lognormal catalogs have to have been run through 
 # **this might be buggy
 def xi_clust_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize=globals.boxsize, density=globals.lognormal_density,

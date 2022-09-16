@@ -11,7 +11,6 @@ import generate_mock_list
 globals.initialize_vals()
 
 
-# function to generate gradient mock
 def generate_gradmocks(data_dir = globals.data_dir,
                         grad_dir = globals.grad_dir,
                         grad_dim = globals.grad_dim,
@@ -19,6 +18,7 @@ def generate_gradmocks(data_dir = globals.data_dir,
                         cat_tag = globals.cat_tag,
                         arb_dir = False,
                         plots=False, z_max=-50):
+    """Use global variables to generate a set of gradient mocks."""
     
     s = time.time()
     
@@ -121,12 +121,12 @@ def generate_gradmocks(data_dir = globals.data_dir,
         rs_uncl = np.random.uniform(size=N)
 
         # dot product onto the unit vectors
-        ws_clust = np.dot(w_hat, xs_lognorm)
-        ws_uncl = np.dot(w_hat, xs_rand)
+        eta_clust = np.dot(w_hat, xs_lognorm)
+        eta_uncl = np.dot(w_hat, xs_rand)
 
         # threshold
-        ts_clust_squared = (m/L) * ws_clust + b 
-        ts_uncl_squared = (m/L) * ws_uncl + b
+        ts_clust_squared = (m/L) * eta_clust + b 
+        ts_uncl_squared = (m/L) * eta_uncl + b
 
         # assert that ts range from 0 to 1
         # assert np.all(ts_clust > 0)

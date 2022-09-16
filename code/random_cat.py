@@ -6,11 +6,11 @@ import Corrfunc
 import globals
 globals.initialize_vals()
 
-def main(boxsize=globals.boxsize, nbar_str=globals.lognormal_density, nx=3):
+def main(boxsize=globals.boxsize, nbar_str=globals.lognormal_density, data_dir=globals.data_dir, nx=3):
 
     tag = '_L{}_n{}'.format(boxsize, nbar_str)
 
-    cat_dir = '/scratch/aew492/research-summer2020_output/catalogs/randoms'
+    cat_dir = os.path.join(data_dir, 'catalogs/randoms')
     if not os.path.isdir(cat_dir):
         os.makedirs(cat_dir)
     
@@ -63,8 +63,4 @@ def get_rr_terms(rand_set, savepos=None, nthreads=globals.nthreads, rmin=globals
         np.save(savepos, rr_res, allow_pickle=True)
 
 if __name__=='__main__':
-    boxsizes = [500, 750, 1000, 1500]
-    densities = ['1e-6', '1e-5', '1e-4', '2e-4', '4e-4', '1e-3']
-    for L in boxsizes:
-        for n in densities:
-            main(boxsize=L, nbar_str=n, nx=3)
+    main(boxsize=750, nbar_str='2e-5', nx=3)

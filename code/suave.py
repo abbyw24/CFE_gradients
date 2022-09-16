@@ -68,7 +68,8 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
 
 # define function to estimate gradient using suave
 # bao_fixed=False ==> default bases are iterative results
-def suave_grad(cat_tag=cat_tag, mock_tag=mock_tag, grad_dim=grad_dim, grad_dir=grad_dir, bao_fixed=False, mock_range=None, plots=False):
+# mock_range = list of rlzs; default is [0,nmocks] where nmocks is defined in globals
+def suave_grad(cat_tag=cat_tag, mock_tag=mock_tag, grad_dim=grad_dim, grad_dir=grad_dir, bao_fixed=True, mock_range=None, plots=False):
     s = time.time()
 
     mock_list_info = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
@@ -108,7 +109,7 @@ def suave_grad(cat_tag=cat_tag, mock_tag=mock_tag, grad_dim=grad_dim, grad_dir=g
         basis = cosmo_bases(rmin, rmax, projfn, redshift=0.57, bias=2.0)
         ncomponents = 4*(basis.shape[1]-1)
     
-    mock_range = mock_range if mock_range else range(len(mock_file_name_list))
+    mock_range = mock_range if mock_range is not None else range(len(mock_file_name_list))
 
     for i in mock_range:
 

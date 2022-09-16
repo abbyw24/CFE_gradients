@@ -17,11 +17,11 @@ def xi_bestfit(r, xi_mod, B_sq, a1, a2, a3):
     return xi_bestfit
 
 # instead of the old cf_model (fiducial), we now use the results from the 4-parameter fit (analogous to bao_iterative)
-def f_bases(mock_fn, r, x, cov_type = 'scipy', cat_tag=globals.cat_tag, data_dir=globals.data_dir):
+def f_bases(mock_fn, r, x, cov_type = 'scipy', cat_tag=globals.cat_tag, data_dir=globals.data_dir, grad_dim=globals.grad_dim):
     assert len(x) == 3
 
     # load in best-fit parameters
-    fit_results = np.load(os.path.join(data_dir, f'bases/4-parameter_fit/{cov_type}/results_gradient_{cat_tag}/basis_gradient_{mock_fn}.npy'), allow_pickle=True).item()
+    fit_results = np.load(os.path.join(data_dir, f'bases/{grad_dim}D/4-parameter_fit/{cov_type}/results_gradient_{cat_tag}/basis_gradient_{mock_fn}.npy'), allow_pickle=True).item()
     alpha = fit_results['best_alpha']
     B_sq = fit_results['B_sq']
     a1 = fit_results['a1']

@@ -39,7 +39,7 @@ def xi_ls_ln(mock, rlz, mock_dir='/scratch/ksf293/mocks/lognormal', randmult=glo
     return r_avg, results_xi
 
 
-def xi_ls_ln_mocklist(cat_tag=globals.cat_tag, randmult=globals.randmult, prints=False):
+def xi_ls_ln_mocklist(cat_tag=globals.cat_tag, randmult=globals.randmult, data_dir=globals.data_dir, prints=False):
 
     s = time.time()
     # results for clustered mocks, NO gradient
@@ -47,8 +47,7 @@ def xi_ls_ln_mocklist(cat_tag=globals.cat_tag, randmult=globals.randmult, prints
     lognorm_file_list = mock_vals['lognorm_file_list']
     mock_fn_list = mock_vals['mock_file_name_list']
 
-    abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
-    save_dir = os.path.join(abs_path, f'xi/ls/{cat_tag}')
+    save_dir = os.path.join(data_dir, f'lognormal/xi/ls/{cat_tag}')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -73,13 +72,12 @@ def xi_baofix_ln_mocklist(cat_tag=globals.cat_tag, data_dir=globals.data_dir, rm
     mock_vals = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
     lognorm_file_list = mock_vals["lognorm_file_list"]
 
-    abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
-    save_dir = os.path.join(abs_path, f'xi/bao_fixed/{cat_tag}')
+    save_dir = os.path.join(data_dir, f'lognormal/xi/bao_fixed/{cat_tag}')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     
     # use cosmo_bases to write basis file; we load this in for suave()
-    projfn = '/scratch/aew492/research-summer2020_output/bases/bao_fixed/cosmo_basis.dat'
+    projfn = os.path.join(data_dir, 'bases/bao_fixed/cosmo_basis.dat')
     basis = cosmo_bases(rmin, rmax, projfn, redshift=0.57, bias=2.0)
 
     for i in range(len(lognorm_file_list)):
@@ -101,14 +99,13 @@ def xi_baofix_ln_mocklist(cat_tag=globals.cat_tag, data_dir=globals.data_dir, rm
 
 
 # results for clustered mocks, NO gradient
-def xi_baoit_ln(cat_tag=globals.cat_tag, prints=False):
+def xi_baoit_ln(cat_tag=globals.cat_tag, data_dir=globals.data_dir, prints=False):
 
     s = time.time()
     mock_vals = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
     lognorm_file_list = mock_vals["lognorm_file_list"]
 
-    abs_path = '/scratch/aew492/research-summer2020_output/lognormal'
-    save_dir = os.path.join(abs_path, f'xi/bao_iterative/{cat_tag}')
+    save_dir = os.path.join(data_dir, f'lognormal/xi/bao_iterative/{cat_tag}')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -118,7 +115,7 @@ def xi_baoit_ln(cat_tag=globals.cat_tag, prints=False):
         L = Lx      # boxsize
         x, y, z, _, _, _ = data.T
 
-        projfn = os.path.join(f'/scratch/aew492/research-summer2020_output/bases/bao_iterative/tables/final_bases/basis_{cat_tag}_rlz{i}.dat')
+        projfn = os.path.join(data_dir, f'bases/bao_iterative/tables/final_bases/basis_{cat_tag}_rlz{i}.dat')
 
         xi_results = suave(x, y, z, L, projfn)
         np.save(os.path.join(save_dir, f'xi_{lognorm_file_list[i]}'), xi_results)

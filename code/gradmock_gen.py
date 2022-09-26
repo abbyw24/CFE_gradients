@@ -16,8 +16,8 @@ def generate_gradmocks(data_dir = globals.data_dir,
                         grad_dim = globals.grad_dim,
                         mock_type = globals.mock_type,
                         cat_tag = globals.cat_tag,
-                        arb_dir = False,
-                        plots=False, z_max=-50):
+                        input_w_hat = None,
+                        plots = False, z_max = -50):
     """Use global variables to generate a set of gradient mocks."""
     
     s = time.time()
@@ -34,13 +34,9 @@ def generate_gradmocks(data_dir = globals.data_dir,
     
     # create desired path to mocks directory if it doesn't already exist
     mock_dir = f'mock_data/{cat_tag}'
-    colormock_dir = f'plots/color_mocks/{cat_tag}'
-    samecolormock_dir = f'plots/samecolor_mocks/{cat_tag}'
 
     sub_dirs = [
-        mock_dir,
-        colormock_dir,
-        samecolormock_dir
+        mock_dir
     ]
     create_subdirs(grad_dir, sub_dirs)
 
@@ -49,11 +45,11 @@ def generate_gradmocks(data_dir = globals.data_dir,
     if grad_dim == 1:
         w_hat = np.array([1.0,0,0])
     elif grad_dim == 2:
-        if arb_dir:
-            w_hat = np.random.normal(size=3)
-            w_hat[2] = 0
+        if input_w_hat:
+            w_hat = input_w_hat
         else:
-            w_hat = np.array([1.0,1.0,0])
+            w_hat = np.random.normal(size=3)
+        w_hat[2] = 0
     elif grad_dim == 3:
         if arb_dir:
             w_hat = np.random.normal(size=3)
@@ -163,6 +159,17 @@ def generate_gradmocks(data_dir = globals.data_dir,
 
         # VISUALIZATION
         if plots == True:
+
+            # create directories, if they don't already exist
+            colormock_dir = f'plots/color_mocks/{cat_tag}'
+            samecolormock_dir = f'plots/samecolor_mocks/{cat_tag}'
+
+            sub_dirs = [
+                colormock_dir,
+                samecolormock_dir
+            ]
+            create_subdirs(grad_dir, sub_dirs)
+
             # plot all points in same color
             xy_slice = xs_grad[np.where(xs_grad[:,2] < z_max)] # select rows where z < z_max
 
@@ -206,7 +213,7 @@ def generate_gradmocks(data_dir = globals.data_dir,
         mock_dict_fn = os.path.join(grad_dir, f'{mock_dir}/{mock_file_name_list[i]}')
         np.save(mock_dict_fn, mock_info)
 
-        print(f"gradient generated --> {mock_file_name}")
+        print(f"gradient generated --> {grad_dim}, {mock_file_name}")
     
     total_time = time.time()-s
     print(datetime.timedelta(seconds=total_time))

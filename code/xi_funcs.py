@@ -177,8 +177,10 @@ def xi_ls_mocklist(cat_tag=globals.cat_tag, mock_type=globals.mock_type, boxsize
         if prints:
             print(f"landy-szalay --> {mock_fn}")
     
+    grad_info = f'{globals.grad_dim}D ' if mock_tag=='gradient' else ''
+    
     total_time = time.time()-s
-    print(f"landy-szalay --> {cat_tag}, {len(mock_fn_list)} mocks")
+    print(f"landy-szalay --> {cat_tag}, {grad_info}{mock_tag}, {len(mock_fn_list)} mocks")
     print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
 

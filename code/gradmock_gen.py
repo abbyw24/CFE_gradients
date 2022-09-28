@@ -5,17 +5,21 @@ import time
 import datetime
 
 import read_lognormal
-from create_subdirs import create_subdirs
+import fetch_lognormal_mocks
 import globals
 import generate_mock_list
 globals.initialize_vals()
 
 
-def generate_gradmocks(data_dir = globals.data_dir,
-                        grad_dir = globals.grad_dir,
+def generate_gradmocks(nmocks = globals.nmocks,
+                        L = globals.boxsize,
+                        n = globals.lognormal_density,
+                        As = globals.As,
+                        rlzs = globals.rlzs,
+                        data_dir = globals.data_dir,
                         grad_dim = globals.grad_dim,
-                        mock_type = globals.mock_type,
-                        cat_tag = globals.cat_tag,
+                        m = globals.m,
+                        b = globals.b,
                         input_w_hat = None,
                         plots = False, z_max = -50):
     """Use global variables to generate a set of gradient mocks."""
@@ -23,22 +27,23 @@ def generate_gradmocks(data_dir = globals.data_dir,
     s = time.time()
     
     # generate mock list
-    mock_vals = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
-    path_to_lognorm_source = mock_vals['path_to_lognorm_source']
-    mock_file_name_list = mock_vals['mock_file_name_list']
-    lognorm_file_list = mock_vals['lognorm_file_list']
-    m_arr = mock_vals['m_arr']
-    b_arr = mock_vals['b_arr']
-    
-    assert mock_type != 'lognormal', "mock_type must not be lognormal for gradient generation!"
+    mock_set = generate_mock_list.mock_set(nmocks, L, n, As=As, data_dir=data_dir, rlzs=rlzs)
+
+    # initialize gradient
+    mock_set.add_gradient(grad_dim, m, b)
+
+    # mock_vals = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
+    # path_to_lognorm_source = mock_vals['path_to_lognorm_source']
+    # mock_file_name_list = mock_vals['mock_file_name_list']
+    # lognorm_file_list = mock_vals['lognorm_file_list']
+    # m_arr = mock_vals['m_arr']
+    # b_arr = mock_vals['b_arr']
     
     # create desired path to mocks directory if it doesn't already exist
-    mock_dir = f'mock_data/{cat_tag}'
+    if not os.path.exists(mock_set.grad_dir):
+        os.makedirs(mock_set.grad_dir)
+        print(f"created path {mock_set.grad_dir}")
 
-    sub_dirs = [
-        mock_dir
-    ]
-    create_subdirs(grad_dir, sub_dirs)
 
     ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
     # generate unit vector– this is the direction of the gradient
@@ -51,64 +56,69 @@ def generate_gradmocks(data_dir = globals.data_dir,
             w_hat = np.random.normal(size=3)
         w_hat[2] = 0
     elif grad_dim == 3:
-        if arb_dir:
-            w_hat = np.random.normal(size=3)
+        if input_w_hat:
+            w_hat = input_w_hat
         else:
-            w_hat = np.array([1.0,1.0,1.0])
+            w_hat = np.random.normal(size=3)
     else:
         assert False, "Invalid dimension; must be 1, 2, or 3"
 
     # normalize w_hat
     w_hat /= np.linalg.norm(w_hat)
 
-    for i in range(len(mock_file_name_list)):
+    # loop through each lognormal realization and inject the specified gradient into each one to create a new mock
+    for i, rlz in enumerate(mock_set.rlzs):
 
-        # create dictionary with mock info
-        mock_info = {
-            'mock_file_name' : mock_file_name_list[i],
+        # unpack realization-specific variables
+        cat_tag = mock_set.cat_tag
+        mock_file_name = mock_set.mock_fn_list[i]
+        ln_file_name = mock_set.ln_fn_list[i]
+        m = mock_set.m_arr[i]
+        b = mock_set.b_arr[i]
+
+        # create dictionary with initial mock info
+        mock_dict = {
+            'mock_file_name' : mock_file_name,
             'cat_tag' : cat_tag,
-            'lognorm_rlz' : lognorm_file_list[i],
+            'lognormal_rlz' : ln_file_name,
             'w_hat' : w_hat,
-            'm' : m_arr[i],
-            'b' : b_arr[i],
+            'm' : m,
+            'b' : b,
         }
 
-        # redefine dictionary values for simplicity
-        mock_file_name = str(mock_info['mock_file_name'])
-        lognorm_file = str(mock_info['lognorm_rlz'])
-        m = float(mock_info['m'])
-        b = float(mock_info['b'])
-
-
         # LOGNORMAL SET
-        Lx, Ly, Lz, N, data = read_lognormal.read(os.path.join(path_to_lognorm_source, f'cat_{cat_tag}_lognormal_rlz{i}.bin'))
-            # define boxsize based on mock; and N = number of data points
+        # try fetching the desired lognormal catalogs from my own directories, otherwise fetch from Kate's
+        try:
+            ln_dict = np.load(os.path.join(data_dir, f'catalogs/lognormal/{cat_tag}/{ln_file_name}.npy'), allow_pickle=True).item()
+        except FileNotFoundError:
+            print("Fetching lognormal catalogs...")
+            fetch_lognormal_mocks.fetch_ln_mocks(cat_tag, mock_set.rlzs)
+            ln_dict = np.load(os.path.join(data_dir, f'catalogs/lognormal/{cat_tag}/{ln_file_name}.npy'), allow_pickle=True).item()
+        
+        # data points
+        xs_lognorm = ln_dict['data'].T
         
         # number of data points
-        mock_info['N'] = N
+        N = ln_dict['N']
 
         # boxsize
-        L = Lx
-        # assert float(L) == float(boxsize), "Boxsize from data does not match boxsize from globals.py"
-            # make sure the boxsize from data equals the boxsize we specified in the file name
-        mock_info['boxsize'] = L
+        L = ln_dict['L']
 
         # expected gradient
-        mock_info['grad_expected'] = m/(b*L)*w_hat
+        grad_expected = m/(b*L)*w_hat
 
-        # save lognormal set to mocks directory
-        x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
-            # data is initially loaded in from 0 to L; we want to shift down by L/2 to center around 0
-        xs_lognorm = (np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2))
-        velocities = np.array([vx_lognorm, vy_lognorm, vz_lognorm])
-        mock_info['lognorm_set'] = xs_lognorm
-        mock_info['velocities'] = velocities
+        # # save lognormal set to mocks directory
+        # x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
+        #     # data is initially loaded in from 0 to L; we want to shift down by L/2 to center around 0
+        # xs_lognorm = (np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2))
+        # velocities = np.array([vx_lognorm, vy_lognorm, vz_lognorm])
+        # mock_info['lognorm_set'] = xs_lognorm
+        # mock_info['velocities'] = velocities
 
 
         # NULL SET
         # generate a null (unclustered) data set (same size as mock)
         xs_rand = np.random.uniform(-L/2,L/2,(3,N))
-        mock_info['rand_set'] = xs_rand
 
 
         # INJECT GRADIENT
@@ -135,25 +145,23 @@ def generate_gradmocks(data_dir = globals.data_dir,
         # clustered and unclustered sets for gradient
         xs_clust_grad = xs_lognorm.T[I_clust]
         xs_unclust_grad = xs_rand.T[I_uncl]
-        mock_info['clust_set'] = xs_clust_grad
-        mock_info['unclust_set'] = xs_unclust_grad
 
         # append to create gradient mock data
         xs_grad = np.append(xs_clust_grad, xs_unclust_grad, axis=0)
-        mock_info['grad_set'] = xs_grad
 
-        # save grad_set to catalogs directory
-        cat_dir = os.path.join(data_dir, f'catalogs/gradient/{cat_tag}')
+        # add new data to mock dictionary
+        mock_dict['grad_expected'] = grad_expected
+        mock_dict['rand_set'] = xs_rand
+        mock_dict['clust_set'] = xs_clust_grad
+        mock_dict['unclust_set'] = xs_unclust_grad
+        mock_dict['grad_set'] = xs_grad
+
+        # save our gradient mock dictionary to catalogs directory
+        cat_dir = os.path.join(data_dir, f'catalogs/gradient/{grad_dim}D/{cat_tag}')
         if not os.path.exists(cat_dir):
             os.makedirs(cat_dir)
-        cat_fn = os.path.join(cat_dir, f'{mock_file_name}')
+        cat_fn = os.path.join(cat_dir, mock_file_name)
 
-        mock_dict = {
-            'data' : xs_grad,
-            'cat_tag' : cat_tag,
-            'L' : L,
-            'N' : N
-        }
         np.save(cat_fn, mock_dict)
 
 
@@ -209,11 +217,11 @@ def generate_gradmocks(data_dir = globals.data_dir,
 
             plt.close('all') 
 
-        # save dictionary
-        mock_dict_fn = os.path.join(grad_dir, f'{mock_dir}/{mock_file_name_list[i]}')
-        np.save(mock_dict_fn, mock_info)
+        # # save dictionary
+        # mock_dict_fn = os.path.join(grad_dir, f'{mock_dir}/{mock_file_name_list[i]}')
+        # np.save(mock_dict_fn, mock_info)
 
-        print(f"gradient generated --> {grad_dim}, {mock_file_name}")
+        print(f"gradient generated --> {grad_dim}D, {mock_file_name}")
     
     total_time = time.time()-s
     print(datetime.timedelta(seconds=total_time))

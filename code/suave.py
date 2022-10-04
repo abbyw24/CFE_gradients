@@ -12,28 +12,13 @@ from Corrfunc.utils import evaluate_xi
 from Corrfunc.utils import convert_3d_counts_to_cf
 from colossus.cosmology import cosmology
 
-from create_subdirs import create_subdirs
-import generate_mock_list
 from center_mock import center_mock
+import random_cat
+import generate_mock_list
 import globals
 
 globals.initialize_vals()  # brings in all the default parameters
 
-cat_tag = globals.cat_tag
-grad_dim = globals.grad_dim
-boxsize = globals.boxsize
-lognormal_density = globals.lognormal_density
-data_dir = globals.data_dir
-grad_dir = globals.grad_dir
-mock_type = globals.mock_type
-mock_tag = globals.mock_tag
-
-randmult = globals.randmult
-periodic = globals.periodic
-rmin = globals.rmin
-rmax = globals.rmax
-nbins = globals.nbins
-nthreads = globals.nthreads
 
 
 def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
@@ -44,6 +29,7 @@ def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
     cf = cosmo_base.correlationFunction
 
     return bias**2 * cf(r, z=redshift)
+
 
 
 # define cosmo_bases function
@@ -66,227 +52,42 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
     return bases
 
 
-# define function to estimate gradient using suave
-# bao_fixed=False ==> default bases are iterative results
-# mock_range = list of rlzs; default is [0,nmocks] where nmocks is defined in globals
-def suave_grad(cat_tag=cat_tag, mock_tag=mock_tag, grad_dim=grad_dim, grad_dir=grad_dir, bao_fixed=True, mock_range=None, plots=False):
-    s = time.time()
-
-    mock_list_info = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
-    mock_file_name_list = mock_list_info['mock_file_name_list']
-    mock_param_list = mock_list_info['mock_param_list']
-    realizations = mock_list_info['rlz_list']
-
-    # make sure all inputs have the right form
-    assert isinstance(grad_dim, int), 'grad_dim'
-    assert isinstance(grad_dir, str)
-
-    # create the needed subdirectories
-    basis_type = 'bao_fixed' if bao_fixed else 'bao_iterative'
-    suave_dir = f'suave_data/{cat_tag}/{basis_type}'
-    plots_dir = f'plots/suave/{cat_tag}/{basis_type}/grad_recovered' if bao_fixed else f''
-
-    sub_dirs = [
-        suave_dir,
-        plots_dir
-    ]
-    create_subdirs(grad_dir, sub_dirs)
-
-    # parameters for suave (not already imported from globals)
-    r_edges = np.linspace(rmin, rmax, nbins+1) 
-    ncont = 2000
-    r_fine = np.linspace(rmin, rmax, ncont)
-
-    nmubins = 1
-    mumax = 1.0
-
-    proj_type = 'gradient'
-    weight_type = 'pair_product_gradient'
-
-    # basis if bao_fixed (outside of loop because it's the same basis for all realizations)
-    if bao_fixed:
-        projfn = os.path.join(data_dir, f'bases/bao_fixed/cosmo_basis.dat')
-        basis = cosmo_bases(rmin, rmax, projfn, redshift=0.57, bias=2.0)
-        ncomponents = 4*(basis.shape[1]-1)
-    
-    mock_range = mock_range if mock_range is not None else range(len(mock_file_name_list))
-
-    for i in mock_range:
-
-        rlz = realizations[i]
-
-        mock_name = f'{cat_tag}_rlz{rlz}_lognormal' if mock_tag == 'lognormal' else f'{cat_tag}_rlz{rlz}_{mock_param_list[i]}'
-
-        # load bases
-        if not bao_fixed:
-            projfn = os.path.join(data_dir, f'bases/bao_iterative/results/results_gradient_{cat_tag}/final_bases/basis_gradient_{mock_name}_trrnum_{randmult}x.dat')
-            basis = np.loadtxt(projfn)
-            ncomponents = 4*(basis.shape[1]-1)
-
-
-        # load in mock and patch info
-        mock_info = np.load(os.path.join(grad_dir, f'mock_data/{cat_tag}/{mock_file_name_list[i]}.npy'), allow_pickle=True).item()
-        mock_file_name = mock_info['mock_file_name']
-        L = mock_info['boxsize']
-        mock_data = mock_info['grad_set']
-        grad_expected = mock_info['grad_expected']
-
-        # center data points between 0 and L
-        center_mock(mock_data, 0, L)
-
-        # create suave dictionary
-        suave_info = {}
-
-        nd = len(mock_data)
-        x, y, z = mock_data.T
-
-        # random set
-        nr = randmult*nd
-        xr = np.random.rand(nr)*float(L)
-        yr = np.random.rand(nr)*float(L)
-        zr = np.random.rand(nr)*float(L)
-
-        # weights
-        loc_pivot = [L/2., L/2., L/2.]
-        weights = np.array([np.ones(len(x)), x-loc_pivot[0], y-loc_pivot[1], z-loc_pivot[2]])
-        weights_r = np.array([np.ones(len(xr)), xr-loc_pivot[0], yr-loc_pivot[1], zr-loc_pivot[2]])
-
-        # run the pair counts
-        dd_res, dd_proj, _ = DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z, weights1=weights, 
-                                proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
-                                periodic=periodic, weight_type=weight_type)
-        # print("DD:", np.array(dd_proj))
-
-        dr_res, dr_proj, _ = DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z, weights1=weights, 
-                                X2=xr, Y2=yr, Z2=zr, weights2=weights_r, 
-                                proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
-                                periodic=periodic, weight_type=weight_type)
-        # print("DR:", np.array(dr_proj))
-
-        rr_res, rr_proj, qq_proj = DDsmu(1, nthreads, r_edges, mumax, nmubins, xr, yr, zr, weights1=weights_r, 
-                                        proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
-                                        periodic=periodic, weight_type=weight_type)
-        # print("RR:", np.array(rr_proj))
-
-        amps = compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj, rr_proj, qq_proj)
-        xi_proj = evaluate_xi(amps, r_fine, proj_type, rbins=r_edges, projfn=projfn)
-
-        # extract the standard binned values
-        dd = np.array([x['npairs'] for x in dd_res], dtype=float)
-        dr = np.array([x['npairs'] for x in dr_res], dtype=float)
-        rr = np.array([x['npairs'] for x in rr_res], dtype=float)
-        xi_standard = convert_3d_counts_to_cf(nd, nd, nr, nr, dd, dr, dr, rr)
-        r_avg = 0.5*(r_edges[:-1] + r_edges[1:])
-
-        # recovered gradient
-        # print("amps = ", amps)
-        w_cont = amps[1:]/amps[0]
-        w_cont_norm = np.linalg.norm(w_cont)
-        w_cont_hat = w_cont/w_cont_norm
-        # print("w_cont = ", w_cont)
-        # print(f"||w_cont|| = {w_cont_norm:.6f}")
-        # b_guess = 0.5
-        # m_recovered_perL = w_cont_norm*b_guess*L
-        grad_recovered = w_cont 
-        suave_info['grad_recovered'] = grad_recovered
-
-        # print("recovered gradient (a/a_0) =", grad_recovered)
-
-        # expected gradient (only in x direction)
-        # print("expected gradient (m_input/b_input)w_hat =", grad_expected)
-
-        # mean squared error just to see for now how close we are
-        mean_sq_err = (1/len(grad_expected))*np.sum((grad_recovered - grad_expected)**2)
-        # print(f"mean squared error = {mean_sq_err}")
-        suave_info['mean_sq_err'] = mean_sq_err
-
-        # non-loop-required plot parameters
-        v_min = -L/2.
-        v_max = L/2.
-        nvs = 50
-        vs = np.linspace(v_min, v_max, nvs)
-        
-        if plots == True:
-            fig, ax = plt.subplots()
-            vs_norm = matplotlib.colors.Normalize(vmin=v_min, vmax=v_max)
-            cmap = matplotlib.cm.get_cmap('cool')
-
-        xi_locs = []
-
-        for i, v in enumerate(vs):
-            loc = loc_pivot + v*w_cont_hat
-            # if i==len(vs)-1:
-            #     print(loc)
-            weights1 = np.array(np.concatenate(([1.0], loc-loc_pivot)))
-            weights2 = weights1 #because we just take the average of these and want to get this back
-            
-            xi_loc = evaluate_xi(amps, r_fine, proj_type, projfn=projfn, 
-                            weights1=weights1, weights2=weights2, weight_type=weight_type)    
-            xi_locs.append(xi_loc)
-            
-            if plots == True:
-                p = plt.plot(r_fine, xi_loc, color=cmap(vs_norm(v)), lw=0.5)
-        
-        if plots == True:
-            
-            sm = plt.cm.ScalarMappable(cmap=cmap, norm=vs_norm)
-            cbar = plt.colorbar(sm)
-            cbar.set_label(r"$v \,\, (\mathbf{x} = v\hat{e}_\mathrm{gradient} + \mathbf{x}_\mathrm{pivot})$", rotation=270, labelpad=12)
-            ax.axhline(0, color='grey', lw=0.5)
-            ax.set_ylim((-0.01, 0.12))
-            ax.set_xlabel(r"Separation $r$ ($h^{-1}\,$Mpc)")
-            ax.set_ylabel(r"$\xi(r)$")
-
-            if mock_type == '1mock':
-                ax.set_title("")
-            else:
-                ax.set_title(f"Recovered Gradient, {mock_file_name}")
-
-            fig.savefig(os.path.join(grad_dir, f'{plots_dir}/{mock_file_name}.png'))
-
-            plt.cla()
-            plt.close('all')
-
-        # save other plot parameters
-        suave_info['r_avg'] = r_avg
-        suave_info['amps'] = amps
-        suave_info['r_fine'] = r_fine
-        suave_info['xi_locs'] = xi_locs
-        suave_info['proj_type'] = proj_type
-        suave_info['projfn'] = projfn
-        suave_info['weight_type'] = weight_type
-
-        # save suave info dictionary
-        np.save(os.path.join(grad_dir, f'{suave_dir}/{mock_file_name}'), suave_info, allow_pickle=True)
-
-        print(f"suave --> {mock_file_name}")
-    
-    print(f"suave --> {cat_tag}, {basis_type} basis")
-    total_time = time.time()-s
-    print(datetime.timedelta(seconds=total_time))
 
 # function to run suave with any basis
-def suave(x, y, z, boxsize, projfn,
-            proj_type='generalr',
+def suave(x, y, z, L, n, projfn,
+            proj_type = 'generalr',
+            load_rand = True,
             randmult = globals.randmult,
-            nthreads=globals.nthreads,
+            periodic = globals.periodic,
             rmin = globals.rmin,
             rmax = globals.rmax,
-            periodic = globals.periodic,
-            ncont = 1000,
+            ncont = globals.ncont,
+            nthreads = globals.nthreads,
             nmubins = 1,
             mumax = 1.0
             ):
+    """Use Suave to compute the continuous 2pcf given an input data set and basis file"""
 
     # data
     data = np.array([x, y, z])
-    center_mock(data, 0, boxsize)
+    center_mock(data, 0, L)
     nd = len(x)
 
-    # random set
-    nr = randmult*nd
-    xs_rand = np.random.uniform(0, boxsize, (3, nr))
-    xr, yr, zr = xs_rand
+    # random set: either load a pre-computed set, or generate one here
+    if load_rand:
+        try:
+            random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{L}_n{n}_{randmult}x.dat')
+        except OSError: # generate the random catalog if it doesn't already exist
+            random_cat.main(L, n, data_dir, randmult)
+            random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{L}_n{n}_{randmult}x.dat')
+        finally:
+            rand_set = np.loadtxt(random_fn)
+        # rand_set.shape == (nr, 3)
+    else:
+        nr = randmult * nd
+        rand_set = np.random.uniform(0, L, (int(nr),3))
+    center_mock(rand_set, 0, L)
+    xr, yr, zr = xs_rand.T
 
     # other parameters for suave
     r_edges = np.linspace(rmin, rmax, nbins+1) 
@@ -298,14 +99,14 @@ def suave(x, y, z, boxsize, projfn,
 
     # run the pair counts
     dd_res, dd_proj, _ = DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z,
-                                    boxsize=boxsize, periodic=periodic, proj_type=proj_type,
+                                    boxsize=L, periodic=periodic, proj_type=proj_type,
                                     ncomponents=ncomponents, projfn=projfn)
     dr_res, dr_proj, _ = DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z,
                                     X2=xr, Y2=yr, Z2=zr,
-                                    boxsize=boxsize, periodic=periodic, proj_type=proj_type,
+                                    boxsize=L, periodic=periodic, proj_type=proj_type,
                                     ncomponents=ncomponents, projfn=projfn)
     rr_res, rr_proj, qq_proj = DDsmu(1, nthreads, r_edges, mumax, nmubins,
-                                            xr, yr, zr, boxsize=boxsize,
+                                            xr, yr, zr, boxsize=L,
                                             periodic=periodic, proj_type=proj_type,
                                             ncomponents=ncomponents, projfn=projfn)
     
@@ -318,3 +119,273 @@ def suave(x, y, z, boxsize, projfn,
     results[:,1] = xi_proj
 
     return results
+
+
+
+# function to estimate gradient using suave
+def suave_grad(x, y, z, L, projfn,
+                load_rand = True,
+                randmult = globals.randmult,
+                proj_type = 'gradient',
+                weight_type = 'pair_product_gradient',
+                periodic = globals.periodic,
+                rmin = globals.rmin,
+                rmax = globals.rmax,
+                ncont = globals.ncont,
+                nthreads = globals.nthreads,
+                nmubins = 1,
+                mumax = 1.0,
+                compute_standard = False):
+    """Use Suave to estimate the gradient in clustering amplitude given an input data set and basis file."""
+
+    # create suave dictionary
+    suave_dict = {}
+
+    # parameters
+    nd = len(x)
+    r_edges = np.linspace(rmin, rmax, nbins+1) 
+    r_fine = np.linspace(rmin, rmax, ncont)
+
+    # random set: either load a pre-computed set, or generate one here
+    if load_rand:
+        try:
+            random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{L}_n{n}_{randmult}x.dat')
+        except OSError: # generate the random catalog if it doesn't already exist
+            random_cat.main(L, n, data_dir, randmult)
+            random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{L}_n{n}_{randmult}x.dat')
+        finally:
+            rand_set = np.loadtxt(random_fn)
+        # rand_set.shape == (nr, 3)
+    else:
+        nr = randmult * nd
+        rand_set = np.random.uniform(0, L, (int(nr),3))
+    center_mock(rand_set, 0, L)
+    xr, yr, zr = xs_rand.T
+
+    # basis
+    basis = np.loadtxt(projfn)
+    ncomponents = basis.shape[1]-1
+    
+    # weights
+    loc_pivot = [L/2., L/2., L/2.]
+    weights = np.array([np.ones(len(x)), x-loc_pivot[0], y-loc_pivot[1], z-loc_pivot[2]])
+    weights_r = np.array([np.ones(len(xr)), xr-loc_pivot[0], yr-loc_pivot[1], zr-loc_pivot[2]])
+
+    # run the pair counts
+    dd_res, dd_proj, _ = DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z, weights1=weights, 
+                            proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
+                            periodic=periodic, weight_type=weight_type)
+
+    dr_res, dr_proj, _ = DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z, weights1=weights, 
+                            X2=xr, Y2=yr, Z2=zr, weights2=weights_r, 
+                            proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
+                            periodic=periodic, weight_type=weight_type)
+
+    rr_res, rr_proj, qq_proj = DDsmu(1, nthreads, r_edges, mumax, nmubins, xr, yr, zr, weights1=weights_r, 
+                                    proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
+                                    periodic=periodic, weight_type=weight_type)
+
+    amps = compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj, rr_proj, qq_proj)
+    xi_proj = evaluate_xi(amps, r_fine, proj_type, rbins=r_edges, projfn=projfn)
+
+    # extract the standard binned values, if specified
+    if compute_standard:
+        dd = np.array([x['npairs'] for x in dd_res], dtype=float)
+        dr = np.array([x['npairs'] for x in dr_res], dtype=float)
+        rr = np.array([x['npairs'] for x in rr_res], dtype=float)
+        xi_standard = convert_3d_counts_to_cf(nd, nd, nr, nr, dd, dr, dr, rr)
+        r_avg = 0.5*(r_edges[:-1] + r_edges[1:])
+        # add these results to the results dictionary
+        suave_dict['r_avg'] = r_avg
+        suave_dict['xi_standard'] = xi_standard
+
+    # recovered gradient
+    w_cont = amps[1:]/amps[0]
+    suave_dict['grad_recovered'] = w_cont
+    # w_cont_norm = np.linalg.norm(w_cont)
+    # w_cont_hat = w_cont/w_cont_norm
+
+    # save other plot parameters
+    suave_dict['amps'] = amps
+    suave_dict['r_fine'] = r_fine
+    suave_dict['proj_type'] = proj_type
+    suave_dict['projfn'] = projfn
+    suave_dict['weight_type'] = weight_type
+
+    return suave_dict
+        
+    
+
+# OLD SUAVE GRADIENT FUNCTION
+# def suave_grad(nmocks = globals.nmocks,
+#                 L = globals.boxsize,
+#                 n = globals.lognormal_density,
+#                 As = globals.As,
+#                 rlzs = globals.rlzs,
+#                 data_dir = globals.data_dir,
+#                 grad_dim = globals.grad_dim,
+#                 m = globals.m,
+#                 b = globals.b,
+#                 rmin = globals.rmin,
+#                 rmax = globals.rmax,
+#                 ncont = globals.ncont,
+#                 bao_fixed=True,         # ** fixed vs. iterative BAO basis
+#                 prints=True,
+#                 plots=False):
+
+#     s = time.time()
+
+#     # generate mock list
+#     mock_set = generate_mock_list.mock_set(nmocks, L, n, As=As, data_dir=data_dir, rlzs=rlzs)
+#     # add the desired gradient to this initial mock set
+#     mock_set.add_gradient(grad_dim, m, b)
+#     cat_tag = mock_set.cat_tag
+
+#     # basis type: fixed vs iterative
+#     basis_type = 'bao_fixed' if bao_fixed else 'bao_iterative'
+
+#     # create path to suave results directory if it doesn't already exist
+#     suave_dir = f'suave_data/{cat_tag}/{basis_type}'
+#     if not os.path.exists(suave_dir):
+#         os.makedirs(suave_dir)
+
+#     # parameters for suave (not already imported from globals)
+#     r_edges = np.linspace(rmin, rmax, nbins+1) 
+#     r_fine = np.linspace(rmin, rmax, ncont)
+
+#     proj_type = 'gradient'
+#     weight_type = 'pair_product_gradient'
+
+#     # basis if bao_fixed
+#     if bao_fixed:
+#         projfn = os.path.join(data_dir, f'bases/bao_fixed/cosmo_basis.dat')
+#         basis = cosmo_bases(rmin, rmax, projfn, redshift=0.57, bias=2.0)
+#         ncomponents = 4*(basis.shape[1]-1)
+
+#     for i, rlz in enumerate(mock_set.rlzs):
+
+#         mock_fn = mock_fn_list[i]
+
+#         # load bases
+#         if not bao_fixed:
+#             projfn = os.path.join(data_dir, f'bases/bao_iterative/results/results_gradient_{cat_tag}/final_bases/basis_gradient_{mock_fn}_trrnum_{randmult}x.dat')
+#             basis = np.loadtxt(projfn)
+#             ncomponents = 4*(basis.shape[1]-1)
+
+
+#         # load in mock and patch info
+#         mock_dict = np.load(os.path.join(mock_set.grad_dir, f'mock_data/{cat_tag}/{mock_fn}.npy'), allow_pickle=True).item()
+#         mock_data = mock_dict['grad_set']
+#         L = mock_dict['boxsize']
+#         grad_expected = mock_dict['grad_expected']
+
+#         # center data points between 0 and L
+#         center_mock(mock_data, 0, L)
+
+#         # create suave dictionary
+#         suave_dict = {}
+
+#         nd = len(mock_data)
+#         x, y, z = mock_data.T
+
+#         # random set
+#         nr = randmult*nd
+#         xr = np.random.rand(nr)*float(L)
+#         yr = np.random.rand(nr)*float(L)
+#         zr = np.random.rand(nr)*float(L)
+
+#         # weights
+#         loc_pivot = [L/2., L/2., L/2.]
+#         weights = np.array([np.ones(len(x)), x-loc_pivot[0], y-loc_pivot[1], z-loc_pivot[2]])
+#         weights_r = np.array([np.ones(len(xr)), xr-loc_pivot[0], yr-loc_pivot[1], zr-loc_pivot[2]])
+
+#         # run the pair counts
+#         dd_res, dd_proj, _ = DDsmu(1, nthreads, r_edges, mumax, nmubins, x, y, z, weights1=weights, 
+#                                 proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
+#                                 periodic=periodic, weight_type=weight_type)
+
+#         dr_res, dr_proj, _ = DDsmu(0, nthreads, r_edges, mumax, nmubins, x, y, z, weights1=weights, 
+#                                 X2=xr, Y2=yr, Z2=zr, weights2=weights_r, 
+#                                 proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
+#                                 periodic=periodic, weight_type=weight_type)
+
+#         rr_res, rr_proj, qq_proj = DDsmu(1, nthreads, r_edges, mumax, nmubins, xr, yr, zr, weights1=weights_r, 
+#                                         proj_type=proj_type, ncomponents=ncomponents, projfn=projfn, 
+#                                         periodic=periodic, weight_type=weight_type)
+
+#         amps = compute_amps(ncomponents, nd, nd, nr, nr, dd_proj, dr_proj, dr_proj, rr_proj, qq_proj)
+#         xi_proj = evaluate_xi(amps, r_fine, proj_type, rbins=r_edges, projfn=projfn)
+
+#         # extract the standard binned values
+#         dd = np.array([x['npairs'] for x in dd_res], dtype=float)
+#         dr = np.array([x['npairs'] for x in dr_res], dtype=float)
+#         rr = np.array([x['npairs'] for x in rr_res], dtype=float)
+#         xi_standard = convert_3d_counts_to_cf(nd, nd, nr, nr, dd, dr, dr, rr)
+#         r_avg = 0.5*(r_edges[:-1] + r_edges[1:])
+
+#         # recovered gradient
+#         w_cont = amps[1:]/amps[0]
+#         w_cont_norm = np.linalg.norm(w_cont)
+#         w_cont_hat = w_cont/w_cont_norm
+#         suave_dict['grad_recovered'] = w_cont
+
+#         # save other plot parameters
+#         suave_dict['r_avg'] = r_avg
+#         suave_dict['amps'] = amps
+#         suave_dict['r_fine'] = r_fine
+#         suave_dict['proj_type'] = proj_type
+#         suave_dict['projfn'] = projfn
+#         suave_dict['weight_type'] = weight_type
+
+#         # save suave dictionary
+#         save_fn = os.path.join(grad_dir, f'{suave_dir}/{mock_fn}')
+#         np.save(save_fn, suave_dict, allow_pickle=True)
+        
+#         if plots == True:
+#             # define plot parameters
+#             v_min = -L/2.
+#             v_max = L/2.
+#             nvs = 50
+#             vs = np.linspace(v_min, v_max, nvs)
+#             xi_locs = []
+
+#             fig, ax = plt.subplots()
+#             vs_norm = matplotlib.colors.Normalize(vmin=v_min, vmax=v_max)
+#             cmap = matplotlib.cm.get_cmap('cool')
+
+#             # compute and plot xi at nvs evenly-spaced positions across the box
+#             for i, v in enumerate(vs):
+#                 loc = loc_pivot + v*w_cont_hat
+#                 # if i==len(vs)-1:
+#                 #     print(loc)
+#                 weights1 = np.array(np.concatenate(([1.0], loc-loc_pivot)))
+#                 weights2 = weights1 #because we just take the average of these and want to get this back
+                
+#                 xi_loc = evaluate_xi(amps, r_fine, proj_type, projfn=projfn, 
+#                                 weights1=weights1, weights2=weights2, weight_type=weight_type)    
+#                 xi_locs.append(xi_loc)
+                
+#                 p = plt.plot(r_fine, xi_loc, color=cmap(vs_norm(v)), lw=0.5)
+            
+#             sm = plt.cm.ScalarMappable(cmap=cmap, norm=vs_norm)
+#             cbar = plt.colorbar(sm)
+#             cbar.set_label(r"$v \,\, (\mathbf{x} = v\hat{e}_\mathrm{gradient} + \mathbf{x}_\mathrm{pivot})$", rotation=270, labelpad=12)
+#             ax.axhline(0, color='grey', lw=0.5)
+#             ax.set_ylim((-0.01, 0.12))
+#             ax.set_xlabel(r"Separation $r$ ($h^{-1}\,$Mpc)")
+#             ax.set_ylabel(r"$\xi(r)$")
+
+#             ax.set_title(f"Recovered Gradient, {mock_fn}")
+
+#             fig.savefig(os.path.join(grad_dir, f'{plots_dir}/{mock_fn}.png'))
+
+#             plt.cla()
+#             plt.close('all')
+
+
+#         if prints:
+#             print(f"suave --> {save_fn}")
+    
+#     print(f"suave --> {cat_tag}, {grad_dim}D gradient, {basis_type} basis")
+#     total_time = time.time()-s
+#     print(datetime.timedelta(seconds=total_time))

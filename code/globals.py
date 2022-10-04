@@ -10,7 +10,7 @@ def initialize_vals():
     nmocks = 401
 
     global boxsize
-    boxsize = 750
+    boxsize = 500
 
     global lognormal_density
     lognormal_density = "1e-4"
@@ -55,6 +55,8 @@ def initialize_vals():
     rmax = 140.0
     global nbins
     nbins = 22
+    global ncont
+    ncont = 2000
     global nthreads
     nthreads = 12
 

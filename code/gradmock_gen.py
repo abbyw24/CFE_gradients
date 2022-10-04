@@ -38,11 +38,6 @@ def generate_gradmocks(nmocks = globals.nmocks,
     # lognorm_file_list = mock_vals['lognorm_file_list']
     # m_arr = mock_vals['m_arr']
     # b_arr = mock_vals['b_arr']
-    
-    # create desired path to mocks directory if it doesn't already exist
-    if not os.path.exists(mock_set.grad_dir):
-        os.makedirs(mock_set.grad_dir)
-        print(f"created path {mock_set.grad_dir}")
 
 
     ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
@@ -76,15 +71,20 @@ def generate_gradmocks(nmocks = globals.nmocks,
         m = mock_set.m_arr[i]
         b = mock_set.b_arr[i]
 
+        # expected gradient
+        w = m/(b*L)*w_hat
+
         # create dictionary with initial mock info
         mock_dict = {
             'mock_file_name' : mock_file_name,
             'cat_tag' : cat_tag,
             'lognormal_rlz' : ln_file_name,
+            'grad_expected' : w,
             'w_hat' : w_hat,
             'm' : m,
             'b' : b,
         }
+
 
         # LOGNORMAL SET
         # try fetching the desired lognormal catalogs from my own directories, otherwise fetch from Kate's
@@ -103,17 +103,6 @@ def generate_gradmocks(nmocks = globals.nmocks,
 
         # boxsize
         L = ln_dict['L']
-
-        # expected gradient
-        grad_expected = m/(b*L)*w_hat
-
-        # # save lognormal set to mocks directory
-        # x_lognorm, y_lognorm, z_lognorm, vx_lognorm, vy_lognorm, vz_lognorm = data.T
-        #     # data is initially loaded in from 0 to L; we want to shift down by L/2 to center around 0
-        # xs_lognorm = (np.array([x_lognorm, y_lognorm, z_lognorm])-(L/2))
-        # velocities = np.array([vx_lognorm, vy_lognorm, vz_lognorm])
-        # mock_info['lognorm_set'] = xs_lognorm
-        # mock_info['velocities'] = velocities
 
 
         # NULL SET
@@ -150,7 +139,7 @@ def generate_gradmocks(nmocks = globals.nmocks,
         xs_grad = np.append(xs_clust_grad, xs_unclust_grad, axis=0)
 
         # add new data to mock dictionary
-        mock_dict['grad_expected'] = grad_expected
+        mock_dict['grad_expected'] = w
         mock_dict['rand_set'] = xs_rand
         mock_dict['clust_set'] = xs_clust_grad
         mock_dict['unclust_set'] = xs_unclust_grad

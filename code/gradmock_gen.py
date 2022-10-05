@@ -8,6 +8,7 @@ import read_lognormal
 import fetch_lognormal_mocks
 import globals
 import generate_mock_list
+from center_mock import center_mock
 globals.initialize_vals()
 
 
@@ -21,8 +22,8 @@ def generate_gradmocks(nmocks = globals.nmocks,
                         m = globals.m,
                         b = globals.b,
                         input_w_hat = None,
-                        plots = False, z_max = -50):
-    """Use global variables to generate a set of gradient mocks."""
+                        prints = False, plots = False, z_max = -50):
+    """Use global parameters to generate a set of gradient mocks."""
     
     s = time.time()
     
@@ -31,13 +32,6 @@ def generate_gradmocks(nmocks = globals.nmocks,
 
     # initialize gradient
     mock_set.add_gradient(grad_dim, m, b)
-
-    # mock_vals = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)
-    # path_to_lognorm_source = mock_vals['path_to_lognorm_source']
-    # mock_file_name_list = mock_vals['mock_file_name_list']
-    # lognorm_file_list = mock_vals['lognorm_file_list']
-    # m_arr = mock_vals['m_arr']
-    # b_arr = mock_vals['b_arr']
 
 
     ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
@@ -71,6 +65,10 @@ def generate_gradmocks(nmocks = globals.nmocks,
         m = mock_set.m_arr[i]
         b = mock_set.b_arr[i]
 
+        ##
+        if not prints and i==0:
+            print(f'first mock: ', mock_file_name)
+
         # expected gradient
         w = m/(b*L)*w_hat
 
@@ -95,14 +93,18 @@ def generate_gradmocks(nmocks = globals.nmocks,
             fetch_lognormal_mocks.fetch_ln_mocks(cat_tag, mock_set.rlzs)
             ln_dict = np.load(os.path.join(data_dir, f'catalogs/lognormal/{cat_tag}/{ln_file_name}.npy'), allow_pickle=True).item()
         
-        # data points
-        xs_lognorm = ln_dict['data'].T
-        
         # number of data points
         N = ln_dict['N']
+        mock_dict['N'] = N
 
         # boxsize
         L = ln_dict['L']
+        mock_dict['L'] = L
+        
+        # data points
+        xs_lognorm = ln_dict['data'].T
+        center_mock(xs_lognorm, 0, L)
+
 
 
         # NULL SET
@@ -143,7 +145,7 @@ def generate_gradmocks(nmocks = globals.nmocks,
         mock_dict['rand_set'] = xs_rand
         mock_dict['clust_set'] = xs_clust_grad
         mock_dict['unclust_set'] = xs_unclust_grad
-        mock_dict['grad_set'] = xs_grad
+        mock_dict['data'] = xs_grad
 
         # save our gradient mock dictionary to catalogs directory
         cat_dir = os.path.join(data_dir, f'catalogs/gradient/{grad_dim}D/{cat_tag}')
@@ -210,7 +212,9 @@ def generate_gradmocks(nmocks = globals.nmocks,
         # mock_dict_fn = os.path.join(grad_dir, f'{mock_dir}/{mock_file_name_list[i]}')
         # np.save(mock_dict_fn, mock_info)
 
-        print(f"gradient generated --> {grad_dim}D, {mock_file_name}")
+        if prints:
+            print(f"gradient generated --> {grad_dim}D, {mock_file_name}")
     
+    print(f"gradient generated --> {grad_dim}D, {cat_tag}, {nmocks} mocks")
     total_time = time.time()-s
-    print(datetime.timedelta(seconds=total_time))
+    print(f"total time = {datetime.timedelta(seconds=total_time)}")

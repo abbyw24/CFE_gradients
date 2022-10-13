@@ -57,16 +57,18 @@ def cosmo_bases(rmin, rmax, projfn, cosmo_base=None, ncont=2000,
 def suave(x, y, z, L, n, projfn,
             proj_type = 'generalr',
             load_rand = True,
+            data_dir = globals.data_dir,
             randmult = globals.randmult,
             periodic = globals.periodic,
             rmin = globals.rmin,
             rmax = globals.rmax,
+            nbins = globals.nbins,
             ncont = globals.ncont,
             nthreads = globals.nthreads,
             nmubins = 1,
             mumax = 1.0
             ):
-    """Use Suave to compute the continuous 2pcf given an input data set and basis file"""
+    """Use Suave to compute the continuous 2pcf given an input data set and basis file."""
 
     # data
     data = np.array([x, y, z])
@@ -76,10 +78,10 @@ def suave(x, y, z, L, n, projfn,
     # random set: either load a pre-computed set, or generate one here
     if load_rand:
         try:
-            random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{L}_n{n}_{randmult}x.dat')
+            random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{int(L)}_n{n}_{randmult}x.dat')
         except OSError: # generate the random catalog if it doesn't already exist
             random_cat.main(L, n, data_dir, randmult)
-            random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{L}_n{n}_{randmult}x.dat')
+            random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{int(L)}_n{n}_{randmult}x.dat')
         finally:
             rand_set = np.loadtxt(random_fn)
         # rand_set.shape == (nr, 3)
@@ -87,7 +89,8 @@ def suave(x, y, z, L, n, projfn,
         nr = randmult * nd
         rand_set = np.random.uniform(0, L, (int(nr),3))
     center_mock(rand_set, 0, L)
-    xr, yr, zr = xs_rand.T
+    xr, yr, zr = rand_set.T
+    nr = len(xr)
 
     # other parameters for suave
     r_edges = np.linspace(rmin, rmax, nbins+1) 

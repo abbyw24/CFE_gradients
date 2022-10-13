@@ -12,11 +12,11 @@ from center_mock import center_mock
 globals.initialize_vals()
 
 
-def generate_gradmocks(nmocks = globals.nmocks,
-                        L = globals.boxsize,
+def generate_gradmocks(L = globals.boxsize,
                         n = globals.lognormal_density,
                         As = globals.As,
                         rlzs = globals.rlzs,
+                        nmocks = globals.nmocks,
                         data_dir = globals.data_dir,
                         grad_dim = globals.grad_dim,
                         m = globals.m,
@@ -28,7 +28,7 @@ def generate_gradmocks(nmocks = globals.nmocks,
     s = time.time()
     
     # generate mock list
-    mock_set = generate_mock_list.mock_set(nmocks, L, n, As=As, data_dir=data_dir, rlzs=rlzs)
+    mock_set = generate_mock_list.mock_set(L, n, As=As, data_dir=data_dir, rlzs=rlzs, nmocks=nmocks)
 
     # initialize gradient
     mock_set.add_gradient(grad_dim, m, b)
@@ -103,7 +103,7 @@ def generate_gradmocks(nmocks = globals.nmocks,
         
         # data points
         xs_lognorm = ln_dict['data'].T
-        center_mock(xs_lognorm, 0, L)
+        center_mock(xs_lognorm, -L/2, L/2)
 
 
 

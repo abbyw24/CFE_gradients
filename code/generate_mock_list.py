@@ -7,19 +7,25 @@ globals.initialize_vals()
 
 class mock_set:
 
-    def __init__(self, nmocks, boxsize, lognormal_density, As=2, data_dir=globals.data_dir, rlzs=None):
+    def __init__(self, boxsize, lognormal_density, As=2, data_dir=globals.data_dir, rlzs=None, nmocks=globals.nmocks):
 
         self.cat_tag = f'L{boxsize}_n{lognormal_density}_z057_patchy_As{As}x'
-        self.nmocks = nmocks
         self.data_dir = data_dir
 
-        self.rlzs = rlzs if rlzs is not None else range(nmocks)
-        
+        # if realizations are specified, use those; otherwise, use the number of mocks set in globals and start from rlz0
+        if rlzs is not None:
+            self.rlzs = rlzs
+            self.nmocks = len(rlzs)
+        else:
+            self.rlzs = range(nmocks)
+            self.nmocks = nmocks
+
         self.ln_fn_list = [f'{self.cat_tag}_rlz{rlz}_lognormal' for rlz in self.rlzs]
 
         # these will change if we call the add_gradient() method
         self.mock_type = 'lognormal'
         self.mock_fn_list = self.ln_fn_list
+        self.mock_path = 'lognormal'
 
 
     def add_gradient(self, grad_dim, m, b):
@@ -29,6 +35,7 @@ class mock_set:
         self.grad_dir = os.path.join(self.data_dir, f'gradient/{self.grad_dim}D/{self.cat_tag}')
 
         self.mock_type = 'gradient'      # redefine the mock type from 'lognormal'
+        self.mock_path = f'gradient/{grad_dim}D'    # redefine the mock path (extra layer of specifying gradient dimension)
 
         # create arrays of our gradient parameters m and b:
         #   if the input m is a single number, this will be distributed across each realization;

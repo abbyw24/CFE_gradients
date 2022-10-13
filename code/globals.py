@@ -1,7 +1,3 @@
-import numpy as np
-import os
-
-
 def initialize_vals():
 
     # BASIC PARAMETERS (non-gradient)
@@ -28,16 +24,16 @@ def initialize_vals():
     # MOCK TYPE
 
     global mock_type
-    mock_type = 'lognormal'
+    mock_type = 'gradient'
 
 
     # GRADIENT PARAMETERS
 
     global grad_dim
-    grad_dim = 2        # dimension of w_hat in gradient mock
+    grad_dim = 1        # dimension of w_hat in gradient mock
 
     global m
-    m = 1
+    m = 0.1
 
     global b
     b = 0.5

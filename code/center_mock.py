@@ -5,7 +5,6 @@ def center_mock(data, min_val, max_val, shift_val=None):
     k = 0
     if shift_val == None:
         shift_val = (max_val - min_val)/2
-        print(shift_val)
     while np.all((data >= min_val) & (data <= max_val)) == False:
         # print(f"correction {k}: min data = {data.min()}, max data = {data.max()}")
         if np.any(data <= min_val):

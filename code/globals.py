@@ -1,3 +1,5 @@
+import numpy as np
+
 def initialize_vals():
 
     # BASIC PARAMETERS (non-gradient)
@@ -6,7 +8,7 @@ def initialize_vals():
     nmocks = 401
 
     global boxsize
-    boxsize = 500
+    boxsize = 750
 
     global lognormal_density
     lognormal_density = "1e-4"
@@ -30,13 +32,16 @@ def initialize_vals():
     # GRADIENT PARAMETERS
 
     global grad_dim
-    grad_dim = 1        # dimension of w_hat in gradient mock
+    grad_dim = 2        # dimension of w_hat in gradient mock
 
     global m
-    m = 0.1
+    m = 1
 
     global b
     b = 0.5
+
+    global input_w
+    input_w = [np.sqrt(3), 1, 0]
 
 
     # CF ESTIMATOR PARAMETERS
@@ -59,5 +64,5 @@ def initialize_vals():
 
     # PATCH PARAMETERS
 
-    global n_patches
-    n_patches = 8 
+    global npatches
+    npatches = 8 

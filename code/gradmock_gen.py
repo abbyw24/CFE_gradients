@@ -12,41 +12,52 @@ from center_mock import center_mock
 globals.initialize_vals()
 
 
+def is_smooth(tau_sq):
+    """Returns True if all values are between 0 and 1, otherwise returns False."""
+    bools = (tau_sq >= 0) & (tau_sq <= 1)
+    return all(bools)
+
+
 def generate_gradmocks(L = globals.boxsize,
                         n = globals.lognormal_density,
                         As = globals.As,
                         rlzs = globals.rlzs,
-                        nmocks = globals.nmocks,
                         data_dir = globals.data_dir,
                         grad_dim = globals.grad_dim,
                         m = globals.m,
                         b = globals.b,
-                        input_w_hat = None,
-                        prints = False, plots = False, z_max = -50):
+                        input_w = globals.input_w,
+                        prints = False, plots = False, z_max = -50, assert_smooth = True):
     """Use global parameters to generate a set of gradient mocks."""
     
     s = time.time()
     
     # generate mock list
-    mock_set = generate_mock_list.mock_set(L, n, As=As, data_dir=data_dir, rlzs=rlzs, nmocks=nmocks)
+    mock_set = generate_mock_list.mock_set(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
+
+    # if an input gradient vector is specified as an argument, set grad_dim accordingly (i.e. ignore globals.grad_dim)
+    if input_w:
+        grad_dim = len(np.where(np.array(input_w)!=0)[0])
+        assert input_w[0] != 0, "first component of input_w must be nonzero"
+        if grad_dim > 1:
+            assert input_w[1] != 0, "second component of input_w must be nonzero if grad_dim > 1"
 
     # initialize gradient
     mock_set.add_gradient(grad_dim, m, b)
-
 
     ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
     # generate unit vector– this is the direction of the gradient
     if grad_dim == 1:
         w_hat = np.array([1.0,0,0])
     elif grad_dim == 2:
-        if input_w_hat:
-            w_hat = input_w_hat
+        if input_w:
+            w_hat = input_w
         else:
             w_hat = np.random.normal(size=3)
         w_hat[2] = 0
     elif grad_dim == 3:
-        if input_w_hat:
-            w_hat = input_w_hat
+        if input_w:
+            w_hat = input_w
         else:
             w_hat = np.random.normal(size=3)
     else:
@@ -69,15 +80,15 @@ def generate_gradmocks(L = globals.boxsize,
         if not prints and i==0:
             print(f'first mock: ', mock_file_name)
 
-        # expected gradient
-        w = m/(b*L)*w_hat
+        # input gradient
+        w = m / (b*L*np.sqrt(3)) * w_hat     # sqrt(3) is included to ensure that threshold^2 is between 0 and 1 for entire mock if m <= 1
 
         # create dictionary with initial mock info
         mock_dict = {
             'mock_file_name' : mock_file_name,
             'cat_tag' : cat_tag,
             'lognormal_rlz' : ln_file_name,
-            'grad_expected' : w,
+            'grad_input' : w,
             'w_hat' : w_hat,
             'm' : m,
             'b' : b,
@@ -106,7 +117,6 @@ def generate_gradmocks(L = globals.boxsize,
         center_mock(xs_lognorm, -L/2, L/2)
 
 
-
         # NULL SET
         # generate a null (unclustered) data set (same size as mock)
         xs_rand = np.random.uniform(-L/2,L/2,(3,N))
@@ -118,16 +128,17 @@ def generate_gradmocks(L = globals.boxsize,
         rs_uncl = np.random.uniform(size=N)
 
         # dot product onto the unit vectors
-        eta_clust = np.dot(w_hat, xs_lognorm)
-        eta_uncl = np.dot(w_hat, xs_rand)
+        eta_clust = np.dot(w, xs_lognorm)
+        eta_uncl = np.dot(w, xs_rand)
 
         # threshold
-        ts_clust_squared = (m/L) * eta_clust + b 
-        ts_uncl_squared = (m/L) * eta_uncl + b
+        ts_clust_squared = b*eta_clust + b 
+        ts_uncl_squared = b*eta_uncl + b
 
         # assert that ts range from 0 to 1
-        # assert np.all(ts_clust > 0)
-        # assert np.all(ts_clust < 1)
+        if assert_smooth:
+            assert is_smooth(ts_clust_squared)
+            assert is_smooth(ts_uncl_squared)
 
         # desired indices
         I_clust = rs_clust**2 < ts_clust_squared
@@ -141,11 +152,18 @@ def generate_gradmocks(L = globals.boxsize,
         xs_grad = np.append(xs_clust_grad, xs_unclust_grad, axis=0)
 
         # add new data to mock dictionary
-        mock_dict['grad_expected'] = w
         mock_dict['rand_set'] = xs_rand
         mock_dict['clust_set'] = xs_clust_grad
         mock_dict['unclust_set'] = xs_unclust_grad
         mock_dict['data'] = xs_grad
+
+        if i==0:
+            print("expected gradient = ", w)
+            print("w_hat = ", w_hat)
+            print("boxsize = ", L)
+            print("galaxy density = ", n)
+            print("m = ", m)
+
 
         # save our gradient mock dictionary to catalogs directory
         cat_dir = os.path.join(data_dir, f'catalogs/gradient/{grad_dim}D/{cat_tag}')
@@ -208,13 +226,9 @@ def generate_gradmocks(L = globals.boxsize,
 
             plt.close('all') 
 
-        # # save dictionary
-        # mock_dict_fn = os.path.join(grad_dir, f'{mock_dir}/{mock_file_name_list[i]}')
-        # np.save(mock_dict_fn, mock_info)
-
         if prints:
             print(f"gradient generated --> {grad_dim}D, {mock_file_name}")
     
-    print(f"gradient generated --> {grad_dim}D, {cat_tag}, {nmocks} mocks")
+    print(f"gradient generated --> {grad_dim}D, {cat_tag}, {mock_set.nmocks} mocks")
     total_time = time.time()-s
     print(f"total time = {datetime.timedelta(seconds=total_time)}")

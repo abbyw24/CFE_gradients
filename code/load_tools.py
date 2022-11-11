@@ -34,7 +34,7 @@ def load_patch_amps(L, n, grad_dim, m, b=0.5, nmocks=401, npatches=8, data_dir=g
 def grad_input(L, n, grad_dim, m, rlz=0, b=0.5, data_dir=globals.data_dir, As=globals.As):
     cat_tag = f'L{int(L)}_n{n}_z057_patchy_As{As}x'
     mock_dict = np.load(os.path.join(data_dir, f'catalogs/gradient/{grad_dim}D/{cat_tag}/{cat_tag}_rlz{rlz}_m-{m:.3f}-L_b-{b:.3f}.npy'), allow_pickle=True).item()
-    return mock_dict['grad_expected']
+    return mock_dict['grad_input']
 
 
 def check_grad_amps(L, n, grad_dim, m, b=0.5, nmocks=401, bins=30, alpha=0.3, data_dir=globals.data_dir, title=None, return_amps=False):

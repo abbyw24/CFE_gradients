@@ -17,32 +17,34 @@ from colossus.cosmology import cosmology
 import read_lognormal as reader
 
 from center_mock import center_mock
-
 import generate_mock_list
-
 import globals
 globals.initialize_vals()
 
-def main(cat_tag=globals.cat_tag,
-            mock_tag = globals.mock_tag,
-            data_dir = globals.data_dir,
-            grad_dim = globals.grad_dim,
-            boxsize = globals.boxsize,
-            density = globals.lognormal_density,
-            nmocks = globals.nmocks,
-            randmult = globals.randmult):
+def main(mock_type = globals.mock_type,
+            L = globals.boxsize, n = globals.lognormal_density, As = globals.As,
+            data_dir = globals.data_dir, rlzs = None,
+            grad_dim = globals.grad_dim, m = globals.m, b = globals.b,
+            rmin = globals.rmin, rmax = globals.rmax, nbins = globals.nbins,
+            randmult = globals.randmult, nthreads = globals.nthreads, load_rand = True, prints = False):
 
     s = time.time()
     
-    mock_list_info = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)  # this is only used if mock_tag is not lognormal
+    # generate the mock set parameters
+    mock_set = generate_mock_list.mock_set(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
+    cat_tag = mock_set.cat_tag
+    rlzs = mock_set.rlzs
 
-    if mock_tag == 'lognormal':
-        cat_dir = os.path.join(data_dir, f'catalogs/lognormal/{cat_tag}') #f'/scratch/ksf293/mocks/lognormal/cat_{cat_tag}'
+    # check whether we want to use gradient mocks or lognormal mocks
+    if mock_type=='gradient':
+        mock_set.add_gradient(grad_dim, m, b)
     else:
-        assert mock_tag == 'gradient'
-        cat_dir = os.path.join(data_dir, f'gradient/{grad_dim}D/mock_data/{cat_tag}')
+        assert mock_type=='lognormal', "mock_type must be either 'gradient' or 'lognormal'"
 
-    random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{boxsize}_n{density}_{randmult}x.dat')  # generate my own random catalogs
+    if load_rand:
+        random_fn = os.path.join(data_dir, f'catalogs/randoms/rand_L{L}_n{n}_{randmult}x.dat')
+    else:
+        random_fn = None
 
     proj = 'baoiter'
     # cosmo_name options: ['b17', 'planck', 'wmap9'] (for example)
@@ -51,7 +53,6 @@ def main(cat_tag=globals.cat_tag,
     cosmo = cosmology.setCosmology(cosmo_name)
     cf_tag = f"_{proj}_cosmo{cosmo_name}_test"
     redshift = 0.57
-    realizations = mock_list_info['rlz_list']
 
     restart_unconverged = False # will restart any unconverged realizations - WARNING, IF FALSE WILL OVERWRITE ITERATIONS OF UNCONVERGED ONES
     convergence_threshold = 1e-5 #when to stop (fractional change)
@@ -59,37 +60,32 @@ def main(cat_tag=globals.cat_tag,
 
     save_iterated_bases = True
     skip_converged = True
-    trr_analytic = False     # needs to be False eventually
+    trr_analytic = False
     periodic = False
-    nthreads = globals.nthreads
     dalpha = 0.001
     k0 = 0.1
 
     print(Corrfunc.__file__)
     print(Corrfunc.__version__)
 
-    #cosmo = bao_utils.get_cosmo(cosmo_name)
+    # cosmo = bao_utils.get_cosmo(cosmo_name)
     trr_tag = '' if trr_analytic else '_trrnum'
     rand_tag = '' if trr_analytic else f'_{randmult}x'
     per_tag = '_perTrue' if periodic else ''
 
-    print(cat_tag, mock_tag)
-
-    for Nr in range(nmocks):
-        print(f"Realization {Nr}")
-
-        rlz = realizations[Nr]
+    for Nr, rlz in enumerate(rlzs):
+        print(f"Realization {rlz}")
 
         alpha_model_start = 1.0
         eta = 0.5
-        biter = BAO_iterator(Nr, mock_tag, boxsize, periodic, cat_tag, rand_tag, cat_dir, cosmo, data_dir, rlz,
-                            mock_list_info=mock_list_info, cf_tag=cf_tag, trr_analytic=trr_analytic,
+        biter = BAO_iterator(Nr, rlz, mock_type, mock_set, rand_tag, cosmo, L, periodic,
+                            grad_dim=grad_dim, rmin=rmin, rmax=rmax, nbins=nbins, cf_tag=cf_tag, trr_analytic=trr_analytic,
                             save_iterated_bases=save_iterated_bases, nthreads=nthreads, redshift=redshift,
                             alpha_model_start=alpha_model_start, dalpha=dalpha, k0=k0, random_fn=random_fn)
 
         # update this
         if skip_converged:
-            converged_fn = f'{biter.result_dir}/converged/cf{biter.cf_tag}_{biter.trr_tag}{biter.rand_tag}{biter.per_tag}_{biter.mock_name}.npy'
+            converged_fn = f'{biter.result_dir}/converged/cf{biter.cf_tag}_{biter.trr_tag}{biter.rand_tag}{biter.per_tag}_{biter.mock_fn}.npy'
             matches = glob.glob(converged_fn)
             if len(matches)>0:
                 print("Already converged and saved to", matches[0])
@@ -98,7 +94,7 @@ def main(cat_tag=globals.cat_tag,
         # initial parameters
         niter_start = 0
         if restart_unconverged:
-            pattern = f"cf{biter.cf_tag}_{trr_tag}{rand_tag}{per_tag}_niter([0-9]+)_{biter.mock_name}.npy"
+            pattern = f"cf{biter.cf_tag}_{trr_tag}{rand_tag}{per_tag}_niter([0-9]+)_{biter.mock_fn}.npy"
             niters_done = []
             for fn in os.listdir(biter.result_dir):
                 matches = re.search(pattern, fn)
@@ -107,7 +103,7 @@ def main(cat_tag=globals.cat_tag,
             
             if niters_done: # if matches found (list not empty), start from latest iter; otherwise, will start from zero
                 niter_lastdone = max(niters_done) # load in last completed one
-                start_fn = f'{biter.result_dir}/cf{biter.cf_tag}_{trr_tag}{rand_tag}{per_tag}_niter{niter_lastdone}_{biter.mock_name}.npy'
+                start_fn = f'{biter.result_dir}/cf{biter.cf_tag}_{trr_tag}{rand_tag}{per_tag}_niter{niter_lastdone}_{biter.mock_fn}.npy'
                 res = np.load(start_fn, allow_pickle=True, encoding='latin1')
                 _, _, amps, _, extra_dict = res
                 alpha_model_prev = extra_dict['alpha_model']
@@ -184,71 +180,71 @@ def main(cat_tag=globals.cat_tag,
 
 class BAO_iterator:
 
-    def __init__(self, Nr, mock_tag, boxsize, periodic, cat_tag, rand_tag, cat_dir, cosmo, data_dir, rlz, mock_list_info=None,
+    def __init__(self, Nr, rlz, mock_type, mock_set, rand_tag, cosmo, boxsize, periodic, 
                     grad_dim=globals.grad_dim, rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, cf_tag='_baoiter',
                     trr_analytic=False, save_iterated_bases=False, nthreads=globals.nthreads, redshift=0.0, bias=2.0,
                     alpha_model_start=1.0, dalpha=0.01, k0=0.1, random_fn=None):
 
         # input params
         self.Nr = Nr
-        self.mock_tag = mock_tag
-        self.boxsize = boxsize
         self.rlz = rlz
+        self.mock_type = mock_type
+        self.rand_tag = rand_tag
         self.cosmo = cosmo
-        self.grad_dim = grad_dim
+        self.boxsize = boxsize
+        self.periodic = periodic
 
+        self.grad_dim = grad_dim
         self.rmin = rmin
         self.rmax = rmax
         self.nbins = nbins
+        self.cf_tag = cf_tag
+        
+        self.trr_analytic = trr_analytic
+        self.save_iterated_bases = save_iterated_bases
+        self.nthreads = nthreads
         self.redshift = redshift
+        self.bias = bias
+        self.alpha_model_start = alpha_model_start
+        self.dalpha = dalpha
+        self.k0 = k0
+        self.random_fn = random_fn
 
         # other params
         self.mumax = 1.0
-        self.bias = bias
-        self.k0 = k0
         self.weight_type = None
-        self.periodic = periodic
-        self.nthreads = nthreads
         self.nmubins = 1
         self.verbose = False
         self.proj_type = 'generalr'
-        self.trr_analytic = trr_analytic
-        self.save_iterated_bases = save_iterated_bases
-
-        # set up other data
+        # set up r params
         self.rbins = np.linspace(rmin, rmax, nbins+1)
         self.rbins_avg = 0.5*(self.rbins[1:]+self.rbins[:-1])
         self.rcont = np.linspace(rmin, rmax, 2000)
-
-        if mock_tag != 'lognormal':
-            self.mock_list_info = mock_list_info
-            self.mock_fn_list = self.mock_list_info['mock_file_name_list']
-            self.mock_param_list = self.mock_list_info['mock_param_list']
-
-        self.cat_tag = cat_tag
-        self.mock_name = f'{cat_tag}_rlz{self.rlz}_lognormal' if self.mock_tag == 'lognormal' else f'{cat_tag}_rlz{self.rlz}_{self.mock_param_list[self.Nr]}'
-        self.rand_tag = rand_tag
-        self.cat_dir = cat_dir
-        self.cf_tag = cf_tag
+        # and random set params
         self.trr_tag = 'trrana' if self.trr_analytic else 'trrnum'
         self.per_tag = '_perTrue' if self.periodic else ''
         if not trr_analytic and random_fn is None:
             raise ValueError("Must choose trr_analytic or pass random_fn!")
-        self.random_fn = random_fn
 
-        self.data_dir = data_dir
-        self.bases_dir = os.path.join(self.data_dir, f'bases/{self.grad_dim}D/bao_iterative')
-        self.projfn = os.path.join(self.bases_dir, f"tables/bases_{self.mock_tag}_{self.mock_name}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}.dat")
+        # mock_set parameters
+        self.cat_tag = mock_set.cat_tag
+        self.data_dir = mock_set.data_dir
+        self.mock_fn = mock_set.mock_fn_list[Nr]
+        self.cat_dir = os.path.join(self.data_dir, f'catalogs/{mock_set.mock_path}/{mock_set.cat_tag}')
+
+        self.bases_dir = os.path.join(self.data_dir, f'bases/bao_iterative/{mock_set.mock_path}')
+
+        self.projfn = os.path.join(self.bases_dir, f"tables/bases_{self.mock_type}_{self.mock_fn}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}.dat")
         if not os.path.exists(os.path.join(self.bases_dir, f"tables")):
             os.makedirs(os.path.join(self.bases_dir, f"tables"))
 
         # set up result dir
-        self.result_dir = os.path.join(self.bases_dir, 'results/results_{}_{}'.format(self.mock_tag, self.cat_tag))
+        self.result_dir = os.path.join(self.bases_dir, f'results/results_{self.cat_tag}')
         if not os.path.exists(self.result_dir):
             os.makedirs(self.result_dir)
 
         # write initial bases
-        projfn_start = os.path.join(self.bases_dir, f"tables/bases_{self.mock_tag}_{self.mock_name}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}.dat")
+        projfn_start = os.path.join(self.bases_dir, f"tables/bases_{self.mock_type}_{self.mock_fn}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}.dat")
         #alpha_guess was previously called alpha_model
         kwargs = {'cosmo_base':self.cosmo, 'redshift':self.redshift, 'dalpha':dalpha, 'alpha_guess':alpha_model_start, 'bias':self.bias}
         #self.ncomponents, _ = bao.write_bases(self.rbins[0], self.rbins[-1], projfn_start, **kwargs)
@@ -263,27 +259,27 @@ class BAO_iterator:
             save_dir = f'{self.result_dir}/converged'
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
-            save_fn = os.path.join(save_dir, f'cf{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_{self.mock_name}.npy')
+            save_fn = os.path.join(save_dir, f'cf{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_{self.mock_fn}.npy')
             np.save(save_fn, [self.rcont, xi, amps, 'baoiter', extra_dict])
             print(f"Saved converged to {save_fn}")
 
             # if mocks are lognormal, also save converged cf to the lognormal result directory
-            if self.mock_tag == 'lognormal':
+            if self.mock_type == 'lognormal':
                 save_dir = f'{self.data_dir}/lognormal/xi/bao_iterative/{self.cat_tag}'
-                save_fn = os.path.join(save_dir, f'xi{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_{self.mock_name}.npy')
+                save_fn = os.path.join(save_dir, f'xi{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_{self.mock_fn}.npy')
                 if not os.path.exists(save_dir):
                     os.makedirs(save_dir)
                 np.save(save_fn, [self.rcont, xi, amps, 'baoiter', extra_dict])
                 print(f"Saved converged to {save_fn}")
         else:
-            save_fn = f'{self.result_dir}/cf{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_niter{niter}_{self.mock_name}.npy'
+            save_fn = f'{self.result_dir}/cf{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_niter{niter}_{self.mock_fn}.npy'
             np.save(save_fn, [self.rcont, xi, amps, 'baoiter', extra_dict])
 
         
     def save_final_basis(self, xi):
         if not os.path.exists(os.path.join(self.result_dir, 'final_bases')):
             os.makedirs(os.path.join(self.result_dir, f'final_bases'))
-        basis_fn = f'{self.result_dir}/final_bases/basis_{self.mock_tag}_{self.mock_name}_{self.trr_tag}{self.rand_tag}.dat'
+        basis_fn = f'{self.result_dir}/final_bases/basis_{self.mock_type}_{self.mock_fn}_{self.trr_tag}{self.rand_tag}.dat'
         final_basis = np.array([self.rcont, xi]).T
         np.savetxt(basis_fn, final_basis)
         print(f"Saved final basis to {basis_fn}")
@@ -296,18 +292,13 @@ class BAO_iterator:
 
 
     def load_data(self):
-        data_fn = f'{self.cat_dir}/{self.mock_name}.npy'
+        data_fn = os.path.join(self.cat_dir, f'{self.mock_fn}.npy')
         mock_info = np.load(data_fn, allow_pickle=True).item()
-        if self.mock_tag == 'lognormal':
-            L, N, data = mock_info['L'], mock_info['N'], mock_info['data']
-        else:   # different data structure to load for gradient mocks
-            assert self.mock_tag == 'gradient'
-            L, N, data = mock_info['boxsize'], mock_info['N'], mock_info['grad_set']
+        L, N, data = mock_info['L'], mock_info['N'], mock_info['data']
         assert float(L) == float(self.boxsize)
         center_mock(data, 0, self.boxsize)
         self.x, self.y, self.z = data.T
-        self.nd = len(data)
-
+        self.nd = N
         self.weights = None
 
 
@@ -384,7 +375,7 @@ class BAO_iterator:
             save_dir = os.path.join(self.bases_dir, 'tables/iterated_bases')
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
-            save_basis_fn = os.path.join(save_dir, f'bases_{self.mock_tag}_{self.mock_name}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}_niter{niter}.dat')
+            save_basis_fn = os.path.join(save_dir, f'bases_{self.mock_type}_{self.mock_fn}{self.cf_tag}_r{self.rbins[0]}-{self.rbins[-1]}_z{self.redshift}_bias{self.bias}_niter{niter}.dat')
             np.savetxt(save_basis_fn, bases)
 
         base_vals = bases[:,1:]

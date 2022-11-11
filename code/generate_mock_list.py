@@ -14,7 +14,7 @@ class mock_set:
 
         # if realizations are specified, use those; otherwise, use the number of mocks set in globals and start from rlz0
         if rlzs is not None:
-            self.rlzs = rlzs
+            self.rlzs = np.arange(rlzs) if type(rlzs)==int else rlzs
             self.nmocks = len(rlzs)
         else:
             self.rlzs = range(nmocks)

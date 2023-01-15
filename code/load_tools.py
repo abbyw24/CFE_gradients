@@ -7,27 +7,23 @@ import globals
 globals.initialize_vals()
 
 
-def load_suave_amps(L, n, grad_dim, m, b=0.5, nmocks=401, basis='bao_fixed', data_dir=globals.data_dir, As=globals.As):
+def load_suave_amps(mockset, basis='bao_iterative'):
     """Return a (n,4) array of the gradient amplitudes recovered with Suave."""
 
-    cat_tag = f'L{int(L)}_n{n}_z057_patchy_As{As}x'
-
-    amps = np.empty((nmocks,4))
-    for rlz in range(nmocks):
-        suave_dict = np.load(os.path.join(data_dir, f'gradient/{grad_dim}D/suave/grad_amps/{basis}/{cat_tag}/{cat_tag}_rlz{rlz}_m-{m:.3f}-L_b-{b:.3f}.npy'), allow_pickle=True).item()
-        amps[rlz] = suave_dict['amps']
+    amps = np.empty((mockset.nmocks,4))
+    for i, mock_fn in enumerate(mockset.mock_fn_list):
+        suave_dict = np.load(os.path.join(mockset.data_dir, f'{mockset.mock_path}/suave/grad_amps/{basis}/{mockset.cat_tag}/{mock_fn}.npy'), allow_pickle=True).item()
+        amps[i] = suave_dict['amps']
     return amps
 
 
-def load_patch_amps(L, n, grad_dim, m, b=0.5, nmocks=401, npatches=8, data_dir=globals.data_dir, As=globals.As):
+def load_patch_amps(mockset, npatches=8):
     """Return a (n,4) array of the gradient amplitudes recovered with the standard patches approach."""
 
-    cat_tag = f'L{int(L)}_n{n}_z057_patchy_As{As}x'
-
-    amps = np.empty((rlzs,4))
-    for rlz in range(rlzs):
-        patch_dict = np.load(os.path.join(data_dir, f'gradient/{grad_dim}D/patch_data/{cat_tag}/{npatches}patches/test_dir/{cat_tag}_rlz{rlz}_m-{m:.3f}-L_b-{b:.3f}.npy'), allow_pickle=True).item()
-        amps[rlz] = patch_dict['theta'].flatten()
+    amps = np.empty((mockset.nmocks,4))
+    for i, mock_fn in enumerate(mockset.mock_fn_list):
+        patch_dict = np.load(os.path.join(mockset.data_dir, f'{mockset.mock_path}/patches/{npatches}patches/grad_amps/{mockset.cat_tag}/{mock_fn}.npy'), allow_pickle=True).item()
+        amps[i] = patch_dict['theta'].flatten()
     return amps
 
 
@@ -37,16 +33,21 @@ def grad_input(L, n, grad_dim, m, rlz=0, b=0.5, data_dir=globals.data_dir, As=gl
     return mock_dict['grad_input']
 
 
-def check_grad_amps(L, n, grad_dim, m, b=0.5, nmocks=401, bins=30, alpha=0.3, data_dir=globals.data_dir, title=None, return_amps=False):
-    cat_tag = f'L{L}_n{n}_z057_patchy_As2x'
-    cfe_amps = load_suave_amps(L, n, grad_dim, m, b=b, nmocks=nmocks)
+def check_grad_amps(mockset, grad_dim, m, b=0.5, method='suave', bins=30, alpha=0.3, title=None, return_amps=False, basis='bao_iterative', npatches=8):
+    mockset.add_gradient(grad_dim, m, b)
+    if method=='suave':
+        amps = load_suave_amps(mockset, basis=basis)
+    elif method=='patches':
+        amps = load_patch_amps(mockset, npatches=npatches)
+    else:
+        assert False, "'method' must be either 'suave' or 'patches"
     
     # recovered and expected gradients
-    grads_rec = np.empty((nmocks,3))
+    grads_rec = np.empty((mockset.nmocks,3))
     grads_exp = np.empty(grads_rec.shape)
-    for i in range(nmocks):
-        grads_rec[i] = cfe_amps[i,1:]/cfe_amps[i,0]
-        grads_exp[i] = grad_input(L, n, grad_dim, m, rlz=i, b=b)
+    for i, rlz in enumerate(mockset.rlzs):
+        grads_rec[i] = amps[i,1:]/amps[i,0]
+        grads_exp[i] = grad_input(mockset.L, mockset.n, grad_dim, m, rlz=rlz, b=b)
     
     res = grads_rec - grads_exp
     
@@ -55,7 +56,7 @@ def check_grad_amps(L, n, grad_dim, m, b=0.5, nmocks=401, bins=30, alpha=0.3, da
     
     _, bins, _ = ax.hist(res[:,0], bins=bins, alpha=alpha, label='x')
     _, _, _ = ax.hist(res[:,1], bins=bins, alpha=alpha, label='y')
-    _, _, _ = ax.hist(res[:,2], bins=bins, alpha=alpha, label='y')
+    _, _, _ = ax.hist(res[:,2], bins=bins, alpha=alpha, label='z')
     
     ax.axvline(0, color='k', lw=1, alpha=0.3)
     ax.set_xlabel('Residual grad. amp. (h/Mpc)')
@@ -69,7 +70,7 @@ def check_grad_amps(L, n, grad_dim, m, b=0.5, nmocks=401, bins=30, alpha=0.3, da
 
     if return_amps:
         data_dict = {
-                    'amps' : cfe_amps,
+                    'amps' : amps,
                     'grads_rec' : grads_rec,
                     'grads_exp' : grads_exp,
                     'res' : res

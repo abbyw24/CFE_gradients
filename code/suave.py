@@ -19,7 +19,6 @@ import globals
 globals.initialize_vals()  # brings in all the default parameters
 
 
-
 def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
 
     if cosmo_base is None:
@@ -28,7 +27,6 @@ def cf_model(r, cosmo_base=None, redshift=0.0, bias=1.0):
     cf = cosmo_base.correlationFunction
 
     return bias**2 * cf(r, z=redshift)
-
 
 
 # define cosmo_bases function
@@ -204,12 +202,6 @@ def suave_grad(x, y, z, L, n, projfn,
         suave_dict['r_avg'] = r_avg
         suave_dict['xi_standard'] = xi_standard
 
-    # recovered gradient
-    w_cont = amps[1:]/amps[0]
-    suave_dict['grad_recovered'] = w_cont
-    # w_cont_norm = np.linalg.norm(w_cont)
-    # w_cont_hat = w_cont/w_cont_norm
-
     # save other plot parameters
     suave_dict['amps'] = amps
     suave_dict['r_fine'] = r_fine
@@ -217,5 +209,7 @@ def suave_grad(x, y, z, L, n, projfn,
     suave_dict['xi_proj'] = xi_proj
     suave_dict['projfn'] = projfn
     suave_dict['weight_type'] = weight_type
+    suave_dict['periodic'] = periodic
+    suave_dict['randmult'] = randmult
 
     return suave_dict

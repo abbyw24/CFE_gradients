@@ -7,6 +7,7 @@ import globals
 globals.initialize_vals()
 
 def main(boxsize=globals.boxsize, nbar_str=globals.lognormal_density, data_dir=globals.data_dir, nx=globals.randmult):
+    """Generate a random catalog given global parameters, and calculate the RR term, if it does not already exist."""
 
     s = time.time()
 
@@ -45,6 +46,7 @@ def main(boxsize=globals.boxsize, nbar_str=globals.lognormal_density, data_dir=g
     print('time: {}'.format(time.time()-s))
 
 def generate_random(nbar, boxsize, nx, savepos=None):
+    """Generate a random catalog given a number density, boxsize, and multiplier."""
     nr = nx * float(nbar) * int(boxsize)**3
     random = np.random.uniform(0, boxsize, (int(nr),3))
     if savepos:
@@ -52,6 +54,7 @@ def generate_random(nbar, boxsize, nx, savepos=None):
     return random
 
 def get_rr_terms(rand_set, savepos=None, nthreads=globals.nthreads, rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, periodic=False):
+    """Calculate the RR term for a given random catalog."""
     print("Calculating rr term")
     assert len(rand_set.T) == 3, 'check input random shape'
     x_rand, y_rand, z_rand = rand_set.T

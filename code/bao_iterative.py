@@ -23,7 +23,7 @@ globals.initialize_vals()
 
 def main(mock_type = globals.mock_type,
             L = globals.boxsize, n = globals.lognormal_density, As = globals.As,
-            data_dir = globals.data_dir, rlzs = None,
+            data_dir = globals.data_dir, rlzs = globals.rlzs,
             grad_dim = globals.grad_dim, m = globals.m, b = globals.b,
             rmin = globals.rmin, rmax = globals.rmax, nbins = globals.nbins,
             randmult = globals.randmult, nthreads = globals.nthreads, load_rand = True, prints = False):
@@ -65,16 +65,14 @@ def main(mock_type = globals.mock_type,
     dalpha = 0.001
     k0 = 0.1
 
-    print(Corrfunc.__file__)
-    print(Corrfunc.__version__)
-
     # cosmo = bao_utils.get_cosmo(cosmo_name)
     trr_tag = '' if trr_analytic else '_trrnum'
     rand_tag = '' if trr_analytic else f'_{randmult}x'
     per_tag = '_perTrue' if periodic else ''
 
     for Nr, rlz in enumerate(rlzs):
-        print(f"Realization {rlz}")
+        if prints:
+            print(f"Realization {rlz}")
 
         alpha_model_start = 1.0
         eta = 0.5
@@ -111,7 +109,8 @@ def main(mock_type = globals.mock_type,
                 alpha_model_start = alpha_model_prev + eta*C*k0
                 niter_start = niter_lastdone + 1
         
-        print(f"Starting from iteration {niter_start}")
+        if prints:
+            print(f"Starting from iteration {niter_start}")
         # set up iterative procedure
         biter.load_catalogs()
         alpha_model = alpha_model_start
@@ -135,13 +134,14 @@ def main(mock_type = globals.mock_type,
                           'dalpha': dalpha, 'alpha_result': alpha_result,
                           'niter': niter, 'err': err}
 
-            print(f'iter {niter}')
+            if prints:
+                print(f'iter {niter}')
             # print(f'alpha: {alpha_model}, dalpha: {dalpha}')
             # print(f"C: {C}")
             if abs(err) < convergence_threshold:
                 converged = True
             
-            biter.save_cf(xi, amps, niter, extra_dict, rand_tag=rand_tag, converged=converged)
+            biter.save_cf(xi, amps, niter, extra_dict, rand_tag=rand_tag, converged=converged, prints=prints)
 
             # update alphas
             c1 = err>0
@@ -158,8 +158,9 @@ def main(mock_type = globals.mock_type,
 
             niter += 1
             
-            print(f'NEW alpha: {alpha_model}, dalpha: {dalpha}')
-            print(f'err: {err} (threshold: {convergence_threshold})')
+            if prints:
+                print(f'NEW alpha: {alpha_model}, dalpha: {dalpha}')
+                print(f'err: {err} (threshold: {convergence_threshold})')
 
             if alpha_model < 0:
                 assert False, "new alpha is negative; check input parameters!"
@@ -168,13 +169,15 @@ def main(mock_type = globals.mock_type,
         if niter==niter_max:
             print(f"hit max number of iterations, {niter_max}")
         if converged:
-            print(f"converged after {niter} iterations with error {err} (threshold {convergence_threshold})")
+            if prints:
+                print(f"converged after {niter} iterations with error {err} (threshold {convergence_threshold})")
 
             # resave converged correlation function (our new basis function!) as a .dat file (instead of .npy) to fit suave script
-            biter.save_final_basis(xi)
+            biter.save_final_basis(xi, prints=prints)
     
     total_time = time.time()-s
-    print(datetime.timedelta(seconds=total_time))
+    print(f"bao_iterative --> {biter.result_dir}/final_bases, {mock_set.nmocks} mocks")
+    print(f"total time: {datetime.timedelta(seconds=total_time)}")
             
 
 
@@ -254,7 +257,7 @@ class BAO_iterator:
         self.ncomponents = base_vals.shape[1]
 
 
-    def save_cf(self, xi, amps, niter, extra_dict, rand_tag, converged=True):
+    def save_cf(self, xi, amps, niter, extra_dict, rand_tag, converged=True, prints=False):
         if converged:
             save_dir = f'{self.result_dir}/converged'
             if not os.path.exists(save_dir):
@@ -270,19 +273,21 @@ class BAO_iterator:
                 if not os.path.exists(save_dir):
                     os.makedirs(save_dir)
                 np.save(save_fn, [self.rcont, xi, amps, 'baoiter', extra_dict])
-                print(f"Saved converged to {save_fn}")
+                if prints:
+                    print(f"Saved converged to {save_fn}")
         else:
             save_fn = f'{self.result_dir}/cf{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_niter{niter}_{self.mock_fn}.npy'
             np.save(save_fn, [self.rcont, xi, amps, 'baoiter', extra_dict])
 
         
-    def save_final_basis(self, xi):
+    def save_final_basis(self, xi, prints=False):
         if not os.path.exists(os.path.join(self.result_dir, 'final_bases')):
             os.makedirs(os.path.join(self.result_dir, f'final_bases'))
-        basis_fn = f'{self.result_dir}/final_bases/basis_{self.mock_type}_{self.mock_fn}_{self.trr_tag}{self.rand_tag}.dat'
+        basis_fn = f'{self.result_dir}/final_bases/basis_{self.mock_fn}_{self.trr_tag}{self.rand_tag}.dat'
         final_basis = np.array([self.rcont, xi]).T
         np.savetxt(basis_fn, final_basis)
-        print(f"Saved final basis to {basis_fn}")
+        if prints:
+            print(f"Saved final basis to {basis_fn}")
 
 
     def load_catalogs(self):

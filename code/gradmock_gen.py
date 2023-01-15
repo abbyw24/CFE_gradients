@@ -18,35 +18,7 @@ def is_smooth(tau_sq):
     return all(bools)
 
 
-def generate_gradmocks(L = globals.boxsize,
-                        n = globals.lognormal_density,
-                        As = globals.As,
-                        rlzs = globals.rlzs,
-                        data_dir = globals.data_dir,
-                        grad_dim = globals.grad_dim,
-                        m = globals.m,
-                        b = globals.b,
-                        input_w = globals.input_w,
-                        prints = False, plots = False, z_max = -50, assert_smooth = True):
-    """Use global parameters to generate a set of gradient mocks."""
-    
-    s = time.time()
-    
-    # generate mock list
-    mock_set = generate_mock_list.mock_set(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
-
-    # if an input gradient vector is specified as an argument, set grad_dim accordingly (i.e. ignore globals.grad_dim)
-    if input_w:
-        grad_dim = len(np.where(np.array(input_w)!=0)[0])
-        assert input_w[0] != 0, "first component of input_w must be nonzero"
-        if grad_dim > 1:
-            assert input_w[1] != 0, "second component of input_w must be nonzero if grad_dim > 1"
-
-    # initialize gradient
-    mock_set.add_gradient(grad_dim, m, b)
-
-    ### should this be inside or outside the loop? depends on whether we want w_hat to be the same for all mocks
-    # generate unit vector– this is the direction of the gradient
+def gradient_direction(grad_dim, input_w=None):
     if grad_dim == 1:
         w_hat = np.array([1.0,0,0])
     elif grad_dim == 2:
@@ -63,8 +35,42 @@ def generate_gradmocks(L = globals.boxsize,
     else:
         assert False, "Invalid dimension; must be 1, 2, or 3"
 
-    # normalize w_hat
+    # normalize
     w_hat /= np.linalg.norm(w_hat)
+
+    return w_hat
+
+
+def generate_gradmocks(L = globals.boxsize,
+                        n = globals.lognormal_density,
+                        As = globals.As,
+                        rlzs = globals.rlzs,
+                        data_dir = globals.data_dir,
+                        grad_dim = globals.grad_dim,
+                        m = globals.m,
+                        b = globals.b,
+                        input_w = globals.input_w,
+                        prints = False, plots = False, z_max = -50, assert_smooth = True, same_dir=True):
+    """Use global parameters to generate a set of gradient mocks."""
+    
+    s = time.time()
+    
+    # generate mock list
+    mock_set = generate_mock_list.MockSet(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
+
+    # if an input gradient vector is specified as an argument, set grad_dim accordingly (i.e. ignore globals.grad_dim)
+    if input_w:
+        grad_dim = len(np.where(np.array(input_w)!=0)[0])
+        assert input_w[0] != 0, "first component of input_w must be nonzero"
+        if grad_dim > 1:
+            assert input_w[1] != 0, "second component of input_w must be nonzero if grad_dim > 1"
+
+    # initialize gradient
+    mock_set.add_gradient(grad_dim, m, b)
+
+    # generate unit vector– this is the direction of the gradient
+    if same_dir:
+        w_hat = gradient_direction(grad_dim, input_w=input_w)
 
     # loop through each lognormal realization and inject the specified gradient into each one to create a new mock
     for i, rlz in enumerate(mock_set.rlzs):
@@ -81,6 +87,8 @@ def generate_gradmocks(L = globals.boxsize,
             print(f'first mock: ', mock_file_name)
 
         # input gradient
+        if same_dir==False:
+            w_hat = gradient_direction(grad_dim)
         w = m / (b*L*np.sqrt(3)) * w_hat     # sqrt(3) is included to ensure that threshold^2 is between 0 and 1 for entire mock if m <= 1
 
         # create dictionary with initial mock info

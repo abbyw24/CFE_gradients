@@ -13,18 +13,29 @@ import generate_mock_list
 import globals
 globals.initialize_vals()
 
-nmocks = globals.nmocks
-nbins = globals.nbins
+"""
+INPUTS:
+- mock galaxy catalog
+- Landy-Szalay results
+
+RETURNS:
+- a set of basis functions (analogous to bao_iterative)
+"""
+
 
 def chisq(x, A, y, cov):
-    resid = y - A@x
+    resid = y - A @ x
     return resid @ np.linalg.solve(cov, resid)
+
 
 def jacobian(x, A, y, cov):
     resid = y - A@x
-    return -2*A.T @ np.linalg.solve(cov, resid)  # essentially returns the derivative of chi-squared
+    return -2*A.T @ np.linalg.solve(cov, resid)
 
-def scipy_fit(alpha, xi_ls, r_avg, cov, cosmo_base=None, redshift=0.57, bias=2.0):
+
+def scipy_fit(alpha, xi_ls, r_avg, cov,
+                cosmo_base=None, redshift=0.57, bias=2.0):
+    """Fit a xi function to Landy-Szalay results given an alpha value and covariances."""
 
     nbins = len(r_avg)
 
@@ -40,8 +51,8 @@ def scipy_fit(alpha, xi_ls, r_avg, cov, cosmo_base=None, redshift=0.57, bias=2.0
     # bounds for parameters (B^2 > 0)
     bnds = ((0, None), (None, None), (None, None), (None, None))
     
-    minimize_results = scipy.optimize.minimize(chisq, x0, args=(A,xi_ls,cov), method='L-BFGS-B', jac=jacobian, bounds=bnds)
-    M = minimize_results['x']
+    minimized_results = scipy.optimize.minimize(chisq, x0, args=(A,xi_ls,cov), method='L-BFGS-B', jac=jacobian, bounds=bnds)
+    M = minimized_results['x']
 
     # plug M (best-fit params) into xi equation
     xi_fit = A @ M
@@ -49,7 +60,9 @@ def scipy_fit(alpha, xi_ls, r_avg, cov, cosmo_base=None, redshift=0.57, bias=2.0
     return xi_fit, M
 
 
-def find_best_alpha(xi_ls, r_avg, cov, alpha_min=0.75, alpha_max=1.25, nalphas=501):
+def find_best_alpha(xi_ls, r_avg, cov,
+                    alpha_min=0.75, alpha_max=1.25, nalphas=501):
+    """Compute the alpha value which minimizes chi-squared, given binned 2pcf results and covariances."""
 
     nbins = len(r_avg)
     alpha_grid = np.linspace(alpha_min, alpha_max, nalphas)
@@ -76,52 +89,76 @@ def find_best_alpha(xi_ls, r_avg, cov, alpha_min=0.75, alpha_max=1.25, nalphas=5
     return best_alpha, alpha_grid, min_chi_squared, M
 
 
-# loop through the list of mocks to find the best fit to cf_model for each one
-def main(mock_tag = globals.mock_tag,
-            data_dir = globals.data_dir,
-            grad_dir = globals.grad_dir,
-            grad_dim = globals.grad_dim,
-            cat_tag = globals.cat_tag,
-            randmult = globals.randmult):
+def fourparam_fit(r_avg, xi_ls, cov):
+    """Compute a 4-parameter fit to binned 2pcf results for a single galaxy catalog; return results in a dictionary."""
+    
+    # find the best alpha (the one that minimizes chi-squared)
+    best_alpha, _, min_chi_squared, M = find_best_alpha(xi_ls, r_avg, cov)
 
+    # unpack M matrix = best-fit parameters
+    B_sq, a1, a2, a3 = M.T
+
+    results_dict = {
+        'best_alpha' : best_alpha,
+        'chi_squared' : min_chi_squared,
+        'B_sq' : B_sq,
+        'a1' : a1,
+        'a2' : a2,
+        'a3' : a3,
+        'cov' : cov
+    }
+
+    return results_dict    
+
+
+def main(mock_type=globals.mock_type,
+            L=globals.boxsize, n=globals.lognormal_density, As=globals.As, rlzs=globals.rlzs,
+            grad_dim=globals.grad_dim, m=globals.m, b=globals.b,
+            nbins=globals.nbins, randmult=globals.randmult, data_dir=globals.data_dir):
+    
     s = time.time()
 
-    mock_list_info = generate_mock_list.generate_mock_list(cat_tag=cat_tag, extra=True)  # this is only used if mock_type is not lognormal
-    mock_fn_list = mock_list_info['mock_file_name_list']
-    mock_param_list = mock_list_info['mock_param_list']
+    # generate the mock set parameters
+    mock_set = generate_mock_list.MockSet(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
+    cat_tag = mock_set.cat_tag
 
-    if mock_tag == 'lognormal':
-        cat_dir = os.path.join(data_dir, f'lognormal/xi/ls/{cat_tag}')
+    # check whether we want to use gradient mocks or lognormal mocks
+    if mock_type=='gradient':
+        mock_set.add_gradient(grad_dim, m, b)
     else:
-        cat_dir = os.path.join(grad_dir, f'ls/{cat_tag}')
+        assert mock_type=='lognormal', "mock_type must be either 'gradient' or 'lognormal'"
 
-    # calculate covariance matrix
-    xi_lss = np.empty((nmocks, nbins))
-    for rlz in range(nmocks):
-        xi_results = np.load(os.path.join(cat_dir, f'xi_ls_{randmult}x_{mock_fn_list[rlz]}.npy'), allow_pickle=True)
-        r_avg = xi_results[0]
-        xi_lss[rlz] = xi_results[1]
-    cov = np.cov(xi_lss.T)
+    # save directory
+    save_dir = os.path.join(data_dir, f'bases/scipy/{mock_set.mock_path}/{cat_tag}')
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
     
-    for i in range(nmocks):
+    # calculate covariance matrix from the Landy-Szalay results
+    xi_lss = np.empty((mock_set.nmocks, nbins))
+    for i, mock_fn in enumerate(mock_set.mock_fn_list):
+        xi_results = np.load(os.path.join(data_dir, f'{mock_set.mock_path}/ls/{cat_tag}/xi_ls_{randmult}x_{mock_fn}.npy'), allow_pickle=True)
+        r_avg = xi_results[0]
+        xi_lss[i] = xi_results[1]
+    cov = np.cov(xi_lss.T)          # cov.shape==(nbins,nbins)
+
+    for i, mock_fn in enumerate(mock_set.mock_fn_list):
 
         # load in data
-        xi_results = np.load(os.path.join(cat_dir, f'xi_ls_{randmult}x_{mock_fn_list[i]}.npy'), allow_pickle=True)
-        r_avg = xi_results[0]
-        xi_ls = xi_results[1]
-        
+        # r_avg is the same for all mocks
+        xi_ls = xi_lss[i]
+
         # find the best alpha (the one that minimizes chi-squared)
         best_alpha, _, min_chi_squared, M = find_best_alpha(xi_ls, r_avg, cov)
-        
+
         # save best-fit cf
-        save_dir = os.path.join(data_dir, f'bases/{grad_dim}D/4-parameter_fit/scipy/results_{mock_tag}_{cat_tag}')
+        save_dir = os.path.join(data_dir, f'bases/4-parameter_fit/scipy/{mock_set.mock_path}/results_{cat_tag}')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
 
         # unpacking M matrix
         B_sq, a1, a2, a3 = M.T
         
-        save_fn = os.path.join(save_dir, f'basis_{mock_tag}_{mock_fn_list[i]}')
+        save_fn = os.path.join(save_dir, f'basis_{mock_fn}')
         save_data = {
             'best_alpha' : best_alpha,
             'chi_squared' : min_chi_squared,
@@ -132,14 +169,10 @@ def main(mock_tag = globals.mock_tag,
             'cov' : cov
         }
         np.save(save_fn, save_data)
+
         # here we only save the resulting best-fit values (as opposed to the resulting bestfit correlation function) in order to
         #   reduce redundancy and increase flexibility– B, a1, a2, and a3 can be used with any r_avg to output xi
-        
-        print(f"4-parameter fit --> {mock_fn_list[i]}")
-    
-    total_time = time.time()-s
-    print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
 
-if __name__=="__main__":
+if __name__=='__main__':
     main()

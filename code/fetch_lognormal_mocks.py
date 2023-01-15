@@ -19,6 +19,8 @@ def fetch_ln_mocks(cat_tag, rlzs,
     s = time.time()
     path_to_mocks_dir = os.path.join(mock_dir, f'cat_{cat_tag}')
 
+    rlzs = np.arange(rlzs) if type(rlzs)==int else rlzs
+
     for rlz in rlzs:
         lognorm_fn = f'cat_{cat_tag}_lognormal_rlz{rlz}'
         new_fn = f'{cat_tag}_rlz{rlz}_lognormal'

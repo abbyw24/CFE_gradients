@@ -77,12 +77,14 @@ def check_grad_amps(L, n, grad_dim, m, b=0.5, nmocks=401, bins=30, alpha=0.3, da
         return data_dict
 
 
-def compute_xi_locs(L, n, grad_dim, m, rlz, b=0.5, nvs=50, data_dir=globals.data_dir):
+def compute_xi_locs(L, n, grad_dim, m, rlz, b=0.5, nvs=50, bao_fixed=True, As=globals.As, data_dir=globals.data_dir):
     from Corrfunc.utils import evaluate_xi      # (inside the function for now because of notebook issues on HPC)
 
     # load in suave results dictionary
-    cat_tag = f'L{int(L)}_n{n}_z057_patchy_As2x'
-    suave_dict = np.load(os.path.join(data_dir, f'gradient/{grad_dim}D/suave/grad_amps/bao_fixed/{cat_tag}/{cat_tag}_rlz{rlz}_m-{m:.3f}-L_b-{b:.3f}.npy'), allow_pickle=True).item()
+    cat_tag = f'L{int(L)}_n{n}_z057_patchy_As{As}x'
+    bao_tag = '_fixed' if bao_fixed else '_iterative'
+    suave_dict = np.load(os.path.join(data_dir, f'gradient/{grad_dim}D/suave/grad_amps/bao{bao_tag}/{cat_tag}/{cat_tag}_rlz{rlz}_m-{m:.3f}-L_b-{b:.3f}.npy'), allow_pickle=True).item()
+
     amps = suave_dict['amps']
     r_fine = suave_dict['r_fine']
     w_cont = suave_dict['grad_recovered']
@@ -101,6 +103,7 @@ def compute_xi_locs(L, n, grad_dim, m, rlz, b=0.5, nvs=50, data_dir=globals.data
     xi_locs = []
     # compute xi at nvs evenly-spaced positions across the box
     for i, v in enumerate(vs):
+        # print(loc_pivot, v, w_cont_hat)
         loc = loc_pivot + v*w_cont_hat
 
         weights1 = np.array(np.concatenate(([1.0], loc-loc_pivot)))
@@ -113,18 +116,18 @@ def compute_xi_locs(L, n, grad_dim, m, rlz, b=0.5, nvs=50, data_dir=globals.data
     results_dict = {
         'vs' : vs,
         'r_fine' : r_fine,
-        'xi_locs' : xi_locs
+        'xi_locs' : xi_locs,
     }
 
     return results_dict
 
 
-def save_xi_locs(L, n, grad_dim, m, rlz, b=0.5, nvs=50,
-                    data_dir=globals.data_dir, save_dir='plot_data', save_fn=None):
+def save_xi_locs(L, n, grad_dim, m, rlz, b=0.5, nvs=50, bao_fixed=True,
+                    As=globals.As, data_dir=globals.data_dir, save_dir='plot_data', save_fn=None):
 
-    results = compute_xi_locs(L, n, grad_dim, m, rlz, b=b, nvs=nvs, data_dir=data_dir)
+    results = compute_xi_locs(L, n, grad_dim, m, rlz, b=b, nvs=nvs, bao_fixed=bao_fixed, As=As, data_dir=data_dir)
 
-    save_fn = save_fn if save_fn else f'xi_locs_L{int(L)}_n{n}_m-{m:.3f}-L_b-{b:.3f}_{nvs}vs'
+    save_fn = save_fn if save_fn else f'xi_locs_L{int(L)}_n{n}_m-{m:.3f}-L_b-{b:.3f}_rlz{rlz}_{nvs}vs'
 
     save_path = os.path.join(data_dir, save_dir)
 

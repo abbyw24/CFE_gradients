@@ -9,7 +9,7 @@ from center_mock import center_mock
 import random_cat
 from corrfunc_ls import compute_ls
 from suave import cosmo_bases, suave, suave_grad
-from patchify_xi import xi_in_patches
+from patches_lstsq_fit import compute_patches_lstsqfit
 import globals
 globals.initialize_vals()
 
@@ -256,7 +256,7 @@ def grad_patches_mocklist(mock_type=globals.mock_type,
                         npatches = globals.npatches,
                         prints=False, load_rand=True, periodic=globals.periodic, nthreads=globals.nthreads,
                         rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins,
-                        bao_fixed=True):
+                        bao_fixed=True, overwrite=False):
     """Use a standard approach to estimate the clustering gradients on a set of mock galaxy catalogs."""
 
     s = time.time()
@@ -303,8 +303,8 @@ def grad_patches_mocklist(mock_type=globals.mock_type,
         if not prints and i==0:
             print(f'first mock: ', mock_fn)
 
-        # run patches method on this data
-        patches_dict = xi_in_patches(x, y, z, L, npatches=npatches, load_rand=load_rand)
+        # run patches method on this data: compute xi in patches, and perform the least-squares fit
+        results_dict = compute_patches_lstsqfit(x, y, z, L, n, basis_fn)
 
         np.save(save_fn, results_dict)
 

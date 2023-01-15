@@ -172,6 +172,10 @@ def main(mock_type=globals.mock_type,
 
         # here we only save the resulting best-fit values (as opposed to the resulting bestfit correlation function) in order to
         #   reduce redundancy and increase flexibility– B, a1, a2, and a3 can be used with any r_avg to output xi
+    
+    total_time = time.time()-s
+    print(f"scipy_fit --> {save_dir}, {mock_set.nmocks} mocks")
+    print(f"total time: {datetime.timedelta(seconds=total_time)}")
 
 
 if __name__=='__main__':

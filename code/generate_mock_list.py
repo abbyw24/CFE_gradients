@@ -4,14 +4,17 @@ import globals
 globals.initialize_vals()
 
 
-
 class MockSet:
 
     def __init__(self, boxsize, lognormal_density, As=2, data_dir=globals.data_dir, rlzs=globals.rlzs):
 
-        As_tag = '' if As==1 else f'_As{As}x'
-        self.cat_tag = f'L{boxsize}_n{lognormal_density}_z057_patchy{As_tag}'
+        self.L = boxsize
+        self.n = lognormal_density
+        self.As = As
         self.data_dir = data_dir
+
+        As_tag = '' if As==1 else f'_As{self.As}x'
+        self.cat_tag = f'L{self.L}_n{self.n}_z057_patchy{As_tag}'
 
         # if realizations are specified, use those; otherwise, use the number of mocks set in globals and start from rlz0
         self.rlzs = np.arange(rlzs) if type(rlzs)==int else rlzs

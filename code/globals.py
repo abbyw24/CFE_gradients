@@ -4,20 +4,17 @@ def initialize_vals():
 
     # BASIC PARAMETERS (non-gradient)
 
-    global nmocks
-    nmocks = 401
+    global rlzs
+    rlzs = 10
 
     global boxsize
     boxsize = 750
 
     global lognormal_density
-    lognormal_density = "1e-4"
-
+    lognormal_density = "2e-4"
+    
     global As
     As = 2
-
-    global rlzs     # if we want to use specific realization numbers, instead of range(nmocks)
-    rlzs = None
 
     global data_dir
     data_dir = f'/scratch/aew492/CFE_gradients_output'
@@ -32,16 +29,16 @@ def initialize_vals():
     # GRADIENT PARAMETERS
 
     global grad_dim
-    grad_dim = 2        # dimension of w_hat in gradient mock
+    grad_dim = 1        # dimension of w_hat in gradient mock
 
     global m
-    m = 1
+    m = 0.5
 
     global b
     b = 0.5
 
     global input_w
-    input_w = [np.sqrt(3), 1, 0]
+    input_w = None
 
 
     # CF ESTIMATOR PARAMETERS

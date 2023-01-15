@@ -31,7 +31,7 @@ def main(mock_type = globals.mock_type,
     s = time.time()
     
     # generate the mock set parameters
-    mock_set = generate_mock_list.mock_set(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
+    mock_set = generate_mock_list.MockSet(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
     cat_tag = mock_set.cat_tag
     rlzs = mock_set.rlzs
 

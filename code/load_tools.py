@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib
 
+from generate_mock_list import MockSet
 import globals
 globals.initialize_vals()
 
@@ -12,7 +13,7 @@ def load_suave_amps(mockset, basis='bao_iterative'):
 
     amps = np.empty((mockset.nmocks,4))
     for i, mock_fn in enumerate(mockset.mock_fn_list):
-        suave_dict = np.load(os.path.join(mockset.data_dir, f'{mockset.mock_path}/suave/grad_amps/{basis}/{mockset.cat_tag}/{mock_fn}.npy'), allow_pickle=True).item()
+        suave_dict = np.load(os.path.join(mockset.data_dir, f'{mockset.mock_path}/suave/grad_amps/{basis}/{mock_fn}.npy'), allow_pickle=True).item()
         amps[i] = suave_dict['amps']
     return amps
 
@@ -22,19 +23,19 @@ def load_patch_amps(mockset, npatches=8):
 
     amps = np.empty((mockset.nmocks,4))
     for i, mock_fn in enumerate(mockset.mock_fn_list):
-        patch_dict = np.load(os.path.join(mockset.data_dir, f'{mockset.mock_path}/patches/{npatches}patches/grad_amps/{mockset.cat_tag}/{mock_fn}.npy'), allow_pickle=True).item()
+        patch_dict = np.load(os.path.join(mockset.data_dir, f'{mockset.mock_path}/patches/{npatches}patches/grad_amps/{mock_fn}.npy'), allow_pickle=True).item()
         amps[i] = patch_dict['theta'].flatten()
     return amps
 
 
-def grad_input(L, n, grad_dim, m, rlz=0, b=0.5, data_dir=globals.data_dir, As=globals.As):
-    cat_tag = f'L{int(L)}_n{n}_z057_patchy_As{As}x'
-    mock_dict = np.load(os.path.join(data_dir, f'catalogs/gradient/{grad_dim}D/{cat_tag}/{cat_tag}_rlz{rlz}_m-{m:.3f}-L_b-{b:.3f}.npy'), allow_pickle=True).item()
+def grad_input(mockset, rlz=0):
+    mock_dict = mockset.load_rlz(rlz=rlz)
     return mock_dict['grad_input']
 
 
-def check_grad_amps(mockset, grad_dim, m, b=0.5, method='suave', bins=30, alpha=0.3, title=None, return_amps=False, basis='bao_iterative', npatches=8):
-    mockset.add_gradient(grad_dim, m, b)
+def check_grad_amps(mockset, method='suave', bins=30, alpha=0.3, title=None, return_amps=False, basis='bao_iterative', npatches=8):
+    assert hasattr(mockset, 'grad_dim'), "must pass a mockset with a gradient!"
+
     if method=='suave':
         amps = load_suave_amps(mockset, basis=basis)
     elif method=='patches':
@@ -45,9 +46,9 @@ def check_grad_amps(mockset, grad_dim, m, b=0.5, method='suave', bins=30, alpha=
     # recovered and expected gradients
     grads_rec = np.empty((mockset.nmocks,3))
     grads_exp = np.empty(grads_rec.shape)
-    for i, rlz in enumerate(mockset.rlzs):
+    for i in range(mockset.nmocks):
         grads_rec[i] = amps[i,1:]/amps[i,0]
-        grads_exp[i] = grad_input(mockset.L, mockset.n, grad_dim, m, rlz=rlz, b=b)
+        grads_exp[i] = grad_input(mockset, i)
     
     res = grads_rec - grads_exp
     
@@ -78,13 +79,17 @@ def check_grad_amps(mockset, grad_dim, m, b=0.5, method='suave', bins=30, alpha=
         return data_dict
 
 
-def compute_xi_locs(L, n, grad_dim, m, rlz, b=0.5, nvs=50, bao_fixed=True, As=globals.As, data_dir=globals.data_dir):
+def compute_xi_locs(mockset, i, nvs=50, basis='bao_fixed'):
     from Corrfunc.utils import evaluate_xi      # (inside the function for now because of notebook issues on HPC)
 
+    # unpack mockset params
+    data_dir = mockset.data_dir
+    mock_path = mockset.mock_path
+    mock_fn = mock_fn_list[i]
+    L = mockset.L
+
     # load in suave results dictionary
-    cat_tag = f'L{int(L)}_n{n}_z057_patchy_As{As}x'
-    bao_tag = '_fixed' if bao_fixed else '_iterative'
-    suave_dict = np.load(os.path.join(data_dir, f'gradient/{grad_dim}D/suave/grad_amps/bao{bao_tag}/{cat_tag}/{cat_tag}_rlz{rlz}_m-{m:.3f}-L_b-{b:.3f}.npy'), allow_pickle=True).item()
+    suave_dict = np.load(os.path.join(data_dir, f'{mock_path}/suave/grad_amps/{basis}/{mock_fn}.npy'), allow_pickle=True).item()
 
     amps = suave_dict['amps']
     r_fine = suave_dict['r_fine']
@@ -123,12 +128,14 @@ def compute_xi_locs(L, n, grad_dim, m, rlz, b=0.5, nvs=50, bao_fixed=True, As=gl
     return results_dict
 
 
-def save_xi_locs(L, n, grad_dim, m, rlz, b=0.5, nvs=50, bao_fixed=True,
-                    As=globals.As, data_dir=globals.data_dir, save_dir='plot_data', save_fn=None):
+def save_xi_locs(L, n, grad_dim, m, rlz, b=0.5, nvs=50, basis='bao_fixed',
+                    As=globals.As, data_dir=globals.data_dir, rlzs=globals.rlzs, save_dir='plot_data', save_fn=None):
+    
+    mock_set = MockSet(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
 
-    results = compute_xi_locs(L, n, grad_dim, m, rlz, b=b, nvs=nvs, bao_fixed=bao_fixed, As=As, data_dir=data_dir)
+    results = compute_xi_locs(mock_set, rlz, nvs=nvs, basis=basis, As=As, data_dir=data_dir)
 
-    save_fn = save_fn if save_fn else f'xi_locs_L{int(L)}_n{n}_m-{m:.3f}-L_b-{b:.3f}_rlz{rlz}_{nvs}vs'
+    save_fn = save_fn if save_fn else f'xi_locs_{mock_set.mock_fn_list[rlz]}_{nvs}vs'
 
     save_path = os.path.join(data_dir, save_dir)
 

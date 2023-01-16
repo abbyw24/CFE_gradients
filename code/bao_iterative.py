@@ -21,12 +21,12 @@ import generate_mock_list
 import globals
 globals.initialize_vals()
 
-def main(mock_type = globals.mock_type,
-            L = globals.boxsize, n = globals.lognormal_density, As = globals.As,
-            data_dir = globals.data_dir, rlzs = globals.rlzs,
-            grad_dim = globals.grad_dim, m = globals.m, b = globals.b,
-            rmin = globals.rmin, rmax = globals.rmax, nbins = globals.nbins,
-            randmult = globals.randmult, nthreads = globals.nthreads, load_rand = True, prints = False):
+def main(mock_type=globals.mock_type,
+            L=globals.boxsize, n=globals.lognormal_density, As=globals.As,
+            data_dir=globals.data_dir, rlzs=globals.rlzs,
+            grad_dim=globals.grad_dim, m=globals.m, b=globals.b, same_dir=globals.same_dir,
+            rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins,
+            randmult=globals.randmult, nthreads=globals.nthreads, load_rand=True, prints=False):
 
     s = time.time()
     
@@ -37,7 +37,7 @@ def main(mock_type = globals.mock_type,
 
     # check whether we want to use gradient mocks or lognormal mocks
     if mock_type=='gradient':
-        mock_set.add_gradient(grad_dim, m, b)
+        mock_set.add_gradient(grad_dim, m, b, same_dir=same_dir)
     else:
         assert mock_type=='lognormal', "mock_type must be either 'gradient' or 'lognormal'"
 
@@ -233,7 +233,7 @@ class BAO_iterator:
         self.cat_tag = mock_set.cat_tag
         self.data_dir = mock_set.data_dir
         self.mock_fn = mock_set.mock_fn_list[Nr]
-        self.cat_dir = os.path.join(self.data_dir, f'catalogs/{mock_set.mock_path}/{mock_set.cat_tag}')
+        self.cat_dir = os.path.join(self.data_dir, f'catalogs/{mock_set.mock_path}')
 
         self.bases_dir = os.path.join(self.data_dir, f'bases/bao_iterative/{mock_set.mock_path}')
 
@@ -242,7 +242,7 @@ class BAO_iterator:
             os.makedirs(os.path.join(self.bases_dir, f"tables"))
 
         # set up result dir
-        self.result_dir = os.path.join(self.bases_dir, f'results/results_{self.cat_tag}')
+        self.result_dir = os.path.join(self.bases_dir, f'results')
         if not os.path.exists(self.result_dir):
             os.makedirs(self.result_dir)
 
@@ -268,7 +268,7 @@ class BAO_iterator:
 
             # if mocks are lognormal, also save converged cf to the lognormal result directory
             if self.mock_type == 'lognormal':
-                save_dir = f'{self.data_dir}/lognormal/xi/bao_iterative/{self.cat_tag}'
+                save_dir = f'{self.data_dir}/lognormal/{self.cat_tag}/xi/bao_iterative'
                 save_fn = os.path.join(save_dir, f'xi{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_{self.mock_fn}.npy')
                 if not os.path.exists(save_dir):
                     os.makedirs(save_dir)

@@ -22,22 +22,22 @@ def xi_err_pred(r, V, n, kG, PkG):
 
 def compute_predicted_xi_err(L=globals.boxsize, n=globals.lognormal_density, As=globals.As):
 
+    # initialize mock set
+    mock_set = generate_mock_list.MockSet(L, n, As=As)
+
     # input power spectrum
-    As_tag = '' if As==1 else f'_As{As}x'
-    PkG_fn = f'/scratch/ksf293/mocks/lognormal/inputs/cat_L{L}_n{n}_z057_patchy{As_tag}_pkG.dat'
+    PkG_fn = f'/scratch/ksf293/mocks/lognormal/inputs/cat_{mock_set.cat_tag}_pkG.dat'
     kG, PkG = np.loadtxt(PkG_fn).T
 
     # load in r values to use
-    MockSet = generate_mock_list.mock_set(L, n, As=As)
-    MockSet.load_xi_lss()
-    r_avg = MockSet.r_avg
+    mock_set.load_xi_lss()
 
     # get predicted variances using xi_err_pred()
-    predicted_vars = [xi_err_pred(r, L**3, float(n), kG, PkG) for r in r_avg]
+    predicted_vars = [xi_err_pred(r, L**3, float(n), kG, PkG) for r in mock_set.r_avg]
 
     # save predicted variances
-    save_arr = np.array([r_avg, predicted_vars]).T
-    save_fn = os.path.join(globals.data_dir, f'predicted_xi_var_{MockSet.cat_tag}.npy')
+    save_arr = np.array([mock_set.r_avg, predicted_vars]).T
+    save_fn = os.path.join(globals.data_dir, f'predicted_xi_var_{mock_set.cat_tag}.npy')
     np.save(save_fn, save_arr)
     print(f"saved predicted xi variance ---> {save_fn}")
 

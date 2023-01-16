@@ -25,17 +25,19 @@ class MockSet:
         # these will change if we call the add_gradient() method
         self.mock_type = 'lognormal'
         self.mock_fn_list = self.ln_fn_list
-        self.mock_path = 'lognormal'
+        self.mock_path = f'lognormal/{self.cat_tag}'
 
 
-    def add_gradient(self, grad_dim, m, b):
+    def add_gradient(self, grad_dim, m, b, same_dir=True):
         self.grad_dim = grad_dim
         self.m = m
         self.b = b
-        self.grad_dir = os.path.join(self.data_dir, f'gradient/{self.grad_dim}D/{self.cat_tag}')
+        self.same_dir = same_dir
+        self.w_tag = 'same_omega' if same_dir else 'random_omegas'
+        self.grad_dir = os.path.join(self.data_dir, f'gradient/{self.grad_dim}D/{self.cat_tag}/{self.w_tag}')
 
         self.mock_type = 'gradient'      # redefine the mock type from 'lognormal'
-        self.mock_path = f'gradient/{grad_dim}D'    # redefine the mock path (extra layer of specifying gradient dimension)
+        self.mock_path = f'gradient/{grad_dim}D/{self.w_tag}/{self.cat_tag}'    # redefine the mock path (extra layer of specifying gradient dimension)
 
         # create arrays of our gradient parameters m and b:
         #   if the input m is a single number, this will be distributed across each realization;
@@ -44,7 +46,6 @@ class MockSet:
         b_arr = np.multiply(b, np.ones(self.nmocks))
         self.m_arr = m_arr
         self.b_arr = b_arr
-        # self.mock_param_list = np.column_stack((m_arr, b_arr))
 
         # generate a list of the gradient mock file names
         mock_fn_list = []
@@ -55,13 +56,13 @@ class MockSet:
 
     ## LOAD TOOLS
 
-    def load_rlz(self, rlz):
-        mock_dict = np.load(os.path.join(self.data_dir, f'catalogs/{self.mock_type}/{self.cat_tag}/{self.mock_fn_list[rlz]}.npy'), allow_pickle=True).item()
+    def load_rlz(self, i):
+        mock_dict = np.load(os.path.join(self.data_dir, f'catalogs/{self.mock_path}/{self.mock_fn_list[i]}.npy'), allow_pickle=True).item()
         return mock_dict
     
 
     def load_xi_lss(self, nbins=globals.nbins, randmult=globals.randmult):
-        ls_dir = os.path.join(self.data_dir, f'{self.mock_path}/ls/{self.cat_tag}')
+        ls_dir = os.path.join(self.data_dir, f'{self.mock_path}/ls')
         xi_lss = np.empty((self.nmocks, nbins))
         for i in range(self.nmocks):
             r, xi_lss[i] = np.load(os.path.join(ls_dir, f'xi_ls_{randmult}x_{self.mock_fn_list[i]}.npy'), allow_pickle=True)
@@ -73,7 +74,7 @@ class MockSet:
         # which BAO basis to use
         basis_type = 'bao_fixed' if bao_fixed else 'bao_iterative'
 
-        cfe_dir = os.path.join(self.data_dir, f'{self.mock_path}/suave/xi/{basis_type}/{self.cat_tag}')
+        cfe_dir = os.path.join(self.data_dir, f'{self.mock_path}/suave/xi/{basis_type}')
         xi_cfes = np.empty((self.nmocks, ncont))
         for i in range(self.nmocks):
             rcont, xi_cfes[i] = np.load(os.path.join(cfe_dir, f'xi_{self.mock_fn_list[i]}.npy'), allow_pickle=True).T

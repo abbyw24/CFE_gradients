@@ -113,14 +113,13 @@ def fourparam_fit(r_avg, xi_ls, cov):
 
 def main(mock_type=globals.mock_type,
             L=globals.boxsize, n=globals.lognormal_density, As=globals.As, rlzs=globals.rlzs,
-            grad_dim=globals.grad_dim, m=globals.m, b=globals.b,
+            grad_dim=globals.grad_dim, m=globals.m, b=globals.b, same_dir=globals.same_dir,
             nbins=globals.nbins, randmult=globals.randmult, data_dir=globals.data_dir):
     
     s = time.time()
 
     # generate the mock set parameters
     mock_set = generate_mock_list.MockSet(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
-    cat_tag = mock_set.cat_tag
 
     # check whether we want to use gradient mocks or lognormal mocks
     if mock_type=='gradient':
@@ -129,14 +128,14 @@ def main(mock_type=globals.mock_type,
         assert mock_type=='lognormal', "mock_type must be either 'gradient' or 'lognormal'"
 
     # save directory
-    save_dir = os.path.join(data_dir, f'bases/scipy/{mock_set.mock_path}/{cat_tag}')
+    save_dir = os.path.join(data_dir, f'bases/scipy/{mock_set.mock_path}')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     
     # calculate covariance matrix from the Landy-Szalay results
     xi_lss = np.empty((mock_set.nmocks, nbins))
     for i, mock_fn in enumerate(mock_set.mock_fn_list):
-        xi_results = np.load(os.path.join(data_dir, f'{mock_set.mock_path}/ls/{cat_tag}/xi_ls_{randmult}x_{mock_fn}.npy'), allow_pickle=True)
+        xi_results = np.load(os.path.join(data_dir, f'{mock_set.mock_path}/ls/xi_ls_{randmult}x_{mock_fn}.npy'), allow_pickle=True)
         r_avg = xi_results[0]
         xi_lss[i] = xi_results[1]
     cov = np.cov(xi_lss.T)          # cov.shape==(nbins,nbins)
@@ -151,7 +150,7 @@ def main(mock_type=globals.mock_type,
         best_alpha, _, min_chi_squared, M = find_best_alpha(xi_ls, r_avg, cov)
 
         # save best-fit cf
-        save_dir = os.path.join(data_dir, f'bases/4-parameter_fit/scipy/{mock_set.mock_path}/results_{cat_tag}')
+        save_dir = os.path.join(data_dir, f'bases/4-parameter_fit/scipy/{mock_set.mock_path}')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
 

@@ -5,7 +5,7 @@ def initialize_vals():
     # BASIC PARAMETERS (non-gradient)
 
     global rlzs
-    rlzs = 10
+    rlzs = 500
 
     global boxsize
     boxsize = 750
@@ -32,13 +32,18 @@ def initialize_vals():
     grad_dim = 1        # dimension of w_hat in gradient mock
 
     global m
-    m = 0.5
+    m = 1.0
 
     global b
     b = 0.5
 
     global input_w
-    input_w = None
+    input_w = None  # [0.8660254, 0.5, 0.]
+
+    global same_dir
+    same_dir = True
+    if input_w:
+        same_dir = False
 
 
     # CF ESTIMATOR PARAMETERS

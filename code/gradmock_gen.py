@@ -50,7 +50,8 @@ def generate_gradmocks(L = globals.boxsize,
                         m = globals.m,
                         b = globals.b,
                         input_w = globals.input_w,
-                        prints = False, plots = False, z_max = -50, assert_smooth = True, same_dir=True):
+                        same_dir=globals.same_dir,
+                        prints = False, assert_smooth = True):
     """Use global parameters to generate a set of gradient mocks."""
     
     s = time.time()
@@ -60,13 +61,14 @@ def generate_gradmocks(L = globals.boxsize,
 
     # if an input gradient vector is specified as an argument, set grad_dim accordingly (i.e. ignore globals.grad_dim)
     if input_w:
+        assert same_dir==False
         grad_dim = len(np.where(np.array(input_w)!=0)[0])
         assert input_w[0] != 0, "first component of input_w must be nonzero"
         if grad_dim > 1:
             assert input_w[1] != 0, "second component of input_w must be nonzero if grad_dim > 1"
 
     # initialize gradient
-    mock_set.add_gradient(grad_dim, m, b)
+    mock_set.add_gradient(grad_dim, m, b, same_dir=same_dir)
 
     # generate unit vector– this is the direction of the gradient
     if same_dir:
@@ -174,69 +176,16 @@ def generate_gradmocks(L = globals.boxsize,
 
 
         # save our gradient mock dictionary to catalogs directory
-        cat_dir = os.path.join(data_dir, f'catalogs/gradient/{grad_dim}D/{cat_tag}')
+        cat_dir = os.path.join(data_dir, f'catalogs/{mock_set.mock_path}')
         if not os.path.exists(cat_dir):
             os.makedirs(cat_dir)
         cat_fn = os.path.join(cat_dir, mock_file_name)
 
         np.save(cat_fn, mock_dict)
 
-
-        # VISUALIZATION
-        if plots == True:
-
-            # create directories, if they don't already exist
-            colormock_dir = f'plots/color_mocks/{cat_tag}'
-            samecolormock_dir = f'plots/samecolor_mocks/{cat_tag}'
-
-            sub_dirs = [
-                colormock_dir,
-                samecolormock_dir
-            ]
-            create_subdirs(grad_dir, sub_dirs)
-
-            # plot all points in same color
-            xy_slice = xs_grad[np.where(xs_grad[:,2] < z_max)] # select rows where z < z_max
-
-            fig1, ax1 = plt.subplots()
-            plt.plot(xy_slice[:,0], xy_slice[:,1],',')   # plot scatter xy-slice
-            # plot vector w_hat (no z)
-            a = 0.35*L     # controls width of w_hat vector in plot
-            plt.arrow(-a, 0, 2*a, 0, color='black', lw=2, head_width = .1*a, head_length=.2*a, length_includes_head=True, zorder=100, label=w_hat)
-            ax1.set_aspect('equal')      # square aspect ratio
-            ax1.set_xlabel("x (Mpc/h)")
-            ax1.set_ylabel("y (Mpc/h)")
-            if mock_type == '1mock':
-                ax1.set_title("")
-            else:
-                ax1.set_title(mock_file_name)
-            ax1.legend()
-            fig1.savefig(os.path.join(grad_dir, f'{samecolormock_dir}/{mock_file_name}.png'))
-            plt.cla()
-
-            # plot different colors for clust and uncl
-            xy_slice_clust = xs_clust_grad[np.where(xs_clust_grad[:,2] < z_max)]
-            xy_slice_unclust = xs_unclust_grad[np.where(xs_unclust_grad[:,2] < z_max)]
-
-            fig2, ax2 = plt.subplots()
-            plt.plot(xy_slice_clust[:,0], xy_slice_clust[:,1], ',', c='C0', label="clustered")
-            plt.plot(xy_slice_unclust[:,0], xy_slice_unclust[:,1], ',', c='orange', label="unclustered")
-            plt.plot(xy_slice[:,0], (w_hat[1]/w_hat[0])*xy_slice[:,0], c='green', label=w_hat)   # plot vector w_hat (no z)
-            ax2.set_aspect('equal')      # square aspect ratio
-            # plt.ylim((-400,400))
-            # plt.xlim((-400,400))
-            ax2.set_xlabel("x (Mpc/h)")
-            ax2.set_ylabel("y (Mpc/h)")
-            ax2.set_title(mock_file_name)
-            ax2.legend()
-            fig2.savefig(os.path.join(grad_dir, f'{colormock_dir}/color_{mock_file_name}.png'))
-            plt.cla()
-
-            plt.close('all') 
-
         if prints:
             print(f"gradient generated --> {grad_dim}D, {mock_file_name}")
     
-    print(f"gradient generated --> {grad_dim}D, {cat_tag}, {mock_set.nmocks} mocks")
+    print(f"gradient generated --> {grad_dim}D, {cat_tag}, {mock_set.nmocks} mocks, {mock_set.w_tag}")
     total_time = time.time()-s
     print(f"total time = {datetime.timedelta(seconds=total_time)}")

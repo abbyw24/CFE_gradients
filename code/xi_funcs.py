@@ -19,7 +19,7 @@ globals.initialize_vals()
 def xi_ls_mocklist(mock_type=globals.mock_type,
                     L=globals.boxsize, n=globals.lognormal_density, As=globals.As,
                     data_dir=globals.data_dir, rlzs=globals.rlzs,
-                    grad_dim=globals.grad_dim, m=globals.m, b=globals.b,
+                    grad_dim=globals.grad_dim, m=globals.m, b=globals.b, same_dir=globals.same_dir,
                     prints=False, load_rand=True, randmult=globals.randmult, periodic=globals.periodic, nthreads=globals.nthreads,
                     rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins, overwrite=False):
     """Compute the Landy-Szalay 2pcf on a set of mock galaxy catalogs."""
@@ -28,22 +28,20 @@ def xi_ls_mocklist(mock_type=globals.mock_type,
 
     # generate the mock set parameters
     mock_set = generate_mock_list.MockSet(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
-    cat_tag = mock_set.cat_tag
 
     # check whether we want to use gradient mocks or lognormal mocks
     if mock_type=='gradient':
-        mock_set.add_gradient(grad_dim, m, b)
+        mock_set.add_gradient(grad_dim, m, b, same_dir=same_dir)
     else:
         assert mock_type=='lognormal', "mock_type must be either 'gradient' or 'lognormal'"
 
     # save directory
-    rand_tag = '' if load_rand else '/unique_rands'
-    save_dir = os.path.join(data_dir, f'{mock_set.mock_path}/ls/{cat_tag}{rand_tag}')
+    save_dir = os.path.join(data_dir, f'{mock_set.mock_path}/ls')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
     for i, mock_fn in enumerate(mock_set.mock_fn_list):
-        data_fn = os.path.join(data_dir, f'catalogs/{mock_set.mock_path}/{cat_tag}/{mock_fn}.npy')
+        data_fn = os.path.join(data_dir, f'catalogs/{mock_set.mock_path}/{mock_fn}.npy')
         mock_dict = np.load(data_fn, allow_pickle=True).item()
         mock_data = mock_dict['data']
         assert int(mock_dict['L']) == L, "input boxsize does not match loaded mock data!"
@@ -97,7 +95,7 @@ def xi_ls_mocklist(mock_type=globals.mock_type,
 def xi_cfe_mocklist(mock_type=globals.mock_type,
                         L=globals.boxsize, n=globals.lognormal_density, As=globals.As,
                         data_dir=globals.data_dir, rlzs=globals.rlzs,
-                        grad_dim=globals.grad_dim, m=globals.m, b=globals.b,
+                        grad_dim=globals.grad_dim, m=globals.m, b=globals.b, same_dir=globals.same_dir,
                         prints=False, load_rand=True, randmult=globals.randmult, periodic=globals.periodic, nthreads=globals.nthreads,
                         rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins,
                         bao_fixed=True, overwrite=False):
@@ -107,19 +105,18 @@ def xi_cfe_mocklist(mock_type=globals.mock_type,
 
     # generate the mock set parameters
     mock_set = generate_mock_list.MockSet(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
-    cat_tag = mock_set.cat_tag
 
     # which BAO basis to use
     basis_type = 'bao_fixed' if bao_fixed else 'bao_iterative'
 
     # check whether we want to use gradient mocks or lognormal mocks
     if mock_type=='gradient':
-        mock_set.add_gradient(grad_dim, m, b)
+        mock_set.add_gradient(grad_dim, m, b, same_dir=same_dir)
     else:
         assert mock_type=='lognormal', "mock_type must be either 'gradient' or 'lognormal'"
 
     # save directory (note no random catalog needed with Suave)
-    save_dir = os.path.join(data_dir, f'{mock_set.mock_path}/suave/xi/{basis_type}/{cat_tag}')
+    save_dir = os.path.join(data_dir, f'{mock_set.mock_path}/suave/xi/{basis_type}')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     
@@ -133,12 +130,12 @@ def xi_cfe_mocklist(mock_type=globals.mock_type,
             
         # if bao_iterative, load in the iterative basis for this realization
         if not bao_fixed:
-            projfn = os.path.join(data_dir, f'bases/bao_iterative/{mock_set.mock_path}/results/results_{cat_tag}/final_bases/basis_{mock_fn}_trrnum_{randmult}x.dat')
+            projfn = os.path.join(data_dir, f'bases/bao_iterative/{mock_set.mock_path}/results/final_bases/basis_{mock_fn}_trrnum_{randmult}x.dat')
             if not os.path.exists(projfn):
                 assert FileNotFoundError, "iterative basis not found!"
 
         # load data
-        data_fn = os.path.join(data_dir, f'catalogs/{mock_set.mock_path}/{cat_tag}/{mock_fn}.npy')
+        data_fn = os.path.join(data_dir, f'catalogs/{mock_set.mock_path}/{mock_fn}.npy')
         mock_dict = np.load(data_fn, allow_pickle=True).item()
         mock_data = mock_dict['data']
         L = mock_dict['L']
@@ -176,7 +173,7 @@ def xi_cfe_mocklist(mock_type=globals.mock_type,
 def grad_cfe_mocklist(mock_type=globals.mock_type,
                         L=globals.boxsize, n=globals.lognormal_density, As=globals.As,
                         data_dir=globals.data_dir, rlzs=globals.rlzs,
-                        grad_dim=globals.grad_dim, m=globals.m, b=globals.b,
+                        grad_dim=globals.grad_dim, m=globals.m, b=globals.b, same_dir=globals.same_dir,
                         prints=False, load_rand=True, periodic=globals.periodic, nthreads=globals.nthreads,
                         rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins,
                         bao_fixed=True, overwrite=False):
@@ -186,19 +183,18 @@ def grad_cfe_mocklist(mock_type=globals.mock_type,
 
     # generate the mock set parameters
     mock_set = generate_mock_list.MockSet(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
-    cat_tag = mock_set.cat_tag
 
     # which BAO basis to use
     basis_type = 'bao_fixed' if bao_fixed else 'bao_iterative'
 
     # check whether we want to use gradient mocks or lognormal mocks
     if mock_type=='gradient':
-        mock_set.add_gradient(grad_dim, m, b)
+        mock_set.add_gradient(grad_dim, m, b, same_dir=same_dir)
     else:
         assert mock_type=='lognormal', "mock_type must be either 'gradient' or 'lognormal'"
 
     # save directory (note no random catalog needed with Suave)
-    save_dir = os.path.join(data_dir, f'{mock_set.mock_path}/suave/grad_amps/{basis_type}/{cat_tag}')
+    save_dir = os.path.join(data_dir, f'{mock_set.mock_path}/suave/grad_amps/{basis_type}')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     
@@ -211,12 +207,12 @@ def grad_cfe_mocklist(mock_type=globals.mock_type,
             
         # if bao_iterative, load in the iterative basis for this realization
         if not bao_fixed:
-            projfn = os.path.join(data_dir, f'bases/bao_iterative/{mock_set.mock_path}/results/results_{cat_tag}/final_bases/basis_{mock_fn}.dat')
+            projfn = os.path.join(data_dir, f'bases/bao_iterative/{mock_set.mock_path}/results/final_bases/basis_{mock_fn}.dat')
             if not os.path.exists(projfn):
                 assert FileNotFoundError, "iterative basis not found!"
 
         # load data
-        data_fn = os.path.join(data_dir, f'catalogs/{mock_set.mock_path}/{cat_tag}/{mock_fn}.npy')
+        data_fn = os.path.join(data_dir, f'catalogs/{mock_set.mock_path}/{mock_fn}.npy')
         mock_dict = np.load(data_fn, allow_pickle=True).item()
         mock_data = mock_dict['data']
         L = mock_dict['L']
@@ -252,27 +248,25 @@ def grad_cfe_mocklist(mock_type=globals.mock_type,
 def grad_patches_mocklist(mock_type=globals.mock_type,
                         L=globals.boxsize, n=globals.lognormal_density, As=globals.As,
                         data_dir=globals.data_dir, rlzs=globals.rlzs,
-                        grad_dim=globals.grad_dim, m=globals.m, b=globals.b,
-                        npatches = globals.npatches,
+                        grad_dim=globals.grad_dim, m=globals.m, b=globals.b, same_dir=globals.same_dir,
                         prints=False, load_rand=True, periodic=globals.periodic, nthreads=globals.nthreads,
                         rmin=globals.rmin, rmax=globals.rmax, nbins=globals.nbins,
-                        bao_fixed=True, overwrite=False):
+                        npatches=globals.npatches, overwrite=False):
     """Use a standard approach to estimate the clustering gradients on a set of mock galaxy catalogs."""
 
     s = time.time()
 
     # generate the mock set parameters
     mock_set = generate_mock_list.MockSet(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
-    cat_tag = mock_set.cat_tag
 
     # check whether we want to use gradient mocks or lognormal mocks
     if mock_type=='gradient':
-        mock_set.add_gradient(grad_dim, m, b)
+        mock_set.add_gradient(grad_dim, m, b, same_dir=same_dir)
     else:
         assert mock_type=='lognormal', "mock_type must be either 'gradient' or 'lognormal'"
 
     # save directory (note no random catalog needed with Suave)
-    save_dir = os.path.join(data_dir, f'{mock_set.mock_path}/patches/{npatches}patches/grad_amps/{cat_tag}')
+    save_dir = os.path.join(data_dir, f'{mock_set.mock_path}/patches/{npatches}patches/grad_amps')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -280,11 +274,11 @@ def grad_patches_mocklist(mock_type=globals.mock_type,
     for i, mock_fn in enumerate(mock_set.mock_fn_list):
 
         # first check if the basis file exists
-        basis_fn = os.path.join(data_dir, f'bases/4-parameter_fit/scipy/{mock_set.mock_path}/results_{cat_tag}/basis_{mock_fn}.npy')
+        basis_fn = os.path.join(data_dir, f'bases/4-parameter_fit/scipy/{mock_set.mock_path}/basis_{mock_fn}.npy')
         assert os.path.exists(basis_fn), "could not find basis file from 4-parameter scipy fit!"
 
         # load data
-        data_fn = os.path.join(data_dir, f'catalogs/{mock_set.mock_path}/{cat_tag}/{mock_fn}.npy')
+        data_fn = os.path.join(data_dir, f'catalogs/{mock_set.mock_path}/{mock_fn}.npy')
         mock_dict = np.load(data_fn, allow_pickle=True).item()
         mock_data = mock_dict['data']
         L = mock_dict['L']

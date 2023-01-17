@@ -264,7 +264,8 @@ class BAO_iterator:
                 os.makedirs(save_dir)
             save_fn = os.path.join(save_dir, f'cf{self.cf_tag}_{self.trr_tag}{self.rand_tag}{self.per_tag}_{self.mock_fn}.npy')
             np.save(save_fn, [self.rcont, xi, amps, 'baoiter', extra_dict])
-            print(f"Saved converged to {save_fn}")
+            if prints:
+                print(f"Saved converged to {save_fn}")
 
             # if mocks are lognormal, also save converged cf to the lognormal result directory
             if self.mock_type == 'lognormal':

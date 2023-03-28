@@ -80,13 +80,51 @@ def check_grad_amps(mockset, method='suave', bins=30, alpha=0.3, title=None, plo
         return data_dict
 
 
-def compute_xi_locs(mockset, i, nvs=50, basis='bao_fixed'):
-    from Corrfunc.utils import evaluate_xi      # (inside the function for now because of notebook issues on HPC)
+def t_intersect(omega, n, a, O):
+    # ensure unit vectors
+    n /= np.linalg.norm(n)
+    omegahat = omega / np.linalg.norm(omega)
+    aprime = np.array(a) - np.array(O)
+    A = np.dot(n, aprime)
+    B = np.dot(n, omegahat)
+    if B==0:
+        print("this line and plane are parallel!")
+        t = np.inf
+    else:
+        t = np.dot(n, aprime) / np.dot(n, omegahat)
+    return t
+
+
+def compute_v(omega, L, O=[0,0,0]):
+    """Computes the maximum distance along the gradient direction."""
+    omegahat = omega / np.linalg.norm(omega)  # ensure unit vector
+    amag = L/2  # distance to each box face
+    # test intersection with yz-plane first
+    comps = {0 : 'yz',
+             1 : 'xz',
+             2 : 'xy'}
+    ts = []
+    for i in comps:
+        # construct unit vector
+        n = np.zeros(3)
+        n[i] = 1
+        a = amag * n
+        t = t_intersect(omegahat, n, a, O)  # "time" to intersect with the plane (=box face)
+        ts.append(np.abs(t))
+        print(f"t = {t:.1f} for the {comps[i]}-plane")
+    v = min(ts)  # the way we parameterize means that t is just the physical distance to the box edge
+    comps_intersect = np.where(ts==v)[0][0]  # will be just one component unless omega is parallel to some face
+    print(f"line will intersect first with the {comps[comps_intersect]} plane: v={v:.2f}")
+    return v
+
+
+def compute_xi_locs(mockset, i, nvs=50, basis='bao_iterative'):
+    from Corrfunc.utils import evaluate_xi
 
     # unpack mockset params
     data_dir = mockset.data_dir
     mock_path = mockset.mock_path
-    mock_fn = mock_fn_list[i]
+    mock_fn = mockset.mock_fn_list[i]
     L = mockset.L
 
     # load in suave results dictionary
@@ -94,18 +132,20 @@ def compute_xi_locs(mockset, i, nvs=50, basis='bao_fixed'):
 
     amps = suave_dict['amps']
     r_fine = suave_dict['r_fine']
-    w_cont = suave_dict['grad_recovered']
     projfn = suave_dict['projfn']
     proj_type = suave_dict['proj_type']
     weight_type = suave_dict['weight_type']
 
+    w_cont = amps[1:]/amps[0]
+    print(f"w_cont = {w_cont}")
     w_cont_hat = w_cont / np.linalg.norm(w_cont)
 
     # parameters
-    v_min = -L/2.
-    v_max = L/2.
+    v_max = compute_v(w_cont, L)
+    print(f"v_max = {v_max:.1f}")
+    v_min = -v_max
     vs = np.linspace(v_min, v_max, nvs)
-    loc_pivot = [L/2., L/2., L/2.]
+    loc_pivot = [L/2., L/2., L/2.]  # center of the box
 
     xi_locs = []
     # compute xi at nvs evenly-spaced positions across the box
@@ -121,6 +161,7 @@ def compute_xi_locs(mockset, i, nvs=50, basis='bao_fixed'):
         xi_locs.append(xi_loc)
 
     results_dict = {
+        'w_cont' : w_cont,
         'vs' : vs,
         'r_fine' : r_fine,
         'xi_locs' : xi_locs,
@@ -129,16 +170,13 @@ def compute_xi_locs(mockset, i, nvs=50, basis='bao_fixed'):
     return results_dict
 
 
-def save_xi_locs(L, n, grad_dim, m, rlz, b=0.5, nvs=50, basis='bao_fixed',
-                    As=globals.As, data_dir=globals.data_dir, rlzs=globals.rlzs, save_dir='plot_data', save_fn=None):
-    
-    mock_set = MockSet(L, n, As=As, data_dir=data_dir, rlzs=rlzs)
+def save_xi_locs(mockset, rlz, nvs=50, basis='bao_iterative', save_dir='plot_data', save_fn=None):
 
-    results = compute_xi_locs(mock_set, rlz, nvs=nvs, basis=basis, As=As, data_dir=data_dir)
+    results = compute_xi_locs(mockset, rlz, nvs=nvs, basis=basis)
 
-    save_fn = save_fn if save_fn else f'xi_locs_{mock_set.mock_fn_list[rlz]}_{nvs}vs'
+    save_fn = save_fn if save_fn else f'xi_locs_{mockset.mock_fn_list[rlz]}_{nvs}vs'
 
-    save_path = os.path.join(data_dir, save_dir)
+    save_path = os.path.join(mockset.data_dir, save_dir)
 
     np.save(os.path.join(save_path, save_fn), results, allow_pickle=True)
     print(f"calculated xi_locs and saved to {os.path.join(save_path, save_fn)}.npy")
